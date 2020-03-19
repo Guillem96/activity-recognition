@@ -3,14 +3,14 @@ import json
 import shutil
 import argparse
 import subprocess
+import multiprocessing
 from pathlib import Path
 from collections import OrderedDict
 from typing import Union, Mapping, Any
 
-from joblib import delayed
-from joblib import Parallel
-
+import tqdm
 import pandas as pd
+from pytube import YouTube
 
 
 def create_video_folders(
@@ -75,37 +75,20 @@ def download_clip(video_identifier: str,
     end_time: float
         Indicates the ending time in seconds of the trimmed video.
     """
-    # Defensive argument checking.
-    assert isinstance(video_identifier, str), 'video_identifier must be string'
-    assert isinstance(output_filename, (str, Path)), 'output_filename must be path'
-    assert len(video_identifier) == 11, 'video_identifier must have length 11'
-
-    status = False
     # Construct command line for getting the direct video link.
-    tmp_filename = Path(tmp_dir, '%s.%%(ext)s' % uuid.uuid4())
-    url = url_base + video_identifier
-    command = ['youtube-dl',
-               '--quiet', '--no-warnings',
-               '-f', 'mp4',
-               '-o', f'"{str(tmp_filename)}"',
-               f'"{url}"']
-    command = ' '.join(command)
-    attempts = 0
-    while True:
-        try:
-            output = subprocess.check_output(command, shell=True,
-                                             stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as err:
-            attempts += 1
-            if attempts == num_attempts:
-                return status, err.output
-        else:
-            break
-    
-    # As we don't know the extension we have to look for the file using its name
-    tmp_filename = list(tmp_filename.parent.glob(tmp_filename.stem + '*'))[0]
+    fname = uuid.uuid4()
+    try:
+        yt = (YouTube(url_base + video_identifier)
+            .streams
+            .filter(file_extension='mp4', progressive=True)
+            .get_lowest_resolution()
+            .download(output_path=str(tmp_dir), 
+                        filename=str(fname)))
+    except Exception as err:
+        return False, str(err)
 
     # Construct command to trim the videos (ffmpeg required).
+    tmp_filename = Path(tmp_dir, str(fname) + '.mp4')
     command = ['ffmpeg',
                '-i', f'"{str(tmp_filename)}"',
                '-ss', str(start_time),
@@ -119,7 +102,8 @@ def download_clip(video_identifier: str,
         output = subprocess.check_output(command, shell=True,
                                          stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as err:
-        return status, err.output
+        print(f'[ERROR] Croping video {tmp_filename}')
+        return False, err.output
 
     # Check if the video was successfully saved.
     status = tmp_filename.exists()
@@ -172,50 +156,48 @@ def parse_kinetics_annotations(input_csv: str,
         df.rename(columns=columns, inplace=True)
         if ignore_is_cc:
             df = df.loc[:, df.columns.tolist()[:-1]]
+
     return df
 
 
 def main(input_csv: str, 
          output_dir: str,
          num_jobs: int = 24, 
-         tmp_dir: str = '/tmp/kinetics',
-         drop_duplicates: bool = False):
+         tmp_dir: str = '/tmp/kinetics'):
 
     # Reading and parsing Kinetics.
     dataset = parse_kinetics_annotations(input_csv)
-    # if os.path.isfile(drop_duplicates):
-    #     print('Attempt to remove duplicates')
-    #     old_dataset = parse_kinetics_annotations(drop_duplicates,
-    #                                              ignore_is_cc=True)
-    #     df = pd.concat([dataset, old_dataset], axis=0, ignore_index=True)
-    #     df.drop_duplicates(inplace=True, keep=False)
-    #     print(dataset.shape, old_dataset.shape)
-    #     dataset = df
-    #     print(dataset.shape)
 
     # Creates folders where videos will be saved later.
     label_to_dir = create_video_folders(dataset, output_dir, tmp_dir)
 
+
     # Download all clips.
     if num_jobs == 1:
         status_lst = []
-        for i, row in dataset.iterrows():
+        for i, row in tqdm.tqdm(dataset.iterrows(), total=dataset.shape[0]):
             status_lst.append(download_clip_wrapper(row, label_to_dir,
                                                     tmp_dir))
     else:
-        delayed_download_clip = delayed(download_clip_wrapper)
-        parallel_job = Parallel(n_jobs=num_jobs)
-        generator = (delayed_download_clip(
-            row, label_to_dir, tmp_dir) 
-            for i, row in dataset.iterrows())
-        status_lst = parallel_job(generator) 
+        pool = multiprocessing.Pool(num_jobs)
+        pbar = tqdm.tqdm(total=dataset.shape[0])
+        update = lambda *a: pbar.update(1)
+
+        try:
+            for i, row in dataset.iterrows():
+                pool.apply_async(download_clip_wrapper, 
+                                 args=(row, label_to_dir, tmp_dir),
+                                 callback=update)
+        except KeyboardInterrupt:
+            print('Stopped downloads pressing CTRL + C')
+            pool.terminate()
+        else:
+            pool.close()
+        
+        pool.join()
 
     # Clean tmp dir.
     shutil.rmtree(tmp_dir)
-
-    # Save download report.
-    with open('download_report.json', 'w') as f:
-        f.write(json.dumps(status_lst))
 
 
 if __name__ == '__main__':
@@ -226,9 +208,6 @@ if __name__ == '__main__':
                          'YouTube Identifier,Start time,End time,Class label'))
     p.add_argument('output_dir', type=str,
                    help='Output directory where videos will be saved.')
-    p.add_argument('-n', '--num-jobs', type=int, default=24)
+    p.add_argument('-n', '--num-jobs', type=int, default=8)
     p.add_argument('-t', '--tmp-dir', type=str, default='/tmp/kinetics')
-    p.add_argument('--drop-duplicates', type=str, default='non-existent',
-                   help='Unavailable at the moment')
-                   # help='CSV file of the previous version of Kinetics.')
     main(**vars(p.parse_args()))
