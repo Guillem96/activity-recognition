@@ -1,0 +1,12 @@
+# Progress indicator
+tqdm>=4.45.0
+
+# Scikit stack
+pandas>=1.0.3
+
+# Video processing
+pytube3>=9.6.4
+av>=7.0.1 
+
+# Google images
+google-images-download>=2.8.0

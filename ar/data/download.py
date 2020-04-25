@@ -28,11 +28,11 @@ def create_video_folders(
     output_dir.mkdir(exist_ok=True)
     
     tmp_dir = Path(tmp_dir)
-    tmp_dir.mkdir(exist_ok=True)
+    tmp_dir.mkdir(exist_ok=True, parents=True)
 
     label_to_dir = {}
     for label_name in dataset['label-name'].unique():
-        this_dir = output_dir / label_name
+        this_dir = output_dir / label_name.replace(' ', '_')
         this_dir.mkdir(exist_ok=True)
         label_to_dir[label_name] = this_dir
 
@@ -83,8 +83,9 @@ def download_clip(video_identifier: str,
             .filter(file_extension='mp4', progressive=True)
             .get_lowest_resolution()
             .download(output_path=str(tmp_dir), 
-                        filename=str(fname)))
+                      filename=str(fname)))
     except Exception as err:
+        # print('[ERROR]', err)
         return False, str(err)
 
     # Construct command to trim the videos (ffmpeg required).
@@ -95,15 +96,15 @@ def download_clip(video_identifier: str,
                '-t', str(end_time - start_time),
                '-c:v', 'libx264', '-c:a', 'copy',
                '-threads', '1',
-               '-loglevel', 'panic',
+            #    '-loglevel', 'panic',
                f'"{str(output_filename)}"']
     command = ' '.join(command)
     try:
         output = subprocess.check_output(command, shell=True,
                                          stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as err:
-        print(f'[ERROR] Croping video {tmp_filename}')
-        return False, err.output
+        # print(f'[ERROR] Croping video {tmp_filename}')
+        return False, err.output.decode('utf-8')
 
     # Check if the video was successfully saved.
     status = tmp_filename.exists()
@@ -120,14 +121,12 @@ def download_clip_wrapper(row: Mapping[str, Any],
 
     clip_id = output_filename.stem
     if output_filename.exists():
-        status = tuple([clip_id, True, 'Exists'])
-        return status
+        return clip_id, True, 'Exists'
 
     downloaded, log = download_clip(row['video-id'], output_filename,
                                     row['start-time'], row['end-time'],
                                     tmp_dir=tmp_dir)
-    status = tuple([clip_id, downloaded, log])
-    return status
+    return clip_id, downloaded, str(log)
 
 
 def parse_kinetics_annotations(input_csv: str, 
@@ -181,7 +180,9 @@ def main(input_csv: str,
     else:
         pool = multiprocessing.Pool(num_jobs)
         pbar = tqdm.tqdm(total=dataset.shape[0])
-        update = lambda *a: pbar.update(1)
+        def update(*args):
+            pbar.update(1)
+            pbar.refresh()
 
         try:
             for i, row in dataset.iterrows():
