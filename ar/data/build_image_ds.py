@@ -7,10 +7,12 @@ from pathlib import Path
 import multiprocessing as mp
 from typing import Collection, Mapping, Union
 
+import click
+
 from PIL import Image
 
 from selenium import webdriver
-
+from selenium.webdriver.firefox.options import Options
 
 def _build_folder_structure(out_path: Path, 
                             actions: Collection[str]) -> Mapping[str, Path]:
@@ -18,7 +20,7 @@ def _build_folder_structure(out_path: Path,
     for a in actions:
         action_path = out_path / a
         action_path.mkdir(exist_ok=True, parents=True)
-        action_2_path[a] = action_2_path
+        action_2_path[a] = action_path
     
     return action_2_path
 
@@ -75,8 +77,11 @@ def _download_images(query: str,
                      image_per_query: int,
                      n_workers: int): 
     
-    driver = webdriver.Firefox()
-    urls = _get_urls(driver, query)
+    opt = Options()
+    opt.add_argument('--headless')
+    driver = webdriver.Firefox(options=opt)
+    
+    urls = _get_urls(driver, query)[:image_per_query]
     driver.close()
     _download_urls(urls, str(query_2_path[query]), n_workers)
     

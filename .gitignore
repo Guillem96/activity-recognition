@@ -11,3 +11,6 @@ __pycache__/
 # Data
 /data/*
 !/data/*.sh
+
+# Images downloading
+geckodriver.log
