@@ -32,7 +32,7 @@ class LogValue(object):
         self.logs.append(new_value)
     
     def __str__(self) -> str:
-        return f'{self.name}: {self.mean.item():.4f}'
+        return f'{self.name}: {self.mean.item():.6f}'
 
     def reset(self):
         """Remove the tracking queue"""

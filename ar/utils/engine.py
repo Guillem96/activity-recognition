@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Collection
 
 import torch
 import torch.nn as nn
@@ -8,7 +8,7 @@ from .logger import LogValue, ValuesLogger
 
 
 LossFn = Callable[[torch.FloatTensor, torch.LongTensor], torch.FloatTensor]
-
+MetricFn = Callable[[torch.FloatTensor, torch.LongTensor], torch.FloatTensor]
 
 def train_one_epoch(dl: torch.utils.data.DataLoader,
                     model: nn.Module,
@@ -47,3 +47,29 @@ def train_one_epoch(dl: torch.utils.data.DataLoader,
             optimizer.zero_grad()
         
         logger(loss=loss.item(), lr=get_lr(optimizer))
+
+
+@torch.no_grad()
+def evaluate(dl: torch.utils.data.DataLoader,
+             model: nn.Module,
+             loss_fn: LossFn,
+             metrics: Collection[MetricFn],
+             device: torch.device = torch.device('cpu')):
+    
+    metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
+    logger = ValuesLogger(
+        *metrics_log,
+        LogValue('loss', len(dl)),
+        print_freq=len(dl),
+        header='Validation')
+    
+    for x, y in dl:
+        x = x.to(device)
+        y = y.to(device)
+
+        predictions = model(x)
+
+        loss = loss_fn(predictions, y)
+        updates_values = {m.__name__: m(predictions, y) for m in metrics}
+        updates_values['loss'] = loss.item()
+        logger(**updates_values)

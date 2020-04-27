@@ -10,8 +10,9 @@ import torchvision.transforms as T
 from .classifier import ImageClassifier
 from ar.transforms import imagenet_stats
 
+from ar.metrics import accuracy
 from ar.utils.nn import _FEATURE_EXTRACTORS
-from ar.utils.engine import train_one_epoch
+from ar.utils.engine import train_one_epoch, evaluate
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -32,9 +33,12 @@ def train(**kwargs):
 
     train_ds = torchvision.datasets.ImageFolder(kwargs['data_dir'], 
                                                 transform=train_tfms)
+    print(train_ds.class_to_idx)
 
     valid_ds = torchvision.datasets.ImageFolder(kwargs['data_dir'], 
                                                 transform=valid_tfms)
+    print(valid_ds.class_to_idx)
+
     train_len = int(len(train_ds) * (1 - kwargs['validation_split']))
     rand_idx = torch.randperm(len(train_ds))
     train_ds = Subset(train_ds, rand_idx[:train_len])
@@ -66,6 +70,16 @@ def train(**kwargs):
                         loss_fn=criterion_fn,
                         epoch=epoch,
                         device=device)
+        
+        evaluate(dl=valid_dl,
+                 model=model,
+                 metrics=[accuracy],
+                 loss_fn=criterion_fn,
+                 device=device)
+        
+        # Save the model jointly with the optimizer
+        model.save(kwargs['save_checkpoint'], 
+                   optimizer=optimizer.state_dict())
 
 
 @click.command()
@@ -83,6 +97,8 @@ def train(**kwargs):
               default='resnet18')
 @click.option('--learning-rate', type=float, default=1e-3)
 
+@click.option('--save-checkpoint', type=click.Path(dir_okay=False),
+              default='models/model.pt', help='File to save the checkpoint')
 def main(**kwargs):
     train(**kwargs)
 

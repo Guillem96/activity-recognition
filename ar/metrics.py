@@ -35,3 +35,16 @@ def top_k_accuracy(y_preds: torch.FloatTensor,
 def top_5_accuracy(*args, **kwargs): return top_k_accuracy(*args, *kwargs, k=5)
 def top_3_accuracy(*args, **kwargs): return top_k_accuracy(*args, *kwargs, k=2)
 def accuracy(*args, **kwargs): return top_k_accuracy(*args, *kwargs, k=1)
+
+
+def confusion_matrix(y_preds: torch.Tensor, 
+                     y_trues: torch.LongTensor) -> torch.LongTensor:
+
+    n_classes = y_preds.size(-1)
+    pred_labels = y_preds.argmax(1)
+
+    cm = torch.zeros(n_classes, n_classes).long()
+    for t, p in zip(target, pred):
+        cm[t, p] += 1
+
+    return conf_matrix
