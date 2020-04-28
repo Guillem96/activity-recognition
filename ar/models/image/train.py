@@ -33,11 +33,8 @@ def train(**kwargs):
 
     train_ds = torchvision.datasets.ImageFolder(kwargs['data_dir'], 
                                                 transform=train_tfms)
-    print(train_ds.class_to_idx)
-
     valid_ds = torchvision.datasets.ImageFolder(kwargs['data_dir'], 
                                                 transform=valid_tfms)
-    print(valid_ds.class_to_idx)
 
     train_len = int(len(train_ds) * (1 - kwargs['validation_split']))
     rand_idx = torch.randperm(len(train_ds))

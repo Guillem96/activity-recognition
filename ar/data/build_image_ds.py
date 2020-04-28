@@ -137,6 +137,6 @@ def main(actions, out_path, images_per_action, num_workers):
     for q in class_names:
         _download_images(q, query_2_path, images_per_action, num_workers)
 
-        
+
 if __name__ == "__main__":
     main()
