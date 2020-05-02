@@ -3,6 +3,8 @@ from typing import Callable, Collection
 import torch
 import torch.nn as nn
 
+import numpy as np
+
 from .nn import get_lr
 from .logger import LogValue, ValuesLogger
 
@@ -10,6 +12,14 @@ from .logger import LogValue, ValuesLogger
 LossFn = Callable[[torch.FloatTensor, torch.LongTensor], torch.FloatTensor]
 MetricFn = Callable[[torch.FloatTensor, torch.LongTensor], torch.FloatTensor]
 
+
+def seed(seed: int = 0):
+    torch.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    np.random.seed(seed)
+
+    
 def train_one_epoch(dl: torch.utils.data.DataLoader,
                     model: nn.Module,
                     optimizer: torch.optim.Optimizer,
@@ -26,8 +36,7 @@ def train_one_epoch(dl: torch.utils.data.DataLoader,
         print_freq=print_freq,
         header='Epoch[{epoch}] [{step}/{total}]'.format(epoch=epoch,
                                                         step='{step}',
-                                                        total=len(dl))
-    )
+                                                        total=len(dl)))
 
     model.train()
     optimizer.zero_grad()
@@ -46,6 +55,9 @@ def train_one_epoch(dl: torch.utils.data.DataLoader,
             optimizer.step()
             optimizer.zero_grad()
         
+        if scheduler is not None:
+            scheduler.step()
+        
         logger(loss=loss.item(), lr=get_lr(optimizer))
 
 
@@ -63,6 +75,7 @@ def evaluate(dl: torch.utils.data.DataLoader,
         print_freq=len(dl),
         header='Validation')
     
+    model.eval()
     for x, y in dl:
         x = x.to(device)
         y = y.to(device)
@@ -73,3 +86,4 @@ def evaluate(dl: torch.utils.data.DataLoader,
         updates_values = {m.__name__: m(predictions, y) for m in metrics}
         updates_values['loss'] = loss.item()
         logger(**updates_values)
+

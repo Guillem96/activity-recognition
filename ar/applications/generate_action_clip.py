@@ -140,6 +140,7 @@ def main(video_path,
         start_frame = int(max(0, frame_idx - clip_duration_frames / 2))
         end_frame = int(min(video.size(0), frame_idx + clip_duration_frames / 2))
         clip_fname = out_dir / f'{start_frame}_{end_frame}_{label}.mp4'
+        
         print(f'Saving video at {str(clip_fname)}')
         torchvision.io.write_video(str(clip_fname), 
                                    video[start_frame: end_frame],

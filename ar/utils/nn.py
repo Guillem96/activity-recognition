@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 import torch.nn as nn
 import torchvision.models as zoo
@@ -37,7 +39,8 @@ def get_lr(optimizer: torch.optim.Optimizer, reduce: str = 'first') -> float:
         return sum(o['lr'] for o in optimizer.param_groups) / float(n)
 
 
-def image_feature_extractor(fe: str, pretrained: bool = True) -> nn.Module:
+def image_feature_extractor(fe: str, 
+                            pretrained: bool = True) -> Tuple[nn.Module, int]:
     """
     Given a architecture name build the nn.Module that outputs the CNN features
 

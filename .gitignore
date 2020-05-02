@@ -17,3 +17,6 @@ __pycache__/
 
 # Images downloading
 geckodriver.log
+
+# Trained models
+/models/

@@ -11,7 +11,8 @@ class ImageClassifier(SerializableModule):
     def __init__(self, 
                  feature_extractor: str, 
                  n_classes: int, 
-                 pretrained: bool = True):
+                 pretrained: bool = True,
+                 freeze_feature_extractor: bool = False):
         super(ImageClassifier, self).__init__()
         
         self.feature_extractor = feature_extractor
@@ -20,6 +21,10 @@ class ImageClassifier(SerializableModule):
 
         self.features, in_classifier = image_feature_extractor(
             feature_extractor, pretrained=True)
+        
+        for p in self.features.parameters():
+            p.requires_grad = not freeze_feature_extractor
+
         self.dropout = nn.Dropout(.5)
         self.classifier = nn.Linear(in_classifier, n_classes)
     

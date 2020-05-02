@@ -5,8 +5,12 @@ tqdm>=4.45.0
 pandas>=1.0.3
 
 # Video processing
-pytube3>=9.6.4
 av>=7.0.1
+pytube3>=9.6.4
+torchvision>=0.6.0a0+82fd1c8
+
+# Audio
+torchaudio>=0.5.0
 
 # CLI
 click>=7.1.1

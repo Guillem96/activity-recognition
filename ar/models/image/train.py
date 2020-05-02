@@ -10,10 +10,9 @@ import torchvision.transforms as T
 from .classifier import ImageClassifier
 from ar.transforms import imagenet_stats
 
+from ar import engine
 from ar.metrics import accuracy
 from ar.utils.nn import _FEATURE_EXTRACTORS
-from ar.utils.engine import train_one_epoch, evaluate
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -22,7 +21,8 @@ def train(**kwargs):
         T.Resize((224, 224)),
         T.RandomHorizontalFlip(),
         T.ToTensor(),
-        T.Normalize(**imagenet_stats)
+        T.Normalize(**imagenet_stats),
+        T.RandomErasing(),
     ])
 
     valid_tfms = T.Compose([
@@ -51,32 +51,70 @@ def train(**kwargs):
                           num_workers=kwargs['data_loader_workers'],
                           shuffle=True)
 
-    model = ImageClassifier(kwargs['feature_extractor'], 
-                            len(valid_ds.dataset.classes))
+    if kwargs['resume_checkpoint'] is None:
+        checkpoint = None
+        model = ImageClassifier(kwargs['feature_extractor'], 
+                                len(valid_ds.dataset.classes),
+                                freeze_feature_extractor=kwargs['freeze_fe'])
+    else:
+        model, checkpoint = ImageClassifier.load(
+            kwargs['resume_checkpoint'],
+            map_location=device,
+            freeze_feature_extractor=kwargs['freeze_fe'])
+        
     model.to(device)
 
-    optimizer = optim.AdamW(model.parameters(), 
-                            lr=kwargs['learning_rate'])
+    trainable_params = [p for p in model.parameters() if p.requires_grad]
+    if kwargs['optimizer'] == 'AdamW':
+        optimizer = optim.AdamW(trainable_params, 
+                                lr=kwargs['learning_rate'])
+    elif kwargs['optimizer'] == 'SGD':
+        optimizer = optim.SGD(trainable_params, lr=kwargs['learning_rate'],
+                              momentum=0.9, weight_decay=4e-5)
+    elif kwargs['optimizer'] == 'Adam':
+        optimizer = optim.Adam(trainable_params, lr=kwargs['learning_rate'],
+                               momentum=0.9, weight_decay=4e-5)
+
+    if kwargs['scheduler'] == 'OneCycle':
+        scheduler = optim.lr_scheduler.OneCycleLR(
+            optimizer, kwargs['learning_rate'] * 10, 
+            len(train_dl) * kwargs['epochs'])
+    elif kwargs['scheduler'] == 'Step':
+        scheduler = optim.lr_scheduler.StepLR(optimizer, len(train_dl), .1)
+    elif kwargs['scheduler'] == 'None':
+        scheduler = None
+    
+    if checkpoint is not None:
+        scheduler.load_state_dict(checkpoint['scheduler'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        starting_epoch = checkpoint['epoch'] + 1
+    else:
+        starting_epoch = 0
 
     criterion_fn = torch.nn.NLLLoss()
 
-    for epoch in range(kwargs['epochs']):
-        train_one_epoch(dl=train_dl,
+    for epoch in range(starting_epoch, kwargs['epochs']):
+        engine.train_one_epoch(dl=train_dl,
+                               model=model,
+                               optimizer=optimizer,
+                               scheduler=scheduler,
+                               loss_fn=criterion_fn,
+                               epoch=epoch,
+                               print_freq=kwargs['print_freq'],
+                               device=device)
+        
+        engine.evaluate(dl=valid_dl,
                         model=model,
-                        optimizer=optimizer,
+                        metrics=[accuracy],
                         loss_fn=criterion_fn,
-                        epoch=epoch,
                         device=device)
         
-        evaluate(dl=valid_dl,
-                 model=model,
-                 metrics=[accuracy],
-                 loss_fn=criterion_fn,
-                 device=device)
-        
         # Save the model jointly with the optimizer
-        model.save(kwargs['save_checkpoint'], 
-                   optimizer=optimizer.state_dict())
+        model.save(
+            kwargs['save_checkpoint'],
+            epoch=epoch,
+            optimizer=optimizer.state_dict(),
+            scheduler=scheduler.state_dict() if scheduler is not None else {})
 
 
 @click.command()
@@ -92,8 +130,21 @@ def train(**kwargs):
 @click.option('--feature-extractor', 
               type=click.Choice(list(_FEATURE_EXTRACTORS)),
               default='resnet18')
+@click.option('--freeze-fe/--no-freeze-fe', default=False,
+              help='Wether or not to fine tune the pretrained'
+                   ' feature extractor')
+@click.option('--optimizer', type=click.Choice(['SGD', 'Adam', 'AdamW']),
+              default='SGD')
+@click.option('--grad-accum-steps', type=int, default=1)
 @click.option('--learning-rate', type=float, default=1e-3)
+@click.option('--scheduler', type=click.Choice(['OneCycle', 'Step', 'None']),
+              default='None')
 
+@click.option('--print-freq', type=int, default=20, 
+              help='Print training epoch progress every n steps')
+
+@click.option('--resume-checkpoint', type=click.Path(dir_okay=False),
+              default=None, help='Resume training from')
 @click.option('--save-checkpoint', type=click.Path(dir_okay=False),
               default='models/model.pt', help='File to save the checkpoint')
 def main(**kwargs):

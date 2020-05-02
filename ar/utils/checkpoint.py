@@ -25,11 +25,12 @@ class SerializableModule(nn.Module, abc.ABC):
     @classmethod
     def load(cls, 
              path: str, 
-             map_location: torch.device) -> 'SerializableModule':
+             map_location: torch.device,
+             **kwargs) -> 'SerializableModule':
 
         checkpoint = torch.load(path, map_location=map_location)
         
-        instance = cls(**checkpoint.pop('config'))
+        instance = cls(**checkpoint.pop('config'), **kwargs)
         instance.to(map_location)
         instance.load_state_dict(checkpoint.pop('model'))
 
