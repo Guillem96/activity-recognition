@@ -1,6 +1,6 @@
 # Activity Recognition
 
-## Detection action on video
+## Obtaining candidate clips
 
 Reproduce **Obtaining candidate clips** section from Kinetics400 paper [1].
 
