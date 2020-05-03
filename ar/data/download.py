@@ -1,11 +1,11 @@
 import uuid
-import json
+import time
 import shutil
 import argparse
 import subprocess
+
 import multiprocessing
 from pathlib import Path
-from collections import OrderedDict
 from typing import Union, Mapping, Any
 
 import tqdm
@@ -79,16 +79,15 @@ def download_clip(video_identifier: str,
     fname = uuid.uuid4()
     try:
         yt = (YouTube(url_base + video_identifier)
-            .streams
-            .filter(file_extension='mp4', progressive=True)
-            .get_lowest_resolution()
-            .download(output_path=str(tmp_dir), 
-                      filename=str(fname)))
+              .streams
+              .filter(file_extension='mp4', progressive=True)
+              .get_lowest_resolution()
+              .download(output_path=str(tmp_dir), 
+                        filename=str(fname)))
     except Exception as err:
-        # print('[ERROR]', err)
+        print('[ERROR]', err)
         return False, str(err)
 
-    # Construct command to trim the videos (ffmpeg required).
     tmp_filename = Path(tmp_dir, str(fname) + '.mp4')
     command = ['ffmpeg',
                '-i', f'"{str(tmp_filename)}"',
@@ -121,12 +120,12 @@ def download_clip_wrapper(row: Mapping[str, Any],
 
     clip_id = output_filename.stem
     if output_filename.exists():
-        return clip_id, True, 'Exists'
+        return 
 
     downloaded, log = download_clip(row['video-id'], output_filename,
                                     row['start-time'], row['end-time'],
                                     tmp_dir=tmp_dir)
-    return clip_id, downloaded, str(log)
+    # return clip_id, downloaded, str(log)
 
 
 def parse_kinetics_annotations(input_csv: str, 
@@ -147,11 +146,11 @@ def parse_kinetics_annotations(input_csv: str,
     """
     df = pd.read_csv(input_csv)
     if 'youtube_id' in df.columns:
-        columns = OrderedDict([
-            ('youtube_id', 'video-id'),
-            ('time_start', 'start-time'),
-            ('time_end', 'end-time'),
-            ('label', 'label-name')])
+        columns = {'youtube_id': 'video-id',
+                   'time_start': 'start-time',
+                   'time_end': 'end-time',
+                   'label': 'label-name'}
+
         df.rename(columns=columns, inplace=True)
         if ignore_is_cc:
             df = df.loc[:, df.columns.tolist()[:-1]]
@@ -173,10 +172,8 @@ def main(input_csv: str,
 
     # Download all clips.
     if num_jobs == 1:
-        status_lst = []
         for i, row in tqdm.tqdm(dataset.iterrows(), total=dataset.shape[0]):
-            status_lst.append(download_clip_wrapper(row, label_to_dir,
-                                                    tmp_dir))
+            download_clip_wrapper(row, label_to_dir, tmp_dir)
     else:
         pool = multiprocessing.Pool(num_jobs)
         pbar = tqdm.tqdm(total=dataset.shape[0])

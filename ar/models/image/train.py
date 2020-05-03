@@ -63,7 +63,7 @@ def train(**kwargs):
             freeze_feature_extractor=kwargs['freeze_fe'])
         
     model.to(device)
-
+    
     trainable_params = [p for p in model.parameters() if p.requires_grad]
     if kwargs['optimizer'] == 'AdamW':
         optimizer = optim.AdamW(trainable_params, 

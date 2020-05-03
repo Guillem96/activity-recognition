@@ -5,7 +5,6 @@ import click
 
 import torch
 import torchvision
-
 import ar.transforms as T 
 from ar.models.image.classifier import ImageClassifier
 
@@ -79,7 +78,7 @@ def find_video_clips(
 @click.option('--n-clips', type=int, default=2, 
               help='Number of clips generated')
 @click.option('--clip-len', type=int, default=5,
-              help='Length of the extracted clips')
+              help='Length of the extracted clips in seconds')
 def main(video_path, 
          skip_frames, 
          image_classifier_checkpoint, 
@@ -106,7 +105,7 @@ def main(video_path,
     print(f'Loading video {video_path}...')
     video, _, info = torchvision.io.read_video(video_path)
     video_duration = video.size(0) / info['video_fps']
-    frames_seconds_after_skip = info['video_fps'] / 4
+    frames_seconds_after_skip = info['video_fps'] / skip_frames
     video_t = video[::skip_frames]
 
     # Clip duration extra variables
@@ -126,7 +125,7 @@ def main(video_path,
     res = find_video_clips(video_t, model, topk=n_clips)
     
     for frame_idx, label in zip(*res):
-        label = classes[label.item()]
+        label = classes[label.item()].replace(' ', '_')
 
         # Getting video seconds of the clip just for logging purposes
         video_second = frame_to_second(frame_idx, info)
@@ -139,12 +138,12 @@ def main(video_path,
         original_frame = frame_idx * skip_frames
         start_frame = int(max(0, frame_idx - clip_duration_frames / 2))
         end_frame = int(min(video.size(0), frame_idx + clip_duration_frames / 2))
-        clip_fname = out_dir / f'{start_frame}_{end_frame}_{label}.mp4'
         
+        clip_fname = out_dir / f'{start_frame}_{end_frame}_{label}.mp4'
         print(f'Saving video at {str(clip_fname)}')
-        torchvision.io.write_video(str(clip_fname), 
-                                   video[start_frame: end_frame],
-                                   info['video_fps'])
+        write_video(str(clip_fname), 
+                    video[start_frame: end_frame],
+                    int(info['video_fps']))
 
 
 if __name__ == "__main__":
