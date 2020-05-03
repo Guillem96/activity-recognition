@@ -17,6 +17,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def train(**kwargs):
+    engine.seed()
+    
     train_tfms = T.Compose([
         T.Resize((224, 224)),
         T.RandomHorizontalFlip(),
