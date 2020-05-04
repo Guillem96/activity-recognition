@@ -1,8 +1,11 @@
 import uuid
+import json
 import time
+import click
 import shutil
-import argparse
+import requests
 import subprocess
+from functools import partial
 
 import multiprocessing
 from pathlib import Path
@@ -57,9 +60,9 @@ def construct_video_filename(row: Mapping[str, Any],
 
 def download_clip(video_identifier: str, 
                   output_filename: Union[str, Path],
-                  start_time: int, end_time: int,
-                  tmp_dir: str = '/tmp/kinetics',
-                  num_attempts: int = 5,
+                  start_time: int, 
+                  end_time: int,
+                  tmp_dir: Union[str, Path] = '/tmp/kinetics',
                   url_base: str = 'https://www.youtube.com/watch?v='):
     """Download a video from youtube if exists and is not blocked.
 
@@ -77,6 +80,7 @@ def download_clip(video_identifier: str,
     """
     # Construct command line for getting the direct video link.
     fname = uuid.uuid4()
+
     try:
         yt = (YouTube(url_base + video_identifier)
               .streams
@@ -84,8 +88,17 @@ def download_clip(video_identifier: str,
               .get_lowest_resolution()
               .download(output_path=str(tmp_dir), 
                         filename=str(fname)))
+    except requests.exceptions.HTTPError as err:
+        if err.response.status_code == 429:
+            import sys
+            print('Stopping downloading because we reached' 
+                  'the maximum requests per day')
+            sys.exit(1)
+        print('Error', str(err))
+        return False, str(err.response.status_code)
+
     except Exception as err:
-        print('[ERROR]', err)
+        print('Error', str(err))
         return False, str(err)
 
     tmp_filename = Path(tmp_dir, str(fname) + '.mp4')
@@ -107,14 +120,22 @@ def download_clip(video_identifier: str,
 
     # Check if the video was successfully saved.
     status = tmp_filename.exists()
-    tmp_filename.unlink(missing_ok=True)
+    if status: tmp_filename.unlink()
     return status, 'Downloaded'
 
 
 def download_clip_wrapper(row: Mapping[str, Any], 
-                          label_to_dir: Mapping[str, Path],  
-                          tmp_dir: Union[str, Path]):
+                          label_to_dir: Mapping[str, Path],
+                          tmp_dir: Union[str, Path],
+                          queue: multiprocessing.Queue,
+                          fail_file: Union[str, Path]):
     """Wrapper for parallel processing purposes."""
+    
+    with Path(fail_file).open() as f:
+        register = json.load(f)
+        if row['video-id'] in register:
+            return
+
     output_filename = construct_video_filename(
         row, label_to_dir)
 
@@ -125,6 +146,10 @@ def download_clip_wrapper(row: Mapping[str, Any],
     downloaded, log = download_clip(row['video-id'], output_filename,
                                     row['start-time'], row['end-time'],
                                     tmp_dir=tmp_dir)
+
+    if not downloaded:
+        queue.put((row['video-id'], log))
+
     # return clip_id, downloaded, str(log)
 
 
@@ -158,34 +183,82 @@ def parse_kinetics_annotations(input_csv: str,
     return df
 
 
+def writer(q: multiprocessing.Queue, fail_file: Union[Path, str]):
+    fail_file = Path(fail_file)
+
+    while 1:
+        video_id, log = q.get()
+        with fail_file.open('r') as f:
+            register = json.load(f)
+            register[video_id] = log
+        
+        with fail_file.open('w') as f:
+            json.dump(register, f)
+            f.flush()
+
+
+@click.command()
+@click.argument('input_csv', required=True, 
+                type=click.Path(exists=True, dir_okay=False),
+                # help='CSV file containing the following format: '
+                #      'YouTube Identifier,Start time,End time,Class label'
+                     )
+@click.argument('output_dir', required=True, type=click.Path(file_okay=False),
+                # help='Output directory where videos will be saved.'
+                )
+@click.option('--failed-file', '-f', default='.failed.json', 
+              type=click.Path(dir_okay=False), 
+              help='File to keep track of failed download and not repeating '
+                   'them every time we resume the downloading script')
+@click.option('--num-jobs', '-n', default=8, type=int)
+@click.option('--tmp-dir', '-t', default='/tmp/kinetics', 
+              type=click.Path(file_okay=False))
+
 def main(input_csv: str, 
          output_dir: str,
-         num_jobs: int = 24, 
-         tmp_dir: str = '/tmp/kinetics'):
+         failed_file: str,
+         num_jobs: int, 
+         tmp_dir: str):
 
+    failed_file = Path(failed_file)
+    if not failed_file.exists():
+        failed_file.write_text('{}')
+        
     # Reading and parsing Kinetics.
     dataset = parse_kinetics_annotations(input_csv)
 
     # Creates folders where videos will be saved later.
     label_to_dir = create_video_folders(dataset, output_dir, tmp_dir)
 
-
     # Download all clips.
     if num_jobs == 1:
         for i, row in tqdm.tqdm(dataset.iterrows(), total=dataset.shape[0]):
-            download_clip_wrapper(row, label_to_dir, tmp_dir)
+            download_clip_wrapper(row, label_to_dir, tmp_dir, failed_file)
     else:
         pool = multiprocessing.Pool(num_jobs)
+        manager = multiprocessing.Manager()
+        queue = manager.Queue()
+
         pbar = tqdm.tqdm(total=dataset.shape[0])
         def update(*args):
             pbar.update(1)
             pbar.refresh()
-
         try:
+            jobs = []
+            print('Launching logger process')
+
+            jobs.append(pool.apply_async(writer, args=(queue, failed_file)))
+
+            print('Launching workers')
             for i, row in dataset.iterrows():
-                pool.apply_async(download_clip_wrapper, 
-                                 args=(row, label_to_dir, tmp_dir),
-                                 callback=update)
+                args = (row, label_to_dir, tmp_dir, queue, failed_file)
+                j = pool.apply_async(download_clip_wrapper, args=args,
+                                     callback=update)
+                jobs.append(j)
+            
+            for j in jobs:
+                j.get()
+
         except KeyboardInterrupt:
             print('Stopped downloads pressing CTRL + C')
             pool.terminate()
@@ -199,13 +272,4 @@ def main(input_csv: str,
 
 
 if __name__ == '__main__':
-    description = 'Helper script for downloading and trimming kinetics videos.'
-    p = argparse.ArgumentParser(description=description)
-    p.add_argument('input_csv', type=str,
-                   help=('CSV file containing the following format: '
-                         'YouTube Identifier,Start time,End time,Class label'))
-    p.add_argument('output_dir', type=str,
-                   help='Output directory where videos will be saved.')
-    p.add_argument('-n', '--num-jobs', type=int, default=8)
-    p.add_argument('-t', '--tmp-dir', type=str, default='/tmp/kinetics')
-    main(**vars(p.parse_args()))
+    main()
