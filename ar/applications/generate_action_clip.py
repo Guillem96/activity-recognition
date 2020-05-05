@@ -113,9 +113,9 @@ def main(video_path,
     
     # Resize and normalize the video
     tfms = torchvision.transforms.Compose([
-        T.ToFloatTensorInZeroOne(),
-        T.Resize((128, 128)),
-        T.Normalize(**T.imagenet_stats)
+        T.VideoToTensor().
+        T.VideoResize((128, 128)),
+        T.VideoNormalize(**T.imagenet_stats)
     ])
 
     video_t = tfms(video_t)

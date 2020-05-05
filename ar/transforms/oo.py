@@ -6,7 +6,7 @@ import ar.transforms.functional as F
 Transform = Callable[[torch.Tensor], torch.Tensor]
 
 
-class RandomCrop(object):
+class VideoRandomCrop(object):
 
     def __init__(self, size):
         self.size = size
@@ -26,34 +26,34 @@ class RandomCrop(object):
 
     def __call__(self, vid: torch.Tensor) -> torch.Tensor:
         i, j, h, w = self.get_params(vid, self.size)
-        return F.crop(vid, i, j, h, w)
+        return F.video_crop(vid, i, j, h, w)
 
 
-class CenterCrop(object):
-
-    def __init__(self, size: Tuple[int, int]):
-        self.size = size
-
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
-        return F.center_crop(vid, self.size)
-
-
-class Resize(object):
+class VideoCenterCrop(object):
 
     def __init__(self, size: Tuple[int, int]):
         self.size = size
 
     def __call__(self, vid: torch.Tensor) -> torch.Tensor:
-        return F.resize(vid, self.size)
+        return F.video_center_crop(vid, self.size)
 
 
-class ToFloatTensorInZeroOne(object):
+class VideoResize(object):
+
+    def __init__(self, size: Tuple[int, int]):
+        self.size = size
+
+    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+        return F.video_resize(vid, self.size)
+
+
+class VideoToTensor(object):
 
     def __call__(self, vid: torch.Tensor) -> torch.FloatTensor:
-        return F.to_normalized_float_tensor(vid)
+        return F.video_to_tensor(vid)
 
 
-class Normalize(object):
+class VideoNormalize(object):
     def __init__(self, 
                  mean: Tuple[float, float, float], 
                  std: Tuple[float, float, float]):
@@ -61,26 +61,26 @@ class Normalize(object):
         self.std = std
 
     def __call__(self, vid: torch.Tensor) -> torch.Tensor:
-        return F.normalize(vid, self.mean, self.std)
+        return F.video_normalize(vid, self.mean, self.std)
 
 
-class RandomHorizontalFlip(object):
+class VideoRandomHorizontalFlip(object):
     def __init__(self, p: float = 0.5):
         self.p = p
 
     def __call__(self, vid: torch.Tensor) -> torch.Tensor:
         if random.random() < self.p:
-            return F.hflip(vid)
+            return F.video_hflip(vid)
         return vid
 
 
-class Pad(object):
+class VideoPad(object):
     def __init__(self, padding: int, fill: int = 0):
         self.padding = padding
         self.fill = fill
 
     def __call__(self, vid: torch.Tensor) -> torch.Tensor:
-        return F.pad(vid, self.padding, self.fill)
+        return F.video_pad(vid, self.padding, self.fill)
 
 
 class OneOf(object):
