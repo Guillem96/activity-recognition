@@ -11,9 +11,7 @@ __pycache__/
 # Data
 /data/*
 !/data/*.sh
-
-# Kinetics lightweighted files
-!/data/kinetics400.names
+!/data/*.names
 
 # Images downloading
 geckodriver.log
