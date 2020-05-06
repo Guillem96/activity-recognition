@@ -1,4 +1,5 @@
 import click
+from typing import Any, Optional
 
 import torch
 import torch.optim as optim
@@ -13,10 +14,12 @@ from ar.transforms import imagenet_stats
 from ar import engine
 from ar.metrics import accuracy
 from ar.utils.nn import _FEATURE_EXTRACTORS
+
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def train(**kwargs):
+def train(**kwargs: Any) -> None:
     engine.seed()
     
     train_tfms = T.Compose([
@@ -39,7 +42,7 @@ def train(**kwargs):
                                                 transform=valid_tfms)
 
     train_len = int(len(train_ds) * (1 - kwargs['validation_split']))
-    rand_idx = torch.randperm(len(train_ds))
+    rand_idx = torch.randperm(len(train_ds)).tolist()
     train_ds = Subset(train_ds, rand_idx[:train_len])
     valid_ds = Subset(valid_ds, rand_idx[train_len:])
 
@@ -67,6 +70,7 @@ def train(**kwargs):
     model.to(device)
     
     trainable_params = [p for p in model.parameters() if p.requires_grad]
+    optimizer: optim.Optimizer = None
     if kwargs['optimizer'] == 'AdamW':
         optimizer = optim.AdamW(trainable_params, 
                                 lr=kwargs['learning_rate'])
@@ -74,9 +78,9 @@ def train(**kwargs):
         optimizer = optim.SGD(trainable_params, lr=kwargs['learning_rate'],
                               momentum=0.9, weight_decay=4e-5)
     elif kwargs['optimizer'] == 'Adam':
-        optimizer = optim.Adam(trainable_params, lr=kwargs['learning_rate'],
-                               momentum=0.9, weight_decay=4e-5)
-
+        optimizer = optim.Adam(trainable_params, lr=kwargs['learning_rate'])
+    
+    scheduler: Optional[optim.lr_scheduler._LRScheduler] = None
     if kwargs['scheduler'] == 'OneCycle':
         scheduler = optim.lr_scheduler.OneCycleLR(
             optimizer, kwargs['learning_rate'] * 10, 
@@ -87,11 +91,13 @@ def train(**kwargs):
         scheduler = None
     
     if checkpoint is not None:
-        scheduler.load_state_dict(checkpoint['scheduler'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        starting_epoch = checkpoint['epoch'] + 1
-    else:
-        starting_epoch = 0
+        if 'optimizer' in checkpoint:
+            optimizer.load_state_dict(checkpoint['optimizer'])
+        
+        if 'scheduler' in checkpoint and scheduler is not None:
+            scheduler.load_state_dict(checkpoint['scheduler'])
+        
+        starting_epoch = checkpoint.get('epoch', -1) + 1
 
     criterion_fn = torch.nn.NLLLoss()
 
@@ -149,7 +155,7 @@ def train(**kwargs):
               default=None, help='Resume training from')
 @click.option('--save-checkpoint', type=click.Path(dir_okay=False),
               default='models/model.pt', help='File to save the checkpoint')
-def main(**kwargs):
+def main(**kwargs: Any) -> None:
     train(**kwargs)
 
 

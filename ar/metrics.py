@@ -1,17 +1,18 @@
 import functools
+from typing import Any
 
 import torch
 
 
-def top_k_accuracy(y_preds: torch.FloatTensor, 
-                   y_trues: torch.LongTensor,
-                   k: int = 5) -> float:
+def top_k_accuracy(y_preds: torch.Tensor, 
+                   y_trues: torch.Tensor,
+                   k: int = 5) -> torch.Tensor:
     """
     Computes the top k accuracy
 
     Parameters
     ----------
-    y_preds: torch.FloatTensor of shape [BATCH, N_CLASSES]
+    y_preds: torch.Tensor of shape [BATCH, N_CLASSES]
         Log probabilities, probabilities or logits from the model
     y_trues: torch.LongTensor of shape [BATCH]
         Ground truths. With range [0, N_CLASSES]
@@ -20,31 +21,26 @@ def top_k_accuracy(y_preds: torch.FloatTensor,
     
     Returns
     -------
-    torch.FloatTensor
+    torch.Tensor
     """
     bs = y_preds.size(0)
     y_trues = y_trues.view(-1)
     assert bs == y_trues.size(0)
         
-    preds_k = y_preds.topk(k, dim=-1).indices
+    _, preds_k = y_preds.topk(k, dim=-1)
     y_trues = y_trues.unsqueeze(1).repeat(1, k)
 
     return preds_k.eq(y_trues).any(-1).sum().float() / y_preds.size(0)
 
 
-def top_5_accuracy(*args, **kwargs): return top_k_accuracy(*args, *kwargs, k=5)
-def top_3_accuracy(*args, **kwargs): return top_k_accuracy(*args, *kwargs, k=2)
-def accuracy(*args, **kwargs): return top_k_accuracy(*args, *kwargs, k=1)
+def top_5_accuracy(y_preds: torch.Tensor, 
+                   y_trues: torch.Tensor) -> torch.Tensor: 
+    return top_k_accuracy(y_preds, y_trues, k=5)
 
+def top_3_accuracy(y_preds: torch.Tensor, 
+                   y_trues: torch.Tensor) -> torch.Tensor: 
+    return top_k_accuracy(y_preds, y_trues, k=2)
 
-def confusion_matrix(y_preds: torch.Tensor, 
-                     y_trues: torch.LongTensor) -> torch.LongTensor:
-
-    n_classes = y_preds.size(-1)
-    pred_labels = y_preds.argmax(1)
-
-    cm = torch.zeros(n_classes, n_classes).long()
-    for t, p in zip(target, pred):
-        cm[t, p] += 1
-
-    return conf_matrix
+def accuracy(y_preds: torch.Tensor, 
+             y_trues: torch.Tensor) -> torch.Tensor: 
+    return top_k_accuracy(y_preds, y_trues, k=1)

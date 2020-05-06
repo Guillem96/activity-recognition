@@ -12,7 +12,8 @@ _FEATURE_EXTRACTORS = {
 }
 
 
-def get_lr(optimizer: torch.optim.Optimizer, reduce: str = 'first') -> float:
+def get_lr(optimizer: torch.optim.Optimizer, 
+           reduce: str = 'first') -> float:
     """
     Get the current optimizer's learning rate
 
@@ -59,18 +60,21 @@ def image_feature_extractor(fe: str,
 
     if fe.startswith('resnet'):
         resnet = zoo.__dict__[fe](pretrained=pretrained)
-        return (nn.Sequential(
+        nn_fe, in_f = (nn.Sequential(
             resnet.conv1, resnet.bn1, resnet.relu, resnet.maxpool,
             resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4,
             resnet.avgpool), resnet.fc.in_features)
 
     elif fe.startswith('densenet'):
         densenet = zoo.__dict__[fe](pretrained=pretrained)
-        return (nn.Sequential(
+        nn_fe, in_f =  (nn.Sequential(
             densenet.features, nn.ReLU(inplace=True), 
             nn.AdaptiveAvgPool2d((1, 1))), densenet.classifier.in_features)
 
     elif fe == 'mobilenet_v2':
         mobilenet = zoo.mobilenet_v2(pretrained=pretrained)
-        return (nn.Sequential(mobilenet.features, nn.AdaptiveAvgPool2d((1, 1))),
+        nn_fe, in_f = (nn.Sequential(mobilenet.features, 
+                                      nn.AdaptiveAvgPool2d((1, 1))),
                 mobilenet.last_channel)
+    
+    return nn_fe, in_f

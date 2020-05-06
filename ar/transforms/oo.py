@@ -1,4 +1,5 @@
-from typing import Callable, Collection, Tuple
+import random
+from typing import Callable, Collection, Tuple, Sequence, List
 
 import torch
 import ar.transforms.functional as F
@@ -49,7 +50,7 @@ class VideoResize(object):
 
 class VideoToTensor(object):
 
-    def __call__(self, vid: torch.Tensor) -> torch.FloatTensor:
+    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
         return F.video_to_tensor(vid)
 
 
@@ -75,7 +76,7 @@ class VideoRandomHorizontalFlip(object):
 
 
 class VideoPad(object):
-    def __init__(self, padding: int, fill: int = 0):
+    def __init__(self, padding: List[int], fill: int = 0):
         self.padding = padding
         self.fill = fill
 
@@ -85,11 +86,11 @@ class VideoPad(object):
 
 class OneOf(object):
     
-    def __init__(self, transforms: Collection[Transform]):
+    def __init__(self, transforms: Sequence[Transform]):
         self.transforms = transforms
     
     def __call__(self, vid: torch.Tensor) -> torch.Tensor:
-        tfm_fn = random.choice(self.transforms)
+        tfm_fn: Transform = random.choice(self.transforms)
         return tfm_fn(vid)
 
 

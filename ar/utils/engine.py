@@ -1,19 +1,17 @@
-from typing import Callable, Collection
+from typing import Collection
 
 import torch
 import torch.nn as nn
+from torch.optim import Optimizer
 
 import numpy as np
 
 from .nn import get_lr
+from ar.typing import LossFn, MetricFn
 from .logger import LogValue, ValuesLogger
 
 
-LossFn = Callable[[torch.FloatTensor, torch.LongTensor], torch.FloatTensor]
-MetricFn = Callable[[torch.FloatTensor, torch.LongTensor], torch.FloatTensor]
-
-
-def seed(seed: int = 0):
+def seed(seed: int = 0) -> None:
     torch.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
@@ -22,13 +20,13 @@ def seed(seed: int = 0):
     
 def train_one_epoch(dl: torch.utils.data.DataLoader,
                     model: nn.Module,
-                    optimizer: torch.optim.Optimizer,
+                    optimizer: Optimizer,
                     loss_fn: LossFn,
                     epoch: int,
                     grad_accum_steps: int = 1,
                     scheduler: torch.optim.lr_scheduler._LRScheduler = None,
                     print_freq: int = 10,
-                    device: torch.device = torch.device('cpu')):
+                    device: torch.device = torch.device('cpu')) -> None:
     
     logger = ValuesLogger(
         LogValue('loss', window_size=len(dl)),
@@ -66,7 +64,7 @@ def evaluate(dl: torch.utils.data.DataLoader,
              model: nn.Module,
              loss_fn: LossFn,
              metrics: Collection[MetricFn],
-             device: torch.device = torch.device('cpu')):
+             device: torch.device = torch.device('cpu')) -> None:
     
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
     logger = ValuesLogger(
@@ -83,7 +81,6 @@ def evaluate(dl: torch.utils.data.DataLoader,
         predictions = model(x)
 
         loss = loss_fn(predictions, y)
-        updates_values = {m.__name__: m(predictions, y) for m in metrics}
+        updates_values = {m.__name__: m(predictions, y).item() for m in metrics}
         updates_values['loss'] = loss.item()
         logger(**updates_values)
-

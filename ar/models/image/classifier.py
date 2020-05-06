@@ -28,14 +28,14 @@ class ImageClassifier(SerializableModule):
         self.dropout = nn.Dropout(.5)
         self.classifier = nn.Linear(in_classifier, n_classes)
     
-    def config(self):
+    def config(self) -> dict:
         return {
             'feature_extractor': self.feature_extractor,
             'n_classes': self.n_classes,
             'pretrained': self.pretrained
         }
 
-    def forward(self, x: torch.FloatTensor) -> torch.FloatTensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.features(x)
         x = torch.flatten(x, 1)
         x = self.dropout(x)

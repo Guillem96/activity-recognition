@@ -18,3 +18,5 @@ geckodriver.log
 
 # Trained models
 /models/
+
+.mypy_cache/

@@ -31,6 +31,9 @@ class LRCNN(utils.checkpoint.SerializableModule):
         self.features, in_classifier = utils.nn.image_feature_extractor(
             feature_extractor, pretrained=True)
 
+        for p in self.features.parameters():
+            p.requires_grad = not freeze_feature_extractor
+            
         self.rnn = nn.LSTM(in_classifier, self.rnn_units, num_layers=2,
                            bidirectional=self.bidirectional, dropout=.1,
                            batch_first=True)
@@ -42,7 +45,7 @@ class LRCNN(utils.checkpoint.SerializableModule):
         
         self.clf = nn.Linear(hidden_size, self.n_classes)
 
-    def config(self):
+    def config(self) -> dict:
         return {
             'feature_extractor': self.feature_extractor,
             'n_classes': self.n_classes,
@@ -52,7 +55,7 @@ class LRCNN(utils.checkpoint.SerializableModule):
             'freeze_feature_extractor': False
         }
 
-    def forward(self, x: torch.FloatTensor) -> torch.FloatTensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (BATCH, CHANNELS, FRAMES, HEIGHT, WIDTH)
         b, c, f, h, w = x.size()
 

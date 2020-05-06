@@ -4,7 +4,6 @@ from pathlib import Path
 import click
 
 import torch
-import torchvision
 import ar.transforms as T 
 from ar.models.image.classifier import ImageClassifier
 
@@ -14,7 +13,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 @torch.no_grad()
 def process_video(video: torch.FloatTensor,
-                  image_classifier: torch.nn.Module) -> torch.FloatTensor:
+                  image_classifier: torch.nn.Module) -> torch.Tensor:
     """
     Maps the image classifier for each video frame and return the classifier
     outputs
@@ -44,7 +43,7 @@ def process_video(video: torch.FloatTensor,
 def find_video_clips(
         video: torch.FloatTensor, 
         image_classifier: torch.nn.Module,
-        topk: int = 2) -> Tuple[torch.LongTensor, torch.LongTensor]:
+        topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Find frames with topk probabilities to contain a class.
 
@@ -55,10 +54,8 @@ def find_video_clips(
         respective frames
     """
     outputs = process_video(video, image_classifier)
-    max_elems = outputs.max(dim=-1)
-    max_probs = max_elems.values
-    labels = max_elems.indices
-    topk_indices = max_probs.topk(topk).indices
+    max_probs, labels = outputs.max(dim=-1)
+    _, topk_indices = max_probs.topk(topk)
     return topk_indices, labels[topk_indices]
 
 
@@ -89,7 +86,7 @@ def main(video_path,
 
     def frame_to_second(frame_idx: int, video_info: dict) -> float:
         real_frame = frame_idx * skip_frames
-        return real_frame / info['video_fps']
+        return real_frame / video_info['video_fps']
 
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True, parents=True)

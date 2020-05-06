@@ -5,7 +5,7 @@ import base64
 import requests
 from pathlib import Path
 import multiprocessing as mp
-from typing import Collection, Mapping, Union
+from typing import Collection, Mapping, Union, Sequence
 
 import click
 
@@ -25,7 +25,7 @@ def _build_folder_structure(out_path: Path,
     return action_2_path
 
 
-def _get_urls(driver, query: str) -> Collection[str]:
+def _get_urls(driver: webdriver.Firefox, query: str) -> Sequence[str]:
     url = f'https://www.google.com/search?q={query}&tbm=isch'
 
     driver.get(url)
@@ -64,7 +64,7 @@ def _get_urls(driver, query: str) -> Collection[str]:
     return [e.get_property('src') for e in elems if e.get_property('src')]
 
 
-def _download_single(i: int, url: str, out_dir: Path):
+def _download_single(i: int, url: str, out_dir: Path) -> None:
     
     if url.startswith('data'):
         url = re.sub('^data:image/.+;base64,', '', url)
@@ -78,7 +78,7 @@ def _download_single(i: int, url: str, out_dir: Path):
 
 def _download_urls(urls: Collection[str], 
                    out_dir: Union[str, Path],
-                   n_workers: int):
+                   n_workers: int) -> None:
     
     out_dir = Path(out_dir)
     pool = mp.Pool(n_workers)
@@ -101,7 +101,7 @@ def _download_urls(urls: Collection[str],
 def _download_images(query: str, 
                      query_2_path: Mapping[str, Path], 
                      image_per_query: int,
-                     n_workers: int): 
+                     n_workers: int) -> None: 
     
     print(f'Fetching images urls from google images for query "{query}"...')
     opt = Options()
@@ -126,14 +126,15 @@ def _download_images(query: str,
 @click.option('--images-per-action', type=int, default=100)
 @click.option('--num-workers', type=int, default=4, 
               help='Number of threads used to download the images')
-def main(actions, out_path, images_per_action, num_workers):
-
-    out_path = Path(out_path)
+def main(actions: str, 
+         out_path: str, 
+         images_per_action: int, 
+         num_workers: int) -> None:
 
     class_names = Path(actions).read_text().split('\n')
     class_names = [o.strip() for o in class_names]
 
-    query_2_path = _build_folder_structure(out_path, class_names)
+    query_2_path = _build_folder_structure(Path(out_path), class_names)
     for q in class_names:
         _download_images(q, query_2_path, images_per_action, num_workers)
 

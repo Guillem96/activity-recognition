@@ -5,11 +5,10 @@ import click
 import shutil
 import requests
 import subprocess
-from functools import partial
-
 import multiprocessing
 from pathlib import Path
-from typing import Union, Mapping, Any
+from functools import partial
+from typing import Union, Mapping, Any, Tuple
 
 import tqdm
 import pandas as pd
@@ -42,16 +41,17 @@ def create_video_folders(
     return label_to_dir
 
 
-def construct_video_filename(row: Mapping[str, Any], 
-                             label_to_dir: Mapping[str, Path]) -> Path:
+def construct_video_filename(
+        row: Mapping[str, Any], 
+        label_to_dir: Union[str, Mapping[str, Path]]) -> Path:
     """Given a dataset row, this function constructs the
        output filename for a given video.
     """
     v_id, start_t, end_t = row['video-id'], row['start-time'], row['end-time']
     basename = f'{v_id}_{start_t:06d}_{end_t:06d}.mp4'
 
-    if not isinstance(label_to_dir, dict):
-        dirname = label_to_dir
+    if isinstance(label_to_dir, str):
+        dirname = Path(label_to_dir)
     else:
         dirname = label_to_dir[row['label-name']]
 
@@ -63,7 +63,7 @@ def download_clip(video_identifier: str,
                   start_time: int, 
                   end_time: int,
                   tmp_dir: Union[str, Path] = '/tmp/kinetics',
-                  url_base: str = 'https://www.youtube.com/watch?v='):
+                  url_base: str = 'https://www.youtube.com/watch?v=') -> Tuple[bool, str]:
     """Download a video from youtube if exists and is not blocked.
 
     Parameters
@@ -102,15 +102,14 @@ def download_clip(video_identifier: str,
         return False, str(err)
 
     tmp_filename = Path(tmp_dir, str(fname) + '.mp4')
-    command = ['ffmpeg',
-               '-i', f'"{str(tmp_filename)}"',
-               '-ss', str(start_time),
-               '-t', str(end_time - start_time),
-               '-c:v', 'libx264', '-c:a', 'copy',
-               '-threads', '1',
-            #    '-loglevel', 'panic',
-               f'"{str(output_filename)}"']
-    command = ' '.join(command)
+    command = ' '.join(['ffmpeg',
+                        '-i', f'"{str(tmp_filename)}"',
+                        '-ss', str(start_time),
+                        '-t', str(end_time - start_time),
+                        '-c:v', 'libx264', '-c:a', 'copy',
+                        '-threads', '1',
+                        # '-loglevel', 'panic',
+                        f'"{str(output_filename)}"'])
     try:
         output = subprocess.check_output(command, shell=True,
                                          stderr=subprocess.STDOUT)
@@ -128,7 +127,7 @@ def download_clip_wrapper(row: Mapping[str, Any],
                           label_to_dir: Mapping[str, Path],
                           tmp_dir: Union[str, Path],
                           queue: multiprocessing.Queue,
-                          fail_file: Union[str, Path]):
+                          fail_file: Union[str, Path]) -> None:
     """Wrapper for parallel processing purposes."""
     
     with Path(fail_file).open() as f:
@@ -183,7 +182,8 @@ def parse_kinetics_annotations(input_csv: str,
     return df
 
 
-def writer(q: multiprocessing.Queue, fail_file: Union[Path, str]):
+def writer(q: multiprocessing.Queue, 
+           fail_file: Union[Path, str]) -> None:
     fail_file = Path(fail_file)
 
     while 1:
@@ -216,9 +216,9 @@ def writer(q: multiprocessing.Queue, fail_file: Union[Path, str]):
 
 def main(input_csv: str, 
          output_dir: str,
-         failed_file: str,
+         failed_file: Union[str, Path],
          num_jobs: int, 
-         tmp_dir: str):
+         tmp_dir: str) -> None:
 
     failed_file = Path(failed_file)
     if not failed_file.exists():
@@ -231,41 +231,33 @@ def main(input_csv: str,
     label_to_dir = create_video_folders(dataset, output_dir, tmp_dir)
 
     # Download all clips.
-    if num_jobs == 1:
-        for i, row in tqdm.tqdm(dataset.iterrows(), total=dataset.shape[0]):
-            download_clip_wrapper(row, label_to_dir, tmp_dir, failed_file)
-    else:
-        pool = multiprocessing.Pool(num_jobs)
-        manager = multiprocessing.Manager()
-        queue = manager.Queue()
-
-        pbar = tqdm.tqdm(total=dataset.shape[0])
-        def update(*args):
-            pbar.update(1)
-            pbar.refresh()
-        try:
-            jobs = []
-            print('Launching logger process')
-
-            jobs.append(pool.apply_async(writer, args=(queue, failed_file)))
-
-            print('Launching workers')
-            for i, row in dataset.iterrows():
-                args = (row, label_to_dir, tmp_dir, queue, failed_file)
-                j = pool.apply_async(download_clip_wrapper, args=args,
-                                     callback=update)
-                jobs.append(j)
-            
-            for j in jobs:
-                j.get()
-
-        except KeyboardInterrupt:
-            print('Stopped downloads pressing CTRL + C')
-            pool.terminate()
-        else:
-            pool.close()
+    pool = multiprocessing.Pool(num_jobs)
+    manager = multiprocessing.Manager()
+    queue = manager.Queue()
+    pbar = tqdm.tqdm(total=dataset.shape[0])
+    def update(*args):
+        pbar.update(1)
+        pbar.refresh()
+    try:
+        jobs = []
+        print('Launching logger process')
+        jobs.append(pool.apply_async(writer, args=(queue, failed_file)))
+        print('Launching workers')
+        for i, row in dataset.iterrows():
+            args = (row, label_to_dir, tmp_dir, queue, failed_file)
+            j = pool.apply_async(download_clip_wrapper, args=args,
+                                 callback=update)
+            jobs.append(j)
         
-        pool.join()
+        for j in jobs:
+            j.get()
+    except KeyboardInterrupt:
+        print('Stopped downloads pressing CTRL + C')
+        pool.terminate()
+    else:
+        pool.close()
+    
+    pool.join()
 
     # Clean tmp dir.
     shutil.rmtree(tmp_dir)

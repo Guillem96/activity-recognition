@@ -1,17 +1,17 @@
 import time
-from typing import Union
+from typing import Deque
 from collections import deque
 
 import torch
 
-Number = Union[int, float, torch.Tensor]
+from ar.typing import Number
 
 
 class LogValue(object):
 
     """
     Utility class to simplify the logging of a value. Keep tracks of the 
-    last `window_size` values and can perform aggreagations such the mean
+    last `window_size` values and can perform aggregations such the mean
     or the median
 
     Parameters
@@ -25,21 +25,21 @@ class LogValue(object):
     def __init__(self, name: str, window_size: int):
         self.name = name
         self.window_size = window_size
-        self.logs = deque(maxlen=window_size)
+        self.logs: Deque[Number] = deque(maxlen=window_size)
     
-    def __call__(self, new_value: Number):
+    def __call__(self, new_value: Number) -> None:
         """Append a new value to the tracking list"""
         self.logs.append(new_value)
     
     def __str__(self) -> str:
         return f'{self.name}: {self.mean.item():.6f}'
 
-    def reset(self):
+    def reset(self) -> None:
         """Remove the tracking queue"""
         self.logs.clear()
 
     @property
-    def mean(self) -> torch.FloatTensor:
+    def mean(self) -> torch.Tensor:
         if self.window_size == 1: 
             return torch.tensor(self.logs[0]).float()
 
@@ -47,7 +47,7 @@ class LogValue(object):
         return torch.mean(logs)
     
     @property
-    def median(self) -> torch.FloatTensor:
+    def median(self) -> torch.Tensor:
         if self.window_size == 1: 
             return torch.tensor(self.logs[0]).float()
 
@@ -79,7 +79,7 @@ class ValuesLogger(object):
         self.steps = 0
         self.inital_time = time.time()
 
-    def __call__(self, **kwargs):
+    def __call__(self, **kwargs: Number) -> None:
         self.steps += 1
 
         # Update the values
@@ -99,7 +99,7 @@ class ValuesLogger(object):
         # Update initial time
         self.inital_time = time.time()
     
-    def reset(self):
+    def reset(self) -> None:
         """Reset all values and set steps to 0"""
         for v in self.values.values():
             v.reset()

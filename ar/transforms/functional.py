@@ -4,7 +4,7 @@ https://github.com/pytorch/vision/blob/master/references/video_classification
 """
 
 import random
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 import torch
 
@@ -59,7 +59,7 @@ def video_center_crop(vid: torch.Tensor,
 
     i = int(round((h - th) / 2.))
     j = int(round((w - tw) / 2.))
-    return crop(vid, i, j, th, tw)
+    return video_crop(vid, i, j, th, tw)
 
 
 def video_hflip(vid: torch.Tensor) -> torch.Tensor:
@@ -70,25 +70,19 @@ def video_hflip(vid: torch.Tensor) -> torch.Tensor:
 # as non-minibatch so that they are applied as if they were 4d (thus image).
 # this way, we only apply the transformation in the spatial domain
 def video_resize(vid: torch.Tensor, 
-                 size: Union[int, Tuple[int, int]], 
+                 size: Tuple[int, int], 
                  interpolation: str = 'bilinear') -> torch.Tensor:
-    # NOTE: using bilinear interpolation because we don't work on minibatches
-    # at this level
-    scale = None
-    if isinstance(size, int):
-        scale = float(size) / min(vid.shape[-2:])
-        size = None
 
     return torch.nn.functional.interpolate(
         vid, 
         size=size, 
-        scale_factor=scale, 
+        scale_factor=None, 
         mode=interpolation, 
         align_corners=False)
 
 
 def video_pad(vid: torch.Tensor, 
-              padding: int, 
+              padding: List[int], 
               fill: int = 0, 
               padding_mode: str = "constant") -> torch.Tensor:
     # NOTE: don't want to pad on temporal dimension, so let as non-batch
@@ -96,7 +90,7 @@ def video_pad(vid: torch.Tensor,
     return torch.nn.functional.pad(vid, padding, value=fill, mode=padding_mode)
 
 
-def video_to_tensor(vid: torch.Tensor) -> torch.FloatTensor:
+def video_to_tensor(vid: torch.Tensor) -> torch.Tensor:
     return vid.permute(3, 0, 1, 2).to(torch.float32) / 255.
 
 
@@ -104,6 +98,6 @@ def video_normalize(vid: torch.Tensor,
                     mean: Tuple[float, float, float], 
                     std: Tuple[float, float, float]) -> torch.Tensor:
     shape = (-1,) + (1,) * (vid.dim() - 1)
-    mean = torch.as_tensor(mean).reshape(shape)
-    std = torch.as_tensor(std).reshape(shape)
-    return (vid - mean) / std
+    mean_ = torch.as_tensor(mean).reshape(shape)
+    std_ = torch.as_tensor(std).reshape(shape)
+    return (vid - mean_) / std_
