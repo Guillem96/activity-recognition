@@ -1,9 +1,10 @@
-from typing import Tuple
 from pathlib import Path
+from typing import Tuple, Union
 
 import click
 
 import torch
+import torchvision
 import ar.transforms as T 
 from ar.models.image.classifier import ImageClassifier
 
@@ -76,13 +77,13 @@ def find_video_clips(
               help='Number of clips generated')
 @click.option('--clip-len', type=int, default=5,
               help='Length of the extracted clips in seconds')
-def main(video_path, 
-         skip_frames, 
-         image_classifier_checkpoint, 
-         class_names,
-         out_dir,
-         n_clips,
-         clip_len):
+def main(video_path: Union[str, Path], 
+         skip_frames: int, 
+         image_classifier_checkpoint: str, 
+         class_names: Union[str, Path],
+         out_dir: Union[str, Path],
+         n_clips: int,
+         clip_len: int) -> None:
 
     def frame_to_second(frame_idx: int, video_info: dict) -> float:
         real_frame = frame_idx * skip_frames
@@ -110,7 +111,7 @@ def main(video_path,
     
     # Resize and normalize the video
     tfms = torchvision.transforms.Compose([
-        T.VideoToTensor().
+        T.VideoToTensor(),
         T.VideoResize((128, 128)),
         T.VideoNormalize(**T.imagenet_stats)
     ])
@@ -122,13 +123,13 @@ def main(video_path,
     res = find_video_clips(video_t, model, topk=n_clips)
     
     for frame_idx, label in zip(*res):
-        label = classes[label.item()].replace(' ', '_')
+        label_name = classes[int(label.item())].replace(' ', '_')
 
         # Getting video seconds of the clip just for logging purposes
-        video_second = frame_to_second(frame_idx, info)
+        video_second = frame_to_second(int(frame_idx.item()), info)
         clip_start = max(0, video_second - clip_len / 2.)
         clip_end = min(video_duration, video_second + clip_len / 2.)
-        print(f'Clip with label {label} starts at {clip_start:.2f} '
+        print(f'Clip with label {label_name} starts at {clip_start:.2f} '
               f'and ends at {clip_end:.2f}')
         
         # Get clip frames ranges and save the extracted clip
@@ -136,11 +137,11 @@ def main(video_path,
         start_frame = int(max(0, frame_idx - clip_duration_frames / 2))
         end_frame = int(min(video.size(0), frame_idx + clip_duration_frames / 2))
         
-        clip_fname = out_dir / f'{start_frame}_{end_frame}_{label}.mp4'
+        clip_fname = out_dir / f'{start_frame}_{end_frame}_{label_name}.mp4'
         print(f'Saving video at {str(clip_fname)}')
-        write_video(str(clip_fname), 
-                    video[start_frame: end_frame],
-                    int(info['video_fps']))
+        torchvision.io.write_video(str(clip_fname), 
+                                   video[start_frame: end_frame],
+                                   int(info['video_fps']))
 
 
 if __name__ == "__main__":

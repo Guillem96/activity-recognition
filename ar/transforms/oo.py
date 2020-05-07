@@ -9,7 +9,7 @@ Transform = Callable[[torch.Tensor], torch.Tensor]
 
 class VideoRandomCrop(object):
 
-    def __init__(self, size):
+    def __init__(self, size: Tuple[int, int]) -> None:
         self.size = size
 
     @staticmethod

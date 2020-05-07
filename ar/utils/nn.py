@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torchvision.models as zoo
 
+from ar.typing import Optimizer
 
 _FEATURE_EXTRACTORS = {
     'resnet18', 'resnet50', 'resnet101', 
@@ -12,7 +13,7 @@ _FEATURE_EXTRACTORS = {
 }
 
 
-def get_lr(optimizer: torch.optim.Optimizer, 
+def get_lr(optimizer: Optimizer, 
            reduce: str = 'first') -> float:
     """
     Get the current optimizer's learning rate

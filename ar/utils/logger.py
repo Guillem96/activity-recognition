@@ -71,7 +71,10 @@ class ValuesLogger(object):
     header: str, default ''
         Text to add befor the values logs
     """
-    def __init__(self, *values, print_freq: int = 10, header: str = ''):
+    def __init__(self, 
+                 *values: LogValue, 
+                 print_freq: int = 10, 
+                 header: str = '') -> None:
         self.header = header
         self.print_freq = print_freq
         self.values = {v.name: v for v in values}

@@ -1,23 +1,17 @@
 import click
-from typing import Any, Tuple, Optional, Union
+from typing import Any, Tuple, Optional, Union, Sequence
 
 import torch
 import torch.optim as optim
-from torch.utils.data.dataloader import default_collate
-from torch.utils.data import DataLoader, Dataset, Subset
+import torch.utils.data as data
 
 import torchvision
 import torchvision.transforms as T
 from torchvision.datasets.samplers import UniformClipSampler, RandomClipSampler
 
-from ar import engine
+import ar
 import ar.transforms as VT
-from ar.metrics import accuracy
-from ar.typing import Transform, SubOrDataset
-from ar.utils.nn import _FEATURE_EXTRACTORS
-from ar.utils.checkpoint import SerializableModule
-
-from .models import LRCNN
+from ar.typing import Transform, SubOrDataset, Optimizer, Scheduler
 
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
@@ -40,15 +34,15 @@ def load_datasets(
     Given a dataset type, performs a set of operations to generate a train
     and validation dataset
     """
-    def train_val_split(ds):
-        rand_idx = torch.randperm(len(ds))
+    def train_val_split(ds: SubOrDataset) -> Tuple[data.Subset, data.Subset]:
+        rand_idx = torch.randperm(len(ds)).tolist()
         train_len = int(len(ds) * validation_size)
         
-        train_ds = Subset(ds, rand_idx[:train_len])
-        train_ds.transform = train_transforms
+        train_ds = data.Subset(ds, rand_idx[:train_len])
+        train_ds.dataset.transform = train_transforms # type: ignore
         
-        valid_ds = Subset(ds, rand_idx[train_len:])
-        valid_ds.transform = train_transforms
+        valid_ds = data.Subset(ds, rand_idx[train_len:])
+        valid_ds.dataset.transform = train_transforms # type: ignore
 
         return train_ds, valid_ds
 
@@ -79,54 +73,14 @@ def load_datasets(
     return train_ds, valid_ds
 
 
-def train(model: SerializableModule, 
-          train_dl: DataLoader, 
-          valid_dl: DataLoader,
-          train_from: dict,
-          **kwargs: Any) -> None:
-    """
-    Trains the models along specified epochs with the given train and validation
-    dataloader.
-    """
-    criterion_fn = torch.nn.NLLLoss()
-    optimizer, scheduler = load_optimizer(model, 
-                                          train_from, 
-                                          len(train_dl),
-                                          **kwargs)
-    starting_epoch = train_from.get('epoch', -1) + 1
-
-    for epoch in range(starting_epoch, kwargs['epochs']):
-        engine.train_one_epoch(dl=train_dl,
-                               model=model,
-                               optimizer=optimizer,
-                               scheduler=scheduler,
-                               loss_fn=criterion_fn,
-                               epoch=epoch,
-                               print_freq=kwargs['print_freq'],
-                               device=device)
-        
-        engine.evaluate(dl=valid_dl,
-                        model=model,
-                        metrics=[accuracy],
-                        loss_fn=criterion_fn,
-                        device=device)
-        
-        # Save the model jointly with the optimizer
-        model.save(
-            kwargs['save_checkpoint'],
-            epoch=epoch,
-            optimizer=optimizer.state_dict(),
-            scheduler=scheduler.state_dict() if scheduler is not None else {})
-
-
-def data_preparation(**kwargs: Any) -> Tuple[DataLoader, DataLoader]:
+def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
     """
     Loads the datasets with corresponding transformations and creates two data
     loaders, one for train and validation
     """
-    def collate_fn(batch):
+    def collate_fn(batch: Sequence[Any]) -> Tuple[torch.Tensor, torch.Tensor]:
         batch = [(d[0], d[2]) for d in batch]
-        return default_collate(batch)
+        return data.dataloader.default_collate(batch)
         
     train_tfms = T.Compose([
         VT.VideoToTensor(),
@@ -148,39 +102,84 @@ def data_preparation(**kwargs: Any) -> Tuple[DataLoader, DataLoader]:
                                        kwargs['validation_split'],
                                        train_tfms, valid_tfms)
 
-    if (isinstance(train_ds, Subset) and 
+    if (isinstance(train_ds, data.Subset) and 
             hasattr(train_ds.dataset, 'video_clips')):
-        train_sampler = RandomClipSampler(train_ds.dataset.video_clips, 10)
-        valid_sampler = UniformClipSampler(valid_ds.dataset.video_clips, 10)
+        train_sampler = RandomClipSampler(
+            train_ds.dataset.video_clips, 10) # type: ignore
+        valid_sampler = UniformClipSampler(
+            valid_ds.dataset.video_clips, 10) # type: ignore
     elif hasattr(train_ds, 'video_clips'):
-        train_sampler = RandomClipSampler(train_ds.video_clips, 10)
-        valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
+        train_sampler = RandomClipSampler(
+            train_ds.video_clips, 10) # type: ignore
+        valid_sampler = UniformClipSampler(
+            valid_ds.video_clips, 10) # type: ignore
     else:
         raise ValueError('Video dataset must have the video_clips attribute')
 
-    train_dl = DataLoader(train_ds, 
-                          batch_size=kwargs['batch_size'],
-                          num_workers=kwargs['data_loader_workers'],
-                          sampler=train_sampler, 
-                          collate_fn=collate_fn,
-                          pin_memory=True)
+    train_dl = data.DataLoader(train_ds, 
+                               batch_size=kwargs['batch_size'],
+                               num_workers=kwargs['data_loader_workers'],
+                               sampler=train_sampler, 
+                               collate_fn=collate_fn,
+                               pin_memory=True)
 
-    valid_dl = DataLoader(valid_ds, 
-                          batch_size=kwargs['batch_size'],
-                          num_workers=kwargs['data_loader_workers'],
-                          sampler=valid_sampler,
-                          collate_fn=collate_fn,
-                          pin_memory=True)
+    valid_dl =data. DataLoader(valid_ds, 
+                               batch_size=kwargs['batch_size'],
+                               num_workers=kwargs['data_loader_workers'],
+                               sampler=valid_sampler,
+                               collate_fn=collate_fn,
+                               pin_memory=True)
 
     return train_dl, valid_dl
+
+
+def train(model: ar.checkpoint.SerializableModule, 
+          train_dl: data.DataLoader, 
+          valid_dl: data.DataLoader,
+          train_from: dict,
+          **kwargs: Any) -> None:
+    """
+    Trains the models along specified epochs with the given train and validation
+    dataloader.
+    """
+    criterion_fn = torch.nn.NLLLoss()
+    optimizer, scheduler = load_optimizer(model, 
+                                          train_from, 
+                                          len(train_dl),
+                                          **kwargs)
+    starting_epoch = train_from.get('epoch', -1) + 1
+
+    for epoch in range(starting_epoch, kwargs['epochs']):
+        ar.engine.train_one_epoch(dl=train_dl,
+                                  model=model,
+                                  optimizer=optimizer,
+                                  scheduler=scheduler,
+                                  loss_fn=criterion_fn,
+                                  epoch=epoch,
+                                  print_freq=kwargs['print_freq'],
+                                  device=device)
+        
+        ar.engine.evaluate(dl=valid_dl,
+                           model=model,
+                           metrics=[ar.metrics.accuracy, 
+                                    ar.metrics.top_3_accuracy],
+                           loss_fn=criterion_fn,
+                           device=device)
+        
+        # Save the model jointly with the optimizer
+        model.save(
+            kwargs['save_checkpoint'],
+            epoch=epoch,
+            optimizer=optimizer.state_dict(),
+            scheduler=scheduler.state_dict() if scheduler is not None else {})
 
 
 def load_optimizer(
         model: torch.nn.Module, 
         checkpoint: dict,
         steps_per_epoch: int = -1,
-        **kwargs: Any) -> Tuple[optim.Optimizer, 
-                                Optional[optim.lr_scheduler._LRScheduler]]:
+        **kwargs: Any) -> Tuple[Optimizer, 
+                                Optional[Scheduler]]:
     """
     Load an optimizer to update the model parameters and if specified,
     also creates a learning rate scheduler.
@@ -190,6 +189,7 @@ def load_optimizer(
     """
     trainable_params = [p for p in model.parameters() if p.requires_grad]
     
+    optimizer: Optimizer = None # type: ignore
     if kwargs['optimizer'] == 'AdamW':
         optimizer = optim.AdamW(trainable_params, 
                                 lr=kwargs['learning_rate'])
@@ -200,7 +200,7 @@ def load_optimizer(
         optimizer = optim.Adam(trainable_params, lr=kwargs['learning_rate'])
     
     if kwargs['scheduler'] == 'OneCycle':
-        scheduler = optim.lr_scheduler.OneCycleLR(
+        scheduler = optim.lr_scheduler.OneCycleLR( # type: ignore
             optimizer, kwargs['learning_rate'] * 10, 
             steps_per_epoch * kwargs['epochs'])
     elif kwargs['scheduler'] == 'Step':
@@ -215,6 +215,32 @@ def load_optimizer(
         scheduler.load_state_dict(checkpoint['scheduler'])
 
     return optimizer, scheduler
+
+
+def _load_model(model_name: str,
+                out_units: int,
+                feature_extractor: str,
+                freeze_fe: bool,
+                resume_checkpoint: str = None,
+                **kwargs: Any) \
+                    -> Tuple[ar.checkpoint.SerializableModule, dict]:
+    
+    model_classes = dict(LRCNN=ar.video.LRCNN)
+    model_cls = model_classes[model_name]
+
+    if resume_checkpoint is None:
+        checkpoint: dict = dict()
+        model = model_cls(feature_extractor, 
+                          out_units,
+                          freeze_feature_extractor=freeze_fe,
+                          **kwargs)
+    else:
+        model, checkpoint = model_cls.load(
+            resume_checkpoint,
+            map_location=device,
+            freeze_feature_extractor=kwargs['freeze_fe'])
+
+    return model, checkpoint
 
 
 @click.group()
@@ -254,7 +280,7 @@ def load_optimizer(
               default='models/model.pt', help='File to save the checkpoint')
 @click.pass_context
 def main(ctx: click.Context, **kwargs: Any) -> None:
-    engine.seed()
+    ar.engine.seed()
     ctx.ensure_object(dict)
 
     train_dl, valid_dl = data_preparation(**kwargs)
@@ -267,7 +293,7 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
 @main.command(name='LRCNN')
 
 @click.option('--feature-extractor', 
-              type=click.Choice(list(_FEATURE_EXTRACTORS)),
+              type=click.Choice(list(ar.nn._FEATURE_EXTRACTORS)),
               default='resnet18')
 @click.option('--freeze-fe/--no-freeze-fe', default=False,
               help='Wether or not to fine tune the pretrained'
@@ -286,22 +312,18 @@ def train_LRCNN(ctx: click.Context, **kwargs: Any) -> None:
     train_dl, valid_dl = ctx.obj['train_dl'], ctx.obj['valid_dl']
 
     ds = train_dl.dataset
-    if isinstance(ds, Subset):
+    if isinstance(ds, data.Subset):
         ds = ds.dataset
 
-    if kwargs['resume_checkpoint'] is None:
-        checkpoint: dict = dict()
-        model = LRCNN(kwargs['feature_extractor'], 
-                      len(ds.classes),
-                      freeze_feature_extractor=kwargs['freeze_fe'],
-                      rnn_units=kwargs['rnn_units'], 
-                      bidirectional=kwargs['bidirectional'])
-    else:
-        model, checkpoint = LRCNN.load(
-            kwargs['resume_checkpoint'],
-            map_location=device,
-            freeze_feature_extractor=kwargs['freeze_fe'])
-        
+    n_classes = len(ds.classes)
+
+    model, checkpoint = _load_model('LRCNN', 
+                                    n_classes, 
+                                    kwargs['feature_extractor'], 
+                                    kwargs['freeze_fe'],
+                                    kwargs['resume_checkpoint'],
+                                    rnn_units=kwargs['rnn_units'], 
+                                    bidirectional=kwargs['bidirectional'])
     model.to(device)
 
     train(model, train_dl, valid_dl, train_from=checkpoint, **kwargs)

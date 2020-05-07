@@ -2,19 +2,17 @@ from typing import Collection
 
 import torch
 import torch.nn as nn
-from torch.optim import Optimizer
-
 import numpy as np
 
 from .nn import get_lr
-from ar.typing import LossFn, MetricFn
+from ar.typing import Optimizer, LossFn, MetricFn
 from .logger import LogValue, ValuesLogger
 
 
 def seed(seed: int = 0) -> None:
     torch.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True # type: ignore
+    torch.backends.cudnn.benchmark = False # type: ignore
     np.random.seed(seed)
 
     

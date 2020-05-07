@@ -235,7 +235,7 @@ def main(input_csv: str,
     manager = multiprocessing.Manager()
     queue = manager.Queue()
     pbar = tqdm.tqdm(total=dataset.shape[0])
-    def update(*args):
+    def update(*args: Any) -> None:
         pbar.update(1)
         pbar.refresh()
     try:

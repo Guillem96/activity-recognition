@@ -13,7 +13,7 @@ class SerializableModule(nn.Module, abc.ABC):
     Abstract torch nn.Module along with serialize utils.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(SerializableModule, self).__init__()
     
     @abc.abstractmethod
