@@ -4,7 +4,7 @@ import torch.nn as nn
 from ar import utils
 
 
-class LRCNN(utils.checkpoint.SerializableModule):
+class LRCN(utils.checkpoint.SerializableModule):
     """
     Model described at Long-term Recurrent Convolutional Networks for Visual 
     Recognition and Description (https://arxiv.org/abs/1411.4389)
@@ -16,7 +16,7 @@ class LRCNN(utils.checkpoint.SerializableModule):
                  bidirectional: bool = True,
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False):
-        super(LRCNN, self).__init__()
+        super(LRCN, self).__init__()
 
         # Frames feature extractor params
         self.feature_extractor = feature_extractor

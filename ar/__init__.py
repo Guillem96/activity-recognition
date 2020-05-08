@@ -1,3 +1,4 @@
+from . import metrics
 from . import transforms
 
 from .utils import nn

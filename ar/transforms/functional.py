@@ -25,7 +25,7 @@ def video_crop(vid: torch.Tensor,
         Expressed in absolute scale
     j: int
         Second top left coordinate component of the crop. 
-        Expessed in absoulte scale
+        Expressed in absolute scale
     h: int
         The crop height
     w: int 
@@ -60,6 +60,34 @@ def video_center_crop(vid: torch.Tensor,
     i = int(round((h - th) / 2.))
     j = int(round((w - tw) / 2.))
     return video_crop(vid, i, j, th, tw)
+
+
+def video_erase(video: torch.Tensor, 
+                i: int, j: int, h: int, w: int, 
+                v: Union[float, torch.Tensor] = 0.) -> torch.Tensor:
+    """ Erase the input Tensor Image with given value.
+
+    Parameters
+    ----------
+    video: torch.Tensor 
+        Tensor video of size (C, FRAMES, H, W) to be erased
+    i: int 
+        i in (i, j) i.e coordinates of the upper left corner.
+    j: int 
+        j in (i,j) i.e coordinates of the upper left corner.
+    h: int 
+        Height of the erased region.
+    w: int 
+        Width of the erased region.
+    v: float, default 0.
+        Erasing value.
+
+    Returns
+    -------
+    torch.Tensor: Erased video.
+    """
+    video[..., i:i + h, j:j + w] = v
+    return video
 
 
 def video_hflip(vid: torch.Tensor) -> torch.Tensor:

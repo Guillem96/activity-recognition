@@ -1,8 +1,6 @@
 import uuid
 import json
 import time
-import click
-import shutil
 import requests
 import subprocess
 import multiprocessing
@@ -10,6 +8,7 @@ from pathlib import Path
 from functools import partial
 from typing import Union, Mapping, Any, Tuple
 
+import click
 import tqdm
 import pandas as pd
 from pytube import YouTube
@@ -82,6 +81,7 @@ def download_clip(video_identifier: str,
     fname = uuid.uuid4()
 
     try:
+        # TODO: Is there a faster library? 
         yt = (YouTube(url_base + video_identifier)
               .streams
               .filter(file_extension='mp4', progressive=True)
@@ -184,6 +184,8 @@ def parse_kinetics_annotations(input_csv: str,
 
 def writer(q: multiprocessing.Queue, 
            fail_file: Union[Path, str]) -> None:
+    """Process to log the failures"""
+
     fail_file = Path(fail_file)
 
     while 1:
@@ -238,19 +240,14 @@ def main(input_csv: str,
     def update(*args: Any) -> None:
         pbar.update(1)
         pbar.refresh()
+    
     try:
-        jobs = []
-        print('Launching logger process')
-        jobs.append(pool.apply_async(writer, args=(queue, failed_file)))
-        print('Launching workers')
+        pool.apply_async(writer, args=(queue, failed_file))
+        
         for i, row in dataset.iterrows():
             args = (row, label_to_dir, tmp_dir, queue, failed_file)
-            j = pool.apply_async(download_clip_wrapper, args=args,
-                                 callback=update)
-            jobs.append(j)
-        
-        for j in jobs:
-            j.get()
+            pool.apply_async(download_clip_wrapper, args=args, callback=update)
+
     except KeyboardInterrupt:
         print('Stopped downloads pressing CTRL + C')
         pool.terminate()
@@ -258,9 +255,6 @@ def main(input_csv: str,
         pool.close()
     
     pool.join()
-
-    # Clean tmp dir.
-    shutil.rmtree(tmp_dir)
 
 
 if __name__ == '__main__':

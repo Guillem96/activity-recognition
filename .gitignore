@@ -19,4 +19,8 @@ geckodriver.log
 # Trained models
 /models/
 
+# MyPy
 .mypy_cache/
+
+# TMP data files
+kinetics_splits/

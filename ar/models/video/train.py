@@ -15,7 +15,7 @@ from ar.typing import Transform, SubOrDataset, Optimizer, Scheduler
 
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
-_AVAILABLE_MODELS = {'LRCNN',}
+_AVAILABLE_MODELS = {'LRCN',}
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -84,7 +84,8 @@ def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
         
     train_tfms = T.Compose([
         VT.VideoToTensor(),
-        VT.VideoResize((224, 224)),
+        VT.VideoResize((256, 256)),
+        VT.VideoRandomCrop((224, 224)),
         VT.VideoRandomHorizontalFlip(),
         VT.VideoNormalize(**VT.imagenet_stats),
     ])
@@ -119,7 +120,8 @@ def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
     train_dl = data.DataLoader(train_ds, 
                                batch_size=kwargs['batch_size'],
                                num_workers=kwargs['data_loader_workers'],
-                               sampler=train_sampler, 
+                               sampler=train_sampler,
+                               shuffle=True,
                                collate_fn=collate_fn,
                                pin_memory=True)
 
@@ -148,7 +150,8 @@ def train(model: ar.checkpoint.SerializableModule,
                                           len(train_dl),
                                           **kwargs)
     starting_epoch = train_from.get('epoch', -1) + 1
-
+    # TODO: Enable mixed precision when pytorch 1.6.0
+    
     for epoch in range(starting_epoch, kwargs['epochs']):
         ar.engine.train_one_epoch(dl=train_dl,
                                   model=model,
@@ -156,6 +159,7 @@ def train(model: ar.checkpoint.SerializableModule,
                                   scheduler=scheduler,
                                   loss_fn=criterion_fn,
                                   epoch=epoch,
+                                #   mixed_precision=kwargs['fp16'],
                                   print_freq=kwargs['print_freq'],
                                   device=device)
         
@@ -164,6 +168,7 @@ def train(model: ar.checkpoint.SerializableModule,
                            metrics=[ar.metrics.accuracy, 
                                     ar.metrics.top_3_accuracy],
                            loss_fn=criterion_fn,
+                        #    mixed_precision=kwargs['fp16'],
                            device=device)
         
         # Save the model jointly with the optimizer
@@ -225,7 +230,7 @@ def _load_model(model_name: str,
                 **kwargs: Any) \
                     -> Tuple[ar.checkpoint.SerializableModule, dict]:
     
-    model_classes = dict(LRCNN=ar.video.LRCNN)
+    model_classes = dict(LRCN=ar.video.LRCN)
     model_cls = model_classes[model_name]
 
     if resume_checkpoint is None:
@@ -269,6 +274,11 @@ def _load_model(model_name: str,
 @click.option('--scheduler', type=click.Choice(['OneCycle', 'Step', 'None']),
               default='None')
 
+# Training optimizations
+@click.option('--fp16/--no-fp16', default=False,
+              help='Perform the forward pass of the model and the loss '
+                   'computation with mixed precision. The backward pass stays'
+                   'with fp32')
 # Logging options
 @click.option('--print-freq', type=int, default=20, 
               help='Print training epoch progress every n steps')
@@ -290,7 +300,7 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
     ctx.obj['valid_dl'] = valid_dl
 
 
-@main.command(name='LRCNN')
+@main.command(name='LRCN')
 
 @click.option('--feature-extractor', 
               type=click.Choice(list(ar.nn._FEATURE_EXTRACTORS)),
@@ -306,7 +316,7 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
               default=True, help='Wether to use a bidirectional LSTM or an '
                                  ' autoregressive')
 @click.pass_context
-def train_LRCNN(ctx: click.Context, **kwargs: Any) -> None:
+def train_LRCN(ctx: click.Context, **kwargs: Any) -> None:
     kwargs.update(ctx.obj['common'])
 
     train_dl, valid_dl = ctx.obj['train_dl'], ctx.obj['valid_dl']
@@ -317,7 +327,7 @@ def train_LRCNN(ctx: click.Context, **kwargs: Any) -> None:
 
     n_classes = len(ds.classes)
 
-    model, checkpoint = _load_model('LRCNN', 
+    model, checkpoint = _load_model('LRCN', 
                                     n_classes, 
                                     kwargs['feature_extractor'], 
                                     kwargs['freeze_fe'],

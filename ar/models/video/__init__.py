@@ -1,1 +1,1 @@
-from .models import LRCNN
+from .models import LRCN

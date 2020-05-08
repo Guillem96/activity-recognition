@@ -13,7 +13,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 @torch.no_grad()
-def process_video(video: torch.FloatTensor,
+def process_video(video: torch.Tensor,
                   image_classifier: torch.nn.Module) -> torch.Tensor:
     """
     Maps the image classifier for each video frame and return the classifier
@@ -28,7 +28,7 @@ def process_video(video: torch.FloatTensor,
     
     Returns
     -------
-    torch.FloatTensor
+    torch.Tensor
         Model outputs for each frame
     """
     batch_size = 64
@@ -42,7 +42,7 @@ def process_video(video: torch.FloatTensor,
 
 
 def find_video_clips(
-        video: torch.FloatTensor, 
+        video: torch.Tensor, 
         image_classifier: torch.nn.Module,
         topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
     """
