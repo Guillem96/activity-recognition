@@ -1,0 +1,3585 @@
+label,youtube_id,time_start,time_end,split
+drinking beer,--6bJUbfpnQ,17,27,test
+climbing tree,--8YXc8iCt8,2,12,test
+surfing water,--coBvtS-eQ,57,67,test
+stomping grapes,--q6ElFyVq0,148,158,test
+tai chi,--q_mvQ8zP8,67,77,test
+cartwheeling,--qlUJAiVkg,0,10,test
+snorkeling,--sYD7KnbOk,276,286,test
+tossing salad,--swPW3U9EE,247,257,test
+rock scissors paper,--xD8NX4lxQ,18,28,test
+building cabinet,-08En2aQklI,233,243,test
+grinding meat,-08O1DDPotw,2,12,test
+breakdancing,-0AFA2OVzn0,19,29,test
+krumping,-0EMaXGGM34,4,14,test
+water skiing,-0Kz1lwvjdU,6,16,test
+push up,-0NIbu2PBlM,29,39,test
+tap dancing,-0SUZKVInwE,81,91,test
+bench pressing,-0tnFi1az8k,14,24,test
+hula hooping,-11AqZ4y7wo,50,60,test
+pushing wheelchair,-18N3scYPX8,34,44,test
+sailing,-1G5T5BQw9U,56,66,test
+bartending,-1H5IyO1MNY,8,18,test
+headbutting,-1YoSo0X6Og,2,12,test
+riding scooter,-1fj0NQmIZs,7,17,test
+washing hair,-1nCh3Vk4Qk,441,451,test
+unloading truck,-2D_WrDD1Is,12,22,test
+scuba diving,-2GDsxwm-hw,501,511,test
+playing saxophone,-2Yyzd5YXaQ,48,58,test
+jogging,-2m5zX4IX4w,140,150,test
+cheerleading,-30CIJF4ces,58,68,test
+snorkeling,-32Wv2WQQYg,85,95,test
+cutting nails,-3LQIrz9FoM,10,20,test
+shoveling snow,-3Mwkq-7TV4,2,12,test
+unloading truck,-3SCUTBygd4,48,58,test
+writing,-3T2VPGo2jI,170,180,test
+playing cello,-3jdmBKycL4,11,21,test
+giving or receiving award,-3rgILesJwk,16,26,test
+riding mechanical bull,-48QzkYV8bE,45,55,test
+country line dancing,-4HzfnOtVeI,150,160,test
+playing cricket,-4Tdepho0iU,23,33,test
+breakdancing,-54-4pEYATY,92,102,test
+smoking,-54IO3sgsuk,46,56,test
+slacklining,-57FevZANM0,273,283,test
+using remote controller (not gaming),-59BM7jvl-0,259,269,test
+robot dancing,-59dBjAyYyE,48,58,test
+tango dancing,-5EihEKkNFI,164,174,test
+yoga,-5F1kYlLevM,61,71,test
+sweeping floor,-5HyGKTpJFs,17,27,test
+bending metal,-5IEKkPiy3A,309,319,test
+digging,-5KbjvBgX3Q,310,320,test
+making a sandwich,-5wMyJhs3i0,53,63,test
+knitting,-5xEgcRn1-g,40,50,test
+squat,-5xauLfWsto,30,40,test
+trapezing,-6ByxTdKhZo,129,139,test
+unboxing,-6RkvfyLrW4,118,128,test
+digging,-6WKByVDvow,58,68,test
+ironing,-6Y0E01g-Kc,150,160,test
+golf chipping,-6uKw-7edlk,306,316,test
+peeling apples,-7--fzZE2qk,185,195,test
+gymnastics tumbling,-7-31bXtcik,96,106,test
+assembling computer,-74c73MiIes,1409,1419,test
+playing keyboard,-74csnCOiUs,0,10,test
+cleaning windows,-7MqfSPKj6c,2,12,test
+spraying,-7Wz9S-ZZz4,6,16,test
+disc golfing,-7XsXx1jZ_g,44,54,test
+auctioning,-7aNZAltVAw,219,229,test
+playing piano,-7aeB7vFtB4,37,47,test
+side kick,-7j1vJYqrXg,0,10,test
+kitesurfing,-7pWlHwSRbU,117,127,test
+shredding paper,-84w8wcPBcg,39,49,test
+unloading truck,-89F37DQpqo,0,10,test
+making pizza,-8Appls4ZFg,236,246,test
+riding a bike,-8EEDhQZU5g,72,82,test
+drinking,-8LxLObXPA4,6,16,test
+waxing chest,-8PWywY7GDw,4,14,test
+baby waking up,-8m8fTNhfqw,19,29,test
+breakdancing,-8snoM0IJ68,198,208,test
+strumming guitar,-9-1EqIj_WM,96,106,test
+stomping grapes,-942XqJakUQ,0,10,test
+braiding hair,-9gRTQfBQsY,447,457,test
+javelin throw,-9iGs_3h12Q,4,14,test
+folding paper,-9iOAGZK3nc,28,38,test
+making tea,-9kEVsj2N5k,26,36,test
+laughing,-9nQwLUdlJo,0,10,test
+scuba diving,-9p74dE2Big,0,10,test
+waxing chest,-9pF9G-Kc8c,257,267,test
+tapping guitar,-A0SHa-CJPk,4,14,test
+plastering,-A8Gmz3Wjjs,286,296,test
+changing wheel,-A94OYMLH1M,956,966,test
+catching fish,-AFUuaxUAYY,399,409,test
+springboard diving,-AJ3JIMaS18,31,41,test
+crying,-AMj3cjAyrY,3,13,test
+writing,-AZMzKjls-k,174,184,test
+filling eyebrows,-Aerc_FKXMk,58,68,test
+bookbinding,-AexuA_FlCw,136,146,test
+hockey stop,-Ar5MuXh6VI,4,14,test
+motorcycling,-BQwNszotto,33,43,test
+juggling balls,-BTAHO9GhQY,15,25,test
+tying knot (not on a tie),-BaWZEvlbSw,62,72,test
+feeding fish,-BfA5d412Fc,21,31,test
+ironing,-BgEMSKNMXY,1,11,test
+skiing slalom,-Bhi653MeIc,25,35,test
+barbequing,-BkdwVmG-zw,188,198,test
+reading book,-BpPSxp00_M,499,509,test
+flipping pancake,-BrNqmFy-6Y,9,19,test
+baby waking up,-BrTPBDhVXw,3,13,test
+tobogganing,-BwaDswA0r4,3,13,test
+cooking on campfire,-BxgBe3Gx9U,33,43,test
+playing bass guitar,-C52lVsuJvg,33,43,test
+plastering,-CCXxG9zFGc,33,43,test
+sharpening pencil,-CQ6GzkHHPo,12,22,test
+skiing crosscountry,-CXcOa9gfZ8,12,22,test
+catching or throwing softball,-Cfav7t1B3I,2,12,test
+building cabinet,-Cr0BPNzlis,310,320,test
+riding camel,-CsBjy8T-II,29,39,test
+grinding meat,-Cuic7OHY80,410,420,test
+squat,-DGp_JMfaN0,16,26,test
+climbing a rope,-DMlJ159cY4,17,27,test
+ironing,-DjD3DMxX9Q,283,293,test
+motorcycling,-DxXAB-V9Sk,457,467,test
+playing drums,-E2dqOULQgY,60,70,test
+ice climbing,-ECIbL1jorg,83,93,test
+throwing axe,-EL_dmBEKJ4,457,467,test
+skiing crosscountry,-FNb6NA1Gwc,14,24,test
+grooming horse,-FQPWQqvNeI,15,25,test
+trapezing,-FeMTIDf8wo,61,71,test
+extinguishing fire,-FgWkgtVJi4,8,18,test
+situp,-FhZ1JPZYl0,54,64,test
+carving pumpkin,-Fyz_LeumSc,11,21,test
+playing bagpipes,-G8N5FxjZbw,1,11,test
+pull ups,-GDrlYxrEQo,0,10,test
+swing dancing,-GMjIMwQbZY,53,63,test
+massaging person's head,-GVV9MG9ZSM,68,78,test
+scuba diving,-GfvydWRInQ,2,12,test
+crawling baby,-GtfRmuezys,42,52,test
+pumping gas,-H-ChBE74Mw,35,45,test
+playing ukulele,-HEUB-46gjI,42,52,test
+setting table,-HGNcQ8dOFI,10,20,test
+playing guitar,-HIql1jZqGw,2,12,test
+driving car,-Ht7cIMt8n0,56,66,test
+picking fruit,-HvpmpjL5-A,9,19,test
+playing squash or racquetball,-HydYk7W3HY,0,10,test
+hugging,-I0QIxBetNU,40,50,test
+petting animal (not cat),-I52PjWCP_U,92,102,test
+making sushi,-I76tLQKa9s,114,124,test
+busking,-IDt7xy5zf4,15,25,test
+cheerleading,-IEZlHxNy5s,43,53,test
+marching,-IEdyZrVljo,405,415,test
+juggling fire,-IHwhSActzk,30,40,test
+playing poker,-IIniDJ9Dk0,61,71,test
+reading book,-ISOGmnN1gE,392,402,test
+hurling (sport),-IX6mSXzzpw,189,199,test
+playing kickball,-IdatujDsqA,49,59,test
+shaking hands,-IhY55dUxug,2,12,test
+trimming or shaving beard,-Ipp3cqqXcM,138,148,test
+opening bottle,-Irzehdgkpw,7,17,test
+stretching arm,-IsvfeHcfNA,62,72,test
+blowing out candles,-J63spG_Wdk,0,10,test
+baking cookies,-J8jfO0Fp6M,335,345,test
+swimming butterfly stroke,-JIvn5VWIKQ,71,81,test
+spray painting,-JZb7tejl9k,48,58,test
+tobogganing,-JqMDT4-nSU,14,24,test
+diving cliff,-Jwh9bPuuA4,23,33,test
+applying cream,-JxYbelw4Ls,103,113,test
+catching or throwing frisbee,-K-8mvDj2rA,1,11,test
+feeding goats,-K9TfSQgSr4,48,58,test
+playing trumpet,-KCuZn3n2ZU,56,66,test
+opening present,-KFVFgToszc,49,59,test
+arranging flowers,-KOWvScu7Xc,24,34,test
+sword fighting,-KQm9cRcNY4,9,19,test
+high kick,-KRPdKOP-1c,0,10,test
+washing dishes,-KSkBTT4Wco,118,128,test
+smoking,-KTJl81A98Y,30,40,test
+tossing salad,-KhXOr0a8Pc,284,294,test
+cooking egg,-Kq1xajBxPw,350,360,test
+climbing ladder,-Ksthv2x-YM,14,24,test
+unloading truck,-Kuuj4FsAMM,18,28,test
+eating ice cream,-KxwPEqUhBk,2,12,test
+motorcycling,-L5hpkb-XCg,26,36,test
+tango dancing,-L67T8ijEdk,20,30,test
+breakdancing,-L6HSKDolBQ,2,12,test
+feeding birds,-LQav7yKBik,28,38,test
+throwing discus,-LbgQ1huX7I,59,69,test
+clapping,-LeQsXtoNg0,4,14,test
+jogging,-LqY0EHFUR0,21,31,test
+drinking beer,-LwoJc8uoMU,3,13,test
+climbing a rope,-MAGN91mrTs,105,115,test
+peeling potatoes,-Mi6Lk-fSXg,28,38,test
+high jump,-Mus-4dzaUY,8,18,test
+swimming butterfly stroke,-MzUbQLVWFI,1,11,test
+playing cricket,-N40ZYEsM58,198,208,test
+sign language interpreting,-NKgPEJ_Gsk,115,125,test
+long jump,-NTz_L5PgxQ,6,16,test
+playing keyboard,-NYntCNDohQ,5,15,test
+gargling,-Ng5opbmX0o,1,11,test
+eating doughnuts,-Nire00E4Fg,22,32,test
+changing oil,-Nj3XmZ7YBM,107,117,test
+blowing leaves,-Nozncj_zuE,35,45,test
+ripping paper,-Npm2udxeAE,71,81,test
+running on treadmill,-OSzhjxCHPQ,30,40,test
+cooking on campfire,-OYB3SrJ4DQ,54,64,test
+dancing ballet,-Ogh8Hmi5zI,14,24,test
+eating carrots,-Ohk2UcaKec,22,32,test
+shining shoes,-OwsGvItrzg,366,376,test
+cutting watermelon,-PZVThuMgA4,0,10,test
+whistling,-PaWOpaF5zg,71,81,test
+extinguishing fire,-PcSF-cutCc,11,21,test
+cooking egg,-PhpwXdflY4,95,105,test
+cleaning pool,-QFXmitnBPA,53,63,test
+exercising with an exercise ball,-QGRVdWSeKw,12,22,test
+bench pressing,-QlSUFX-xok,0,10,test
+decorating the christmas tree,-Qr2DTCs-iE,130,140,test
+parasailing,-R4jNXZVSoM,55,65,test
+shoveling snow,-R8WY2w1dhc,21,31,test
+wrapping present,-RCv-107T5w,226,236,test
+trimming or shaving beard,-RGkkdOgGoo,17,27,test
+cutting nails,-RRtSAgGApc,16,26,test
+brushing teeth,-RdGKu6-iFY,10,20,test
+clay pottery making,-RdIu3WnZfk,20,30,test
+sled dog racing,-Rp2KktONmc,3,13,test
+ice fishing,-RstutWRo0U,69,79,test
+slacklining,-Rt21u6uvPo,97,107,test
+water sliding,-S0RHDUHnIA,7,17,test
+waxing chest,-S741H1g91s,4,14,test
+bench pressing,-SFnrG0O-2E,191,201,test
+waiting in line,-SMyQUm1T4Y,148,158,test
+climbing tree,-SNPOUAt7Rg,49,59,test
+getting a tattoo,-SavKy2kvgU,45,55,test
+eating hotdog,-SgVYC_iWYI,3,13,test
+playing cymbals,-Sna5WJDjnw,84,94,test
+dancing charleston,-SsRQe7_4ao,113,123,test
+braiding hair,-T13gtGMCyA,21,31,test
+bench pressing,-T2MM-Qe2as,8,18,test
+tapping pen,-TQ_pI1z4Bo,24,34,test
+tasting beer,-TT5r4FGzLs,27,37,test
+blowing out candles,-TYJaQehODg,21,31,test
+long jump,-T_2vXQR2Ic,1,11,test
+folding napkins,-T_vuffiF-k,106,116,test
+swimming butterfly stroke,-Taqg91Q2gc,86,96,test
+playing harp,-ThiuDnVGMU,4,14,test
+eating watermelon,-Tnm-HTZJaI,135,145,test
+crying,-ToH-Wo6_F0,83,93,test
+sticking tongue out,-TvIghlxYiM,100,110,test
+skiing slalom,-U2GQP5wehI,11,21,test
+belly dancing,-UI8AJgs0nI,3,13,test
+using computer,-UOs666yX3w,14,24,test
+crawling baby,-USICozh_9w,3,13,test
+playing guitar,-UWzJ4Cle94,8,18,test
+picking fruit,-UXf7RobAqI,99,109,test
+folding napkins,-Ue0vNMSPsw,12,22,test
+hula hooping,-UqDYlvixhI,28,38,test
+marching,-UxwnCIu4OE,26,36,test
+cleaning shoes,-V3YwlumSFY,92,102,test
+playing bagpipes,-V6bFoyqYP0,47,57,test
+singing,-W0NQfZwNgE,139,149,test
+hopscotch,-W2Pcut-jEU,4,14,test
+writing,-WAMHNq45kY,180,190,test
+dying hair,-WKQMew6YXw,254,264,test
+ski jumping,-WShTX4KTxY,10,20,test
+playing bass guitar,-WX7H6iKnZ8,287,297,test
+pumping fist,-WZdO2FkdXw,1,11,test
+disc golfing,-Wc0dy2PzJ8,210,220,test
+busking,-WvBz51wHZc,35,45,test
+waxing chest,-Ww0pXd9LZo,112,122,test
+making a cake,-X7xvCXcYA8,123,133,test
+making bed,-XB1iKTrJgk,62,72,test
+springboard diving,-XLx2qBr3I4,3,13,test
+blasting sand,-XoBhbRqXCM,33,43,test
+juggling fire,-Xth-4ys3MQ,0,10,test
+swing dancing,-XyE05XlEqo,162,172,test
+riding camel,-XzpQxfVypI,87,97,test
+cleaning toilet,-YN55yndVUA,246,256,test
+shot put,-YNvdGOXdgY,0,10,test
+laying bricks,-YdX0uAl0_4,36,46,test
+windsurfing,-Yi-XbJYu2w,0,10,test
+golf driving,-Yn59LWpYdQ,1,11,test
+blasting sand,-YoKTI0qjNM,5,15,test
+passing American football (in game),-YtHps-n5Ks,2,12,test
+hurdling,-YvWXyzrzo8,1,11,test
+clay pottery making,-YyMUeIkqMU,42,52,test
+feeding birds,-Z2YueuUqeQ,1,11,test
+spray painting,-Z7RfIbYfJs,140,150,test
+mowing lawn,-ZI9BkJ98gU,54,64,test
+making a sandwich,-ZaFhH0nTUA,66,76,test
+yawning,-ZigTNAJGn4,0,10,test
+taking a shower,-Zjj4XucJQk,9,19,test
+gargling,-_WG9qk3Kiw,3,13,test
+sword fighting,-_X6Puqlpog,28,38,test
+washing feet,-_q2PvFj5mk,34,44,test
+bowling,-_rX15rXYSk,125,135,test
+doing nails,-_s_BQD-nSI,644,654,test
+cooking on campfire,-a0aE4_sP5s,189,199,test
+balloon blowing,-a1f1ikmdd8,0,10,test
+abseiling,-aU-xCCzkT0,61,71,test
+digging,-aon96HCYtw,45,55,test
+tying knot (not on a tie),-b-JR039AxY,340,350,test
+checking tires,-b3p2tNmPBk,34,44,test
+dodgeball,-b8nYvIl5J4,0,10,test
+riding camel,-bGVnGCy2yY,4,14,test
+pushing cart,-bLRdIPPMZM,26,36,test
+exercising arm,-bXQImQEtFE,2,12,test
+braiding hair,-be28IKDtoc,153,163,test
+changing wheel,-bm4V8OJh7k,3,13,test
+high jump,-bshdION0HE,8,18,test
+jogging,-bwxW5943P8,6,16,test
+bandaging,-c03BzXL9Cs,111,121,test
+shaking head,-c3qPUDUjMw,3,13,test
+petting cat,-c52aencZCQ,30,40,test
+juggling soccer ball,-cFC9KYCoL4,73,83,test
+eating ice cream,-cHgwf2n4tQ,7,17,test
+dancing gangnam style,-ceOB7utBGk,9,19,test
+playing bass guitar,-cfx0kzO3Vg,239,249,test
+playing trombone,-d-RH86UdpQ,45,55,test
+waxing legs,-d1XMoLl0o8,102,112,test
+disc golfing,-d5vOUQOaQM,2,12,test
+shoveling snow,-dDRvl2txcU,3,13,test
+playing controller,-dD_o8PRjmA,164,174,test
+shoveling snow,-dKHH-3ukyY,0,10,test
+punching bag,-dLVVjKN-C8,2,12,test
+waxing eyebrows,-dcc7PJRrtc,132,142,test
+cleaning toilet,-deJQKexStU,142,152,test
+checking tires,-dhP2AH0eqI,141,151,test
+sword fighting,-dhxPxqJaug,1,11,test
+dining,-e4E4xo7Ncc,99,109,test
+contact juggling,-e8GyeCj9jQ,44,54,test
+plastering,-eAEF1YXlT4,41,51,test
+sword fighting,-eHcsSID2UQ,27,37,test
+changing wheel,-eKxC7PuSY8,108,118,test
+swinging on something,-eOZLiXn5Zo,11,21,test
+playing ice hockey,-eOxQpTp5zM,258,268,test
+training dog,-eXioEOiZW0,118,128,test
+jetskiing,-eXujRV6O2E,85,95,test
+blowing out candles,-eY8V3hNgnE,3,13,test
+krumping,-ehIKRiT-Ow,51,61,test
+answering questions,-ek3zFzo560,537,547,test
+tying tie,-f4pDToOoLk,38,48,test
+playing tennis,-f4yZuT0b-8,67,77,test
+long jump,-fC-dZ_VQ8A,3,13,test
+jumping into pool,-fCA7pHxr_U,15,25,test
+playing squash or racquetball,-fCeHk-xpts,14,24,test
+tasting food,-fNsl9VsWIE,269,279,test
+high kick,-fg7MCyZy4Q,1,11,test
+drinking shots,-fhb-4hS5Po,10,20,test
+playing saxophone,-fj_sbZlb3c,7,17,test
+eating hotdog,-fjcWaGkfSQ,3,13,test
+using segway,-fry1DM4r5Q,65,75,test
+feeding birds,-fxvlhAhoxg,14,24,test
+doing nails,-fy1_0WdAhg,75,85,test
+playing ice hockey,-fyfEc1C5Hc,6,16,test
+beatboxing,-g128J_Q-iw,11,21,test
+unloading truck,-gGGgY9NWiw,28,38,test
+presenting weather forecast,-gbXPNJxOjI,4,14,test
+answering questions,-gdnqSMN9Gg,619,629,test
+swimming butterfly stroke,-ggniXt9sgA,26,36,test
+balloon blowing,-gkEGxk_KIc,30,40,test
+answering questions,-gs6AB6dM0g,1,11,test
+drinking,-gtbE1dbVy8,82,92,test
+throwing ball,-gzMWFyyifc,195,205,test
+cheerleading,-h4Tiv08cgY,4,14,test
+opening bottle,-h91CecU7sA,0,10,test
+scuba diving,-hJVfBumlX8,152,162,test
+picking fruit,-hMO1loNxWc,94,104,test
+celebrating,-heO4WrF8Og,307,317,test
+washing feet,-hmT4kAVsZs,156,166,test
+crying,-hqAICViVtI,14,24,test
+catching or throwing frisbee,-hqyu_Rkso8,0,10,test
+bee keeping,-i59KEmlDY8,94,104,test
+juggling balls,-i7RzmW5_qU,38,48,test
+opening bottle,-iDNYCxJM4w,43,53,test
+playing tennis,-iFYOSvF9DA,4,14,test
+cutting watermelon,-iX_6RINZOo,0,10,test
+dancing charleston,-itPc_l4AGs,16,26,test
+arranging flowers,-j7WiOexoYk,33,43,test
+smoking hookah,-k57S_a8Hfg,31,41,test
+gymnastics tumbling,-klUSxo7XiQ,0,10,test
+country line dancing,-kmP2XzLzxI,173,183,test
+blowing out candles,-kojIsU8nC8,25,35,test
+eating burger,-kq3USdeLgw,18,28,test
+jumping into pool,-l4Yob4Bn94,2,12,test
+dancing gangnam style,-l8VHbAWlYE,90,100,test
+riding mechanical bull,-lCIkjdRmTI,28,38,test
+roller skating,-lNPxMYlbmA,11,21,test
+driving tractor,-lXqsvu1zFU,171,181,test
+snowmobiling,-l_RqilCwaM,21,31,test
+celebrating,-lfJwra1GwM,235,245,test
+drop kicking,-lj-DDupYCE,2,12,test
+roller skating,-ljVZv0B0BM,0,10,test
+testifying,-lsFEnDhnGg,29,39,test
+skiing (not slalom or crosscountry),-lzlUCd7s-Y,58,68,test
+cracking neck,-mb7ldf5ULA,0,10,test
+ironing,-mmGmRXCJnE,284,294,test
+tap dancing,-mwC9o_A3sE,114,124,test
+archery,-mxWlK3qiBY,98,108,test
+playing xylophone,-n3KyULzVd4,11,21,test
+shearing sheep,-n6u1HSo944,2,12,test
+celebrating,-n7iHEbz_uw,236,246,test
+tobogganing,-nTv44gBta0,16,26,test
+watering plants,-nWf-00Vhc4,11,21,test
+canoeing or kayaking,-nb-krujQoU,281,291,test
+yawning,-nh4-K3ob1Q,1,11,test
+cooking on campfire,-nvvndnOToQ,113,123,test
+crawling baby,-o2QXnhVTSs,0,10,test
+eating carrots,-o4BC_elkU8,9,19,test
+making a cake,-o6LX_MnkXM,6,16,test
+pole vault,-o7m7y9SR6g,4,14,test
+jogging,-oLIn5-Sa_4,14,24,test
+grinding meat,-oY62fVPksg,15,25,test
+peeling potatoes,-oZiTEE639Y,72,82,test
+sharpening pencil,-o_qCUkrvGI,8,18,test
+peeling potatoes,-ocUEUt5ZcQ,55,65,test
+trimming or shaving beard,-oduzPYh2SI,94,104,test
+headbutting,-olxh-Q1pq0,0,10,test
+doing nails,-orQeYvjmuk,155,165,test
+dancing macarena,-p2x-4LDIEw,48,58,test
+flying kite,-p42nwHu4Qc,20,30,test
+hopscotch,-pBHLSZrn3k,9,19,test
+cleaning toilet,-pBiJnwK2oc,50,60,test
+eating spaghetti,-pDRUb2Z2Gg,32,42,test
+folding napkins,-pU4ZHG8918,60,70,test
+hula hooping,-p_tnSXsg74,72,82,test
+pole vault,-ps_I-I5s3Q,0,10,test
+dancing charleston,-pt85VuDHDY,0,10,test
+cutting watermelon,-pyFr1WZPbM,32,42,test
+planting trees,-q0tbznmevU,25,35,test
+spinning poi,-qK-i0M1e1A,0,10,test
+playing squash or racquetball,-qKQlD8P02U,0,10,test
+blowing out candles,-qPDbj0UFTg,4,14,test
+washing dishes,-qiWGAyhaW8,0,10,test
+baby waking up,-qjBdX1oVAw,25,35,test
+sweeping floor,-qm6XtzZmJs,21,31,test
+riding mechanical bull,-qrke4nLSYA,3,13,test
+country line dancing,-qvq4rwzhq8,166,176,test
+water skiing,-r-wcb34wco,1,11,test
+pumping fist,-rClbvE7nzw,1,11,test
+making a cake,-rSJYwc9zfY,29,39,test
+dining,-rZ32iExC_Q,32,42,test
+wrapping present,-rhOXmTJT1M,211,221,test
+flipping pancake,-rhOaNjvwWo,8,18,test
+getting a tattoo,-ribY-wrw4s,41,51,test
+feeding goats,-rnXAY5Un9E,17,27,test
+grooming dog,-rtblP6SWi0,2,12,test
+washing dishes,-sL_Cd0P2Kc,116,126,test
+texting,-sODNa60qVI,36,46,test
+juggling balls,-sTirMrnRdQ,0,10,test
+presenting weather forecast,-sahetyGc68,3,13,test
+playing badminton,-sonZk0y6sY,13,23,test
+tying knot (not on a tie),-spdWnGHK4g,156,166,test
+jetskiing,-t2MXACtFJQ,8,18,test
+front raises,-t7fuZ0KhDA,63,73,test
+jumping into pool,-t9riuuzLKQ,1,11,test
+situp,-t_Kj6rqo-w,98,108,test
+blowing glass,-t_bPa0vlJ0,0,10,test
+giving or receiving award,-tczuctI_no,57,67,test
+hugging,-tltcdTfV0s,0,10,test
+eating ice cream,-tnOW13JHjU,38,48,test
+sticking tongue out,-tq1dsmh98I,66,76,test
+trimming or shaving beard,-tqtYKaaTIQ,102,112,test
+cooking egg,-tutrdjNtoU,194,204,test
+brushing hair,-txz6rkA9Yg,5,15,test
+flying kite,-u8qo7EBz1E,4,14,test
+playing harp,-uBXbXixTXU,82,92,test
+dunking basketball,-uQv0yknkDk,56,66,test
+wrestling,-uUDFCXCvTs,76,86,test
+tying tie,-udLqYFwhd4,45,55,test
+clay pottery making,-usUJRujj0s,420,430,test
+waxing chest,-uzSYVFb-fg,345,355,test
+drop kicking,-v-zi6Acx-k,0,10,test
+petting cat,-vKy-xy7JAo,2,12,test
+playing basketball,-vLpVgimxUU,3,13,test
+ski jumping,-vM5pKnVRUw,7,17,test
+feeding goats,-vT--8OkXiY,1,11,test
+playing monopoly,-vZYLkhnZRA,20,30,test
+climbing tree,-vtYlfaJ3CI,61,71,test
+dodgeball,-vv-I00vufE,321,331,test
+playing accordion,-w6sZ-nutlA,55,65,test
+surfing water,-wALxeb6hzo,161,171,test
+playing trumpet,-wJAudMwtVE,182,192,test
+archery,-wa3kVxuSwM,18,28,test
+drinking shots,-wcxLAk3zeA,2,12,test
+abseiling,-wjbrrLyhIM,419,429,test
+blowing glass,-wlz7tGsMEQ,28,38,test
+using computer,-wn5vfhnhF8,4,14,test
+eating cake,-xG_VN2tkLE,167,177,test
+cleaning shoes,-xIpo-MdYeU,39,49,test
+playing harmonica,-xPFXfkMZFw,2,12,test
+bee keeping,-xZr4LtG4h8,37,47,test
+dancing charleston,-xiDuQBNpwg,2,12,test
+shredding paper,-xw9OtSHg6Q,82,92,test
+slacklining,-y-gbZRSlfk,241,251,test
+jetskiing,-y1fff_MZcA,0,10,test
+pumping fist,-y5HZIKu_Zs,16,26,test
+peeling apples,-y6T_eOH4_8,130,140,test
+sword fighting,-yPNzJsIxEs,4,14,test
+playing poker,-yWWZ1Ixsgs,467,477,test
+assembling computer,-y_9dyiEYGk,425,435,test
+busking,-yfeSSDk0BE,517,527,test
+using remote controller (not gaming),-ym2_hGkSoU,1,11,test
+taking a shower,-yn0IxFMQpQ,28,38,test
+bowling,-yoU-7VipS4,1,11,test
+dancing macarena,-ysjvl5YaKQ,2,12,test
+counting money,-yvVM1dXOxE,7,17,test
+swimming backstroke,-z-ybS14u-8,180,190,test
+crawling baby,-z4abZTjuNw,1,11,test
+ice climbing,-zIsUmqnyic,157,167,test
+testifying,-zJi5IMUkcE,2,12,test
+tying tie,-zN3AN9NYwA,56,66,test
+passing American football (in game),-zScRrUHpR8,284,294,test
+riding unicycle,-zWLKc6CjTY,56,66,test
+high jump,-zyI3tw5r1g,5,15,test
+pole vault,0-5b3t5rW9Q,29,39,test
+pumping fist,0-CoCQ5WW2k,23,33,test
+dancing charleston,0-UnlIzrGYM,79,89,test
+drop kicking,0-xr4sxR4xc,2,12,test
+archery,002VmnaNvh4,3,13,test
+arranging flowers,00GyvomBAJc,6,16,test
+trimming trees,00_77WAvZ_o,11,21,test
+rock scissors paper,00bMyaftBwI,13,23,test
+swinging legs,00jswK6w3fw,2,12,test
+driving car,010bSXDIJWs,14,24,test
+air drumming,013SMb0SX8I,20,30,test
+making bed,018mAffBtUo,50,60,test
+punching person (boxing),01GgjQ-aTaw,20,30,test
+making a cake,01S7Y2NjDuA,158,168,test
+weaving basket,01i3v6qKrO4,44,54,test
+sailing,01kuhfuym8A,290,300,test
+smoking,01r516c13HU,133,143,test
+hurling (sport),01xdpBA1Guo,98,108,test
+water skiing,02CGKcWah5M,6,16,test
+drinking shots,02HKk4SR134,63,73,test
+bowling,02R48pBFmqk,6,16,test
+throwing axe,02WeHmdkBCY,72,82,test
+brush painting,02XojQ76to0,213,223,test
+brushing teeth,02g7pYEXJm0,58,68,test
+cleaning pool,02pQ-4vI7-I,224,234,test
+holding snake,02seb8Q7Ug8,160,170,test
+trimming or shaving beard,033QIfRVcnI,72,82,test
+counting money,034KRRrR_A8,69,79,test
+hitting baseball,03cnfqhVFIQ,8,18,test
+bandaging,03wut-x5SqE,184,194,test
+tango dancing,04EqsdIRawQ,127,137,test
+smoking hookah,04d70qgDmqQ,3,13,test
+air drumming,04da2yVcPj8,46,56,test
+blowing nose,04fLIUMTbco,6,16,test
+eating cake,04kBfXvYJHM,30,40,test
+jumpstyle dancing,04ohTSdynKw,106,116,test
+assembling computer,04pf8apkops,196,206,test
+headbanging,04smDbDvDPw,0,10,test
+playing bass guitar,051OSKacPxg,129,139,test
+tango dancing,05DYAImHEXs,0,10,test
+writing,05DsENOhRso,195,205,test
+surfing water,05FLJw6nljs,44,54,test
+tapping guitar,05Ntgt4qOwg,87,97,test
+roller skating,05Ss2ws4tnc,95,105,test
+snowkiting,05Sy2LShZtM,51,61,test
+crying,05bnplpTSq8,185,195,test
+catching or throwing softball,05bsY6TnSMs,1,11,test
+tobogganing,05y1JRsb3Z4,2,12,test
+bandaging,06FWsmnIWP0,73,83,test
+bowling,06JH4z9tSOY,7,17,test
+trimming trees,06WLsNRwXxE,15,25,test
+waxing chest,06ZCGv2-OrQ,64,74,test
+catching or throwing frisbee,06btONmXJvM,2,12,test
+giving or receiving award,06e4MessWRM,0,10,test
+ski jumping,06iERukTOa8,89,99,test
+climbing ladder,06pQ17khyhQ,4,14,test
+springboard diving,078IIP8JcAs,3,13,test
+cleaning shoes,07HPWxFya8A,14,24,test
+playing saxophone,07OTK9ULwRU,115,125,test
+dining,07OaYBcCfoc,92,102,test
+javelin throw,07WCZvf1vk8,43,53,test
+hammer throw,07m33c2D1Uo,190,200,test
+juggling fire,07tDZOSmxPI,9,19,test
+breakdancing,07wi_s74YG0,4,14,test
+bungee jumping,07xoDby32_4,20,30,test
+pull ups,07xyK3Efyps,339,349,test
+getting a tattoo,084k_RL3ApU,109,119,test
+baby waking up,08DkCplWSLQ,76,86,test
+tickling,08FtV5EYItw,64,74,test
+baking cookies,08JqXh8jCgk,56,66,test
+riding scooter,08Q7AK7-BwE,34,44,test
+push up,08WuLIpxASE,59,69,test
+cooking sausages,08XUNMdkVNk,285,295,test
+brushing hair,08crodgbXb0,302,312,test
+celebrating,08i4WPjkncY,263,273,test
+shot put,08rpQkUQbvw,1,11,test
+drinking beer,08txwPkaQXg,4,14,test
+throwing discus,08vEETSy4Kk,1,11,test
+robot dancing,090z4pxSE7A,50,60,test
+blasting sand,09IxLfUinv4,0,10,test
+tasting food,09MVw4raiZE,575,585,test
+snorkeling,09RHnLR-fbE,55,65,test
+hurling (sport),09TOL59se_g,514,524,test
+somersaulting,09fc3DPaEm4,72,82,test
+biking through snow,09htkj1I06M,59,69,test
+playing harp,09j5aSb-MDA,35,45,test
+country line dancing,09yfRViqqeI,208,218,test
+writing,0ABg9R9boM4,86,96,test
+country line dancing,0AfgAUo6KQQ,56,66,test
+watering plants,0Aq5KxeoyYY,192,202,test
+clean and jerk,0As-X5D-68w,3,13,test
+throwing axe,0AyrIqYhuPg,45,55,test
+playing ukulele,0B53Xkj2aIM,12,22,test
+cooking egg,0BCtCUXWuEs,80,90,test
+ice skating,0BQGIPMzwFU,76,86,test
+tasting beer,0BS2OyaYIVY,16,26,test
+playing clarinet,0BSttGHc6jw,15,25,test
+cleaning floor,0BWBwcTQt5E,207,217,test
+making a cake,0BZEYM7RaVI,315,325,test
+gargling,0BaDrcBz1Rg,72,82,test
+exercising arm,0BaS_SA8AiM,1,11,test
+applauding,0BburtHMBts,69,79,test
+climbing a rope,0Bnpkk71VB4,46,56,test
+throwing axe,0BpdTc3TFuQ,63,73,test
+juggling soccer ball,0Byb4qkFe6w,81,91,test
+ripping paper,0C8FAc_LMfc,45,55,test
+balloon blowing,0C8JJ81ZwEo,25,35,test
+petting animal (not cat),0CE_vXhy5NU,81,91,test
+trimming or shaving beard,0CFWfA2etfg,292,302,test
+finger snapping,0CM-UnKpYFs,38,48,test
+feeding goats,0CtBXt0rBBs,1,11,test
+cleaning floor,0D1uFAJbMlk,10,20,test
+skiing slalom,0D24noFveBk,3,13,test
+pull ups,0D2dCPX4qR8,0,10,test
+waxing back,0D3a4TtiYDA,14,24,test
+riding camel,0DHdxqytNTo,2,12,test
+cooking egg,0DWLaVx6ego,1,11,test
+testifying,0DfTBPtOpK4,63,73,test
+faceplanting,0DjhC0b68do,15,25,test
+pushing wheelchair,0DpvxV_DtIw,20,30,test
+testifying,0DqjuG09Xls,122,132,test
+washing hands,0DwP5mOidOg,62,72,test
+playing clarinet,0E0Jk6_uyUQ,110,120,test
+playing ice hockey,0E8h0BPYOmE,238,248,test
+high kick,0ENtIsUHCeE,97,107,test
+kissing,0EOzh-kgaN8,4,14,test
+making sushi,0ES7u9e3GbE,117,127,test
+welding,0EkG953tBtk,4,14,test
+wrapping present,0Eo_XEYaw6k,62,72,test
+tasting beer,0Eu7cgmqeA4,6,16,test
+surfing crowd,0F0aQSp8Qz4,1,11,test
+slapping,0F1Pqae4DVU,0,10,test
+surfing water,0F7D9hqf8Ng,90,100,test
+cleaning shoes,0F9XXBqN4v4,296,306,test
+running on treadmill,0FF2CLMllTE,24,34,test
+cleaning pool,0FGx_SekEgY,111,121,test
+testifying,0FO9N0rhfvs,104,114,test
+setting table,0FRuqRqe4_A,75,85,test
+drinking,0Fdu_8YUax4,120,130,test
+motorcycling,0FmsDzKmq1k,56,66,test
+pushing car,0FqsDYRYXWo,12,22,test
+washing hands,0Fs3UX5y-70,22,32,test
+clapping,0G1OirEz2OA,23,33,test
+eating ice cream,0GH9qUkdCgI,9,19,test
+parasailing,0GKUfuifhY4,96,106,test
+rock scissors paper,0GLQURF4tB0,73,83,test
+brushing teeth,0GLw64fSgys,90,100,test
+tap dancing,0GQFYsxMP9Y,53,63,test
+trimming trees,0GTjQ5ps8uk,4,14,test
+gymnastics tumbling,0GVb3PL9FoY,32,42,test
+somersaulting,0GVl7aAlHPQ,0,10,test
+barbequing,0GVrlL6HPb4,232,242,test
+making tea,0GYzBxtZFeY,10,20,test
+pushing wheelchair,0GesW7F0eN8,11,21,test
+blowing glass,0H0cvKkMBGc,6,16,test
+passing American football (in game),0H77yH7IQGQ,2,12,test
+contact juggling,0HCevBkGf8o,2,12,test
+stretching arm,0HFjm61oSDc,0,10,test
+biking through snow,0HMdr0xFLaE,157,167,test
+dribbling basketball,0HQsAGUnQ_0,6,16,test
+curling hair,0HSVIheoYYQ,44,54,test
+grinding meat,0HUG0ujjbjQ,198,208,test
+water skiing,0Hhb27JZdcc,104,114,test
+passing American football (not in game),0Ho3c-KxvWs,26,36,test
+scrambling eggs,0Hr5kBvxtw4,249,259,test
+jumping into pool,0Hu-OgouhvY,2,12,test
+feeding goats,0I1_uocqjnE,118,128,test
+shining shoes,0I2OSg5j1eI,86,96,test
+playing volleyball,0I92CBbeW78,401,411,test
+counting money,0IDQ0o4PTn4,0,10,test
+riding scooter,0IF1aLp3fFc,179,189,test
+bending back,0IG4JwUBRtc,1,11,test
+playing bass guitar,0IMGKXGTo-M,142,152,test
+tobogganing,0IYbQ2DUi3o,0,10,test
+waiting in line,0J-dYI7b9Zs,0,10,test
+filling eyebrows,0J2ql1MGLic,313,323,test
+cleaning toilet,0J3K-I5m5kc,127,137,test
+drinking beer,0J3sOieic7o,6,16,test
+using computer,0J83X6wqPpU,67,77,test
+sled dog racing,0JD7Q6BEDvM,186,196,test
+shaving legs,0JHOEr3YdNM,74,84,test
+playing cards,0JNvnkn_zBs,236,246,test
+cleaning windows,0JVGskmaJRE,3,13,test
+dodgeball,0JVUU6EjB3A,30,40,test
+playing monopoly,0JYSn_3-6qQ,1,11,test
+ski jumping,0JdJdJ_EeP8,45,55,test
+playing clarinet,0K-djmb2Xvg,106,116,test
+ripping paper,0KEDJL_Qvbs,7,17,test
+hopscotch,0KENbNB0le4,7,17,test
+jogging,0KLarV7XP_c,41,51,test
+digging,0KOeXBWZloM,737,747,test
+wrapping present,0KYmumDwiGU,253,263,test
+rock climbing,0Ke8YFNGD9o,16,26,test
+push up,0KeaEynmSR8,62,72,test
+building shed,0L9BH3hRPp8,2,12,test
+waxing legs,0LEToarXPss,97,107,test
+swing dancing,0LGDPVwWMhg,9,19,test
+surfing water,0LKeVIpQzOQ,288,298,test
+arranging flowers,0LLJy9aZkp4,8,18,test
+frying vegetables,0LPgqGnYx2A,349,359,test
+catching or throwing baseball,0LS-dDzebz0,13,23,test
+snorkeling,0L__A-V4Sq4,614,624,test
+tapping guitar,0LaTmJEM0d8,134,144,test
+swimming backstroke,0Lc49M_qMqs,48,58,test
+sticking tongue out,0LiTO_iTMfY,129,139,test
+parasailing,0Lk69lvl3oA,71,81,test
+playing kickball,0LkjnJcHEVM,349,359,test
+country line dancing,0LtaHcsvN8Q,237,247,test
+playing volleyball,0LxQKR7i3kE,0,10,test
+hitting baseball,0M2UyDV1s2k,26,36,test
+cleaning gutters,0M4mYqE-qX0,2,12,test
+ski jumping,0MA8CPbH-Ik,0,10,test
+applying cream,0MCDeDNMYCQ,33,43,test
+tickling,0MFTQH-v2nM,47,57,test
+springboard diving,0MJucSWQ4WU,2,12,test
+playing ice hockey,0MQ90X9rKrE,5,15,test
+bandaging,0MS7fnLfw9k,116,126,test
+hockey stop,0MaMWjVnzjc,3,13,test
+hopscotch,0Mhw4V0v6iQ,4,14,test
+petting animal (not cat),0Ms8ZcoYCBk,27,37,test
+squat,0Mv5X23Wp6c,11,21,test
+eating hotdog,0MxOyLaj9SA,14,24,test
+training dog,0N8RoBWzxnk,16,26,test
+texting,0NB4gZoffNE,7,17,test
+eating watermelon,0NBDOnpVhwQ,93,103,test
+vault,0NDMOCpmTn8,0,10,test
+climbing ladder,0Ni71yNnowc,41,51,test
+cutting pineapple,0NklvCDYq8g,128,138,test
+getting a tattoo,0NpocVmAgsw,62,72,test
+braiding hair,0NqpwltBHeA,69,79,test
+unboxing,0NzFiU7FlPY,206,216,test
+climbing a rope,0O5pyUoqOw4,0,10,test
+drinking shots,0OUUELGkl70,280,290,test
+sneezing,0OWjCuvrmSU,6,16,test
+busking,0Og7oznAwRU,7,17,test
+drinking,0Olp45LHRvY,49,59,test
+milking cow,0Op5KJQLfBU,66,76,test
+sweeping floor,0P5vsjtzrWU,0,10,test
+feeding fish,0P9AVLzJpTI,155,165,test
+doing nails,0PVnkFj-Db8,240,250,test
+playing controller,0PfwGgk1-E8,104,114,test
+reading book,0Pg8JF2Jnno,124,134,test
+cutting nails,0Pv-wIva7EQ,5,15,test
+bookbinding,0Q2OlNzSoj4,487,497,test
+country line dancing,0Q2p34ShskU,211,221,test
+spraying,0QEafK0vs4s,1,11,test
+belly dancing,0QHFsMT93_k,178,188,test
+motorcycling,0QRlbRz2cqI,106,116,test
+tapping pen,0QTW_XLSY6A,145,155,test
+breading or breadcrumbing,0QXt2LjMjvQ,101,111,test
+eating spaghetti,0QabMxwX_rI,15,25,test
+presenting weather forecast,0QqDO2-efxM,23,33,test
+passing American football (in game),0R1ubAbs6Z4,5,15,test
+opening present,0R29PElJ8BA,203,213,test
+kicking field goal,0R5ZqkVbpLo,0,10,test
+stretching arm,0RDYvF3uIhg,118,128,test
+reading newspaper,0RG1Car7PGw,4,14,test
+riding or walking with horse,0RL8YjC3Fps,146,156,test
+playing cards,0RMWFqDI6TU,126,136,test
+tap dancing,0RNc78-05dU,30,40,test
+spraying,0RZSizLlFO8,183,193,test
+lunge,0Rolw_b-n74,2,12,test
+blowing glass,0RpLAKOdZuA,221,231,test
+sword fighting,0S4fymrUcyc,7,17,test
+shooting basketball,0SCgEvuCjJQ,12,22,test
+assembling computer,0SdkTQW9hf4,692,702,test
+country line dancing,0Stbj1momXk,77,87,test
+swing dancing,0SzUtp7G7sc,29,39,test
+playing recorder,0T-FCXSz_t8,20,30,test
+washing dishes,0TQ88kyzoQI,37,47,test
+surfing water,0T_PWMC44Dg,59,69,test
+cooking on campfire,0TaPLUORdmw,12,22,test
+playing badminton,0TrApM5INZM,151,161,test
+counting money,0Tz74PH9_DY,6,16,test
+building shed,0U9PAr7rCd4,0,10,test
+cleaning gutters,0UA3O-orwhk,0,10,test
+snowboarding,0UBELcyI5G4,61,71,test
+snowboarding,0Uc55JX32tg,220,230,test
+balloon blowing,0UgFrDWe4vQ,149,159,test
+lunge,0UxevG4xf_M,123,133,test
+climbing tree,0UyhAFudxyQ,29,39,test
+bench pressing,0V16kxBu8rY,3,13,test
+shooting basketball,0V4stf_xKG8,1,11,test
+playing accordion,0Viik7t9biI,7,17,test
+jogging,0VjLcXlxx9k,4,14,test
+crying,0W-hYeC2dC0,138,148,test
+pushing cart,0WCxSStrFEg,0,10,test
+playing ice hockey,0WKCgLGuiAk,3,13,test
+snatch weight lifting,0WPoVFeAp8I,7,17,test
+washing dishes,0WaR_17HkTQ,38,48,test
+grooming horse,0Wcga29D-yc,19,29,test
+tasting food,0WnmgAp4GiI,138,148,test
+high kick,0Wpb7pExwVg,359,369,test
+clean and jerk,0Ws37Vdmkzc,3,13,test
+auctioning,0WzeFbAAJrk,107,117,test
+catching fish,0X4wn_xWTng,120,130,test
+sled dog racing,0XC4QHXefKQ,34,44,test
+waxing back,0XY1VlqaCMg,3,13,test
+making snowman,0Xftz_vSdSE,13,23,test
+bending metal,0XpFfolhpQg,148,158,test
+singing,0Xq4OFEk1oY,369,379,test
+garbage collecting,0Y4Sj_dO3ls,75,85,test
+diving cliff,0Y56l4lw5cI,18,28,test
+tasting beer,0YCZeBKxuZc,934,944,test
+long jump,0YaDL3JWTeU,34,44,test
+tango dancing,0YaUz1ufJAo,23,33,test
+dancing gangnam style,0YabArljBVg,88,98,test
+feeding birds,0Yb8E0Y7Sho,4,14,test
+frying vegetables,0YcSi7BH5Q4,89,99,test
+making a sandwich,0YdmYZ1qnn0,217,227,test
+shaking head,0YhNlD9Z5pw,16,26,test
+juggling soccer ball,0YhtwP8KVhA,0,10,test
+skiing slalom,0YqITtgOH-Q,4491,4501,test
+milking cow,0Z16a49ndFs,2,12,test
+moving furniture,0ZADu9gkTOU,27,37,test
+massaging feet,0Z_oniqpIoE,604,614,test
+swing dancing,0Zf6vjpAVVw,34,44,test
+cleaning pool,0Zu9K3idwI4,22,32,test
+blowing out candles,0Zx_0dbIvfA,1,11,test
+sharpening pencil,0ZyPlJsG-h4,104,114,test
+marching,0_1SnrM91Vo,12,22,test
+blowing leaves,0_OKJvd1X_k,3,13,test
+dunking basketball,0_QQABg2nCo,53,63,test
+yawning,0_SYtoeA1ZU,1,11,test
+eating ice cream,0_T-5C2Ksyo,3,13,test
+pull ups,0_VBxJ4eNlg,2,12,test
+cooking on campfire,0_cmFDZWdOs,26,36,test
+tapping pen,0_foD_3s77Y,15,25,test
+grinding meat,0_gWyoFIDE0,183,193,test
+kicking soccer ball,0_k1lAjuusQ,24,34,test
+breading or breadcrumbing,0_nsTC1561o,155,165,test
+zumba,0_tMEDs_rzM,116,126,test
+tango dancing,0_taQC76Tlo,19,29,test
+singing,0_tiV36Yris,186,196,test
+cleaning gutters,0aKXMr9x7Jc,38,48,test
+kissing,0aORosqpsaU,245,255,test
+snowkiting,0aS6jMyjRAc,118,128,test
+abseiling,0aSlqZT8QmM,48,58,test
+stomping grapes,0axMATe-Cp4,2,12,test
+reading newspaper,0ayiVYkRYHA,3,13,test
+juggling soccer ball,0azbj-pWSgw,203,213,test
+folding paper,0b4ldM0_3ME,22,32,test
+sticking tongue out,0b7v5PKAOuQ,20,30,test
+springboard diving,0bTqP8WFpxo,2,12,test
+riding camel,0bUpw92kf_c,34,44,test
+blowing nose,0bXjaGuxRSU,2,12,test
+tasting food,0biiCGyyCbY,2,12,test
+waxing back,0bjjlsbiTeo,92,102,test
+marching,0bnFPwriOlQ,40,50,test
+air drumming,0bvAyXzp-ek,0,10,test
+snorkeling,0c4ItGOJBwk,40,50,test
+high kick,0cLInUD5NqQ,3,13,test
+clay pottery making,0cMDj9EofyQ,24,34,test
+picking fruit,0caRj9a6GVE,2,12,test
+pumping gas,0cggZ6TwNjI,14,24,test
+jetskiing,0ch8YodVSjE,21,31,test
+using remote controller (not gaming),0coXbHrKgyk,7,17,test
+playing cricket,0cya6jBqIM8,97,107,test
+sharpening pencil,0d2WGXYVJ9o,51,61,test
+spraying,0d5XD9WhEP0,53,63,test
+tapping pen,0d6mInnyN_0,3,13,test
+riding or walking with horse,0dA0hodps6A,104,114,test
+tango dancing,0dIs-dAnXrM,36,46,test
+counting money,0dK1tdMfliA,211,221,test
+skiing (not slalom or crosscountry),0dNnXXSPEfw,195,205,test
+hoverboarding,0dPjHNddhrE,103,113,test
+cheerleading,0dcEoBr5mlY,8,18,test
+parkour,0ddLglJNiGs,1,11,test
+shooting goal (soccer),0dkKCQ6yqZo,379,389,test
+clay pottery making,0doifF0doG4,45,55,test
+moving furniture,0dsqRQyq13A,220,230,test
+playing flute,0e47JpKHBm8,134,144,test
+throwing axe,0e9fMIpCoN0,2,12,test
+doing laundry,0eBHyQzl1M0,31,41,test
+snowmobiling,0eHmzRf_5PQ,35,45,test
+trapezing,0eMMIhiD5jg,356,366,test
+shaking head,0eQlNNWvCOI,1,11,test
+water skiing,0ebj6mFqMM0,6,16,test
+sled dog racing,0ehxWEWey54,53,63,test
+pull ups,0ep0izfSjIY,0,10,test
+folding clothes,0fM_EQIup80,29,39,test
+golf driving,0fXOvf4mEg8,2,12,test
+washing dishes,0fbjjcNruLk,12,22,test
+marching,0fizoPtNbM4,16,26,test
+cartwheeling,0g0SM20C1oI,6,16,test
+zumba,0g1Z0GlCayg,59,69,test
+water sliding,0g2GAJiEcWc,14,24,test
+milking cow,0g6kXJkymE8,71,81,test
+punching person (boxing),0g813Qgrc-M,785,795,test
+unloading truck,0g8MUBwBM_4,2,12,test
+playing badminton,0gHT-iQWl5M,43,53,test
+riding elephant,0gX73vwLTZ8,38,48,test
+pole vault,0g_4sngP_EE,4,14,test
+grooming dog,0glVcDwvXIk,2,12,test
+diving cliff,0gqQKB_LwDM,71,81,test
+stretching arm,0gqT6pLgrnA,10,20,test
+garbage collecting,0gsLHz1zn3U,3,13,test
+carrying baby,0h-QqZms9Qw,155,165,test
+paragliding,0h2sBd30Drg,81,91,test
+pumping fist,0hJESK4Wy5Y,1,11,test
+hurling (sport),0he8OF8AfK4,335,345,test
+singing,0hh_oVoutFs,2,12,test
+swing dancing,0hhe2_HGakk,56,66,test
+crying,0hlWkkjLWhI,56,66,test
+jumping into pool,0hllvppI8sk,0,10,test
+egg hunting,0htl0JoIvsw,99,109,test
+mowing lawn,0hu29nUZELQ,1,11,test
+egg hunting,0huMOxaAC7o,19,29,test
+cheerleading,0hz5X1SVWr0,1,11,test
+throwing ball,0i-PCYbIoPU,36,46,test
+cheerleading,0i0mXPIzNVc,8,18,test
+vault,0i126pbFjes,4,14,test
+petting cat,0i1X-DnjxWQ,2,12,test
+stretching arm,0i49n87gpic,18,28,test
+waiting in line,0iHz55cL8vw,28,38,test
+whistling,0icJ-REfKGs,100,110,test
+using segway,0ijQEoHumiU,19,29,test
+jetskiing,0iqBa4tN53I,15,25,test
+skateboarding,0iuC9AYmCQo,126,136,test
+blowing leaves,0j1Am95dxC8,3,13,test
+catching or throwing frisbee,0j3lB2JfK_c,0,10,test
+applauding,0j5W1XeV43U,2,12,test
+feeding birds,0jBLYkwVtlg,15,25,test
+petting cat,0jHO_hrhhJ0,60,70,test
+snatch weight lifting,0jJ6Qcw-sRc,15,25,test
+dancing charleston,0jVEoopTP00,17,27,test
+cooking chicken,0jVKCRryoHk,348,358,test
+cooking egg,0jphj5Jncis,68,78,test
+grinding meat,0k4iB49I9A0,76,86,test
+massaging feet,0k7cvnde_bE,26,36,test
+picking fruit,0kAafJxLMQ0,200,210,test
+jogging,0kH2Y6aWE18,35,45,test
+busking,0kPGYXL5zLg,18,28,test
+surfing water,0kqTciFRiJE,141,151,test
+drinking shots,0kr0qmjROh8,2,12,test
+doing aerobics,0ks5Pi7SxYM,349,359,test
+tango dancing,0l-ZViAiQF4,67,77,test
+reading newspaper,0l2lrYMxMuk,9,19,test
+canoeing or kayaking,0l7He6JmyLc,1,11,test
+moving furniture,0lYab5fw0tk,41,51,test
+faceplanting,0lg0_CVvLGU,10,20,test
+eating spaghetti,0ligcMU30Ow,25,35,test
+dancing gangnam style,0lu_Fwcy-Ro,3,13,test
+cleaning floor,0lxEJEaM0h8,38,48,test
+washing hair,0lxYOlITMqg,3,13,test
+laying bricks,0m4NI53fSzM,190,200,test
+eating spaghetti,0mLoZ1QRqzE,56,66,test
+shaking head,0mYnRW4Pzto,12,22,test
+exercising arm,0mp3gm2Jpqs,9,19,test
+vault,0mtALdS5LCY,5,15,test
+waiting in line,0mwBpUpA0lg,11,21,test
+playing tennis,0mxenNO4xIg,29,39,test
+playing clarinet,0nE03ePMHI8,29,39,test
+pumping fist,0nLH52UNKhw,0,10,test
+playing saxophone,0nqVhg_W8Ow,209,219,test
+using remote controller (not gaming),0nshdFqJdEY,47,57,test
+swinging on something,0ntvfIviQnY,21,31,test
+playing xylophone,0nvZlyGIhbA,172,182,test
+playing guitar,0oI3Xm0zg-o,67,77,test
+ski jumping,0oJO7m914dM,7,17,test
+tap dancing,0oMQFAurqK4,60,70,test
+gargling,0ohY0YeRqnk,54,64,test
+cleaning gutters,0olYoiyaE-s,88,98,test
+carrying baby,0oxwwQB6kMo,20,30,test
+sticking tongue out,0oytF8MkCUQ,13,23,test
+long jump,0pGfr64EZcI,1062,1072,test
+shoveling snow,0pPveLvxNOM,38,48,test
+swinging on something,0pQiWMghy3Y,0,10,test
+faceplanting,0pSPl84gZqE,46,56,test
+drumming fingers,0pVZ0am_KoI,135,145,test
+tango dancing,0pZ0W7iQ9dM,3,13,test
+riding unicycle,0pe8SgWUp74,49,59,test
+slacklining,0phrD5TeNPE,14,24,test
+long jump,0piAsleJ72g,3,13,test
+cutting pineapple,0pktEPmwS0s,366,376,test
+clay pottery making,0pr1oBJqnxk,22,32,test
+balloon blowing,0puIOKy4jTE,6,16,test
+playing saxophone,0q1c6APn11c,43,53,test
+high kick,0q98T4L37fE,24,34,test
+hockey stop,0qLw2VQ5wgA,69,79,test
+playing cricket,0qr0UeFJAXA,26,36,test
+eating burger,0qx2yYGDOig,3,13,test
+crying,0r3lFDKUXgI,8,18,test
+waxing back,0r4DbBOOa_4,298,308,test
+slapping,0r89PP_loN8,6,16,test
+mopping floor,0rGYftNHe0I,3,13,test
+tying bow tie,0rYhU3C8v-Q,52,62,test
+feeding goats,0rtGkqpm7qc,4,14,test
+biking through snow,0rtK0GKkkcA,4,14,test
+skydiving,0sW0p_dRKLA,26,36,test
+playing chess,0sYUuNcIwKE,147,157,test
+tap dancing,0so1jmNGlC4,165,175,test
+bee keeping,0soD8Efj_DQ,59,69,test
+petting cat,0spjPGFgHQE,7,17,test
+lunge,0t7xruUYBE4,306,316,test
+shining shoes,0tT5nqpjatI,13,23,test
+dining,0tTGBCCL8j0,60,70,test
+smoking hookah,0tmB7smM2FQ,31,41,test
+welding,0u3FcRRl3_Q,0,10,test
+sailing,0uJkF9X-NRg,10,20,test
+bench pressing,0uPhdEadlIg,427,437,test
+catching or throwing baseball,0ue4lWWKYCE,1,11,test
+long jump,0ug8QzhesOw,3,13,test
+side kick,0ug8d5LowF0,1,11,test
+shot put,0uhHtEYtwM4,9,19,test
+gargling,0uiH2_GVFpA,4,14,test
+roller skating,0usmuDUYIj8,6,16,test
+washing hands,0v3kfsBmBhc,4,14,test
+building shed,0v8CGpILoUI,82,92,test
+eating cake,0vBGQkI_hmo,107,117,test
+testifying,0vC4TIijxzE,287,297,test
+snowmobiling,0vJAFezLPhI,21,31,test
+walking the dog,0vhwiO66Tig,17,27,test
+building shed,0vn-TZAm6FQ,21,31,test
+using remote controller (not gaming),0vy5wQxZnsw,296,306,test
+grooming horse,0w0nNF5L62o,27,37,test
+massaging back,0w1y1oMEY58,167,177,test
+busking,0wHhNDjTUYo,39,49,test
+flying kite,0wIbdBnfiBo,54,64,test
+salsa dancing,0wPLaDPfcuY,3,13,test
+eating ice cream,0wW0p7elXJ0,0,10,test
+brush painting,0wd1uXVuYRE,25,35,test
+high kick,0wddyCGKafY,45,55,test
+tying bow tie,0wgWhxzbZb8,245,255,test
+playing controller,0wjBURrbTV4,60,70,test
+cleaning gutters,0x19AOxuBaE,84,94,test
+juggling soccer ball,0x9C9vMtxD4,127,137,test
+catching or throwing baseball,0xJh6I7J3CU,3,13,test
+crossing river,0xPY4YhnwBk,2,12,test
+tapping guitar,0xVVOEDAKh4,517,527,test
+skydiving,0xijmQ8GsZk,3,13,test
+watering plants,0xivqBUY2AM,0,10,test
+shooting goal (soccer),0xjZMjSgSyo,2,12,test
+abseiling,0xreS8KFbrw,417,427,test
+folding clothes,0xz8aSJdRPc,1,11,test
+walking the dog,0y0TrAHeHNo,240,250,test
+fixing hair,0y35qvIv7QI,69,79,test
+slacklining,0y8C7paKEBQ,581,591,test
+extinguishing fire,0yQLIlIetDM,94,104,test
+fixing hair,0ybdAFMWX3E,1,11,test
+playing organ,0ygbcm02tLs,2,12,test
+playing guitar,0ykJLOQmDnU,210,220,test
+using remote controller (not gaming),0ynESoEIIGs,41,51,test
+auctioning,0ys07aeoJj4,146,156,test
+reading newspaper,0yvTW_YozvY,132,142,test
+skydiving,0yxO4rB56ZQ,67,77,test
+flipping pancake,0zM4uNeGHCw,6,16,test
+stretching leg,0zhxmF-4sns,26,36,test
+playing monopoly,0zkdTG6r-DI,24,34,test
+surfing water,0znABGXo0Mc,175,185,test
+exercising with an exercise ball,0zzQqETJdi8,24,34,test
+making bed,1-2nnzqlsdc,16,26,test
+throwing ball,1-G_YTg-XcU,3,13,test
+spray painting,1-LjauzTMxo,340,350,test
+cutting nails,1-TE1k-bj9k,69,79,test
+roller skating,1-Y38nlC1Ew,1,11,test
+breakdancing,1-Yd3Py976w,7,17,test
+passing American football (in game),1-YryqxsqAQ,18,28,test
+playing badminton,1-a97oHr0ok,43,53,test
+welding,1-oFAwjgBP8,160,170,test
+salsa dancing,1048ArCioEw,248,258,test
+frying vegetables,107S76vCYr8,158,168,test
+laughing,10Lya0LR8gE,35,45,test
+singing,10j6-iaVcYE,100,110,test
+trimming trees,10vDUrlQwAo,71,81,test
+playing keyboard,11OoEpAt05c,4,14,test
+swimming backstroke,11ak7MOIROI,50,60,test
+catching or throwing baseball,11f-F5Mgikw,17,27,test
+passing American football (not in game),11j1UxT40Tk,3,13,test
+doing laundry,11j650YgDqA,79,89,test
+getting a tattoo,11l9ycTvuyI,0,10,test
+bobsledding,11pSHqCzIUI,3,13,test
+snowkiting,11rLwk1LMP0,133,143,test
+punching person (boxing),11spaUUpuOM,285,295,test
+making a sandwich,11voECUIkww,0,10,test
+bouncing on trampoline,11yiM8-DpwI,22,32,test
+passing American football (in game),12C2ODerT7I,2,12,test
+playing drums,12C_CQa1E9s,97,107,test
+cleaning windows,12OwZCQDtow,158,168,test
+stretching leg,12PkVvvdm84,1,11,test
+waxing chest,12Ub2IV5XaE,1230,1240,test
+high kick,12c6-brPWSo,27,37,test
+reading newspaper,12cRu0708dk,0,10,test
+passing American football (in game),12ynsltWoSE,0,10,test
+driving tractor,131tYM6DVzQ,131,141,test
+chopping wood,13IIkkkY-oQ,0,10,test
+making snowman,13Nr7KV8BBQ,0,10,test
+sharpening pencil,13QnV9YMYf0,20,30,test
+tasting beer,13rdutqRfHA,32,42,test
+country line dancing,142MeeyvcT8,17,27,test
+parasailing,144sdHqfWLc,420,430,test
+wrestling,145Bo-XkigU,10,20,test
+wrestling,1493rym-xBo,576,586,test
+jetskiing,14AcigeuJ3s,34,44,test
+trapezing,14BvIG8zEzs,1,11,test
+parkour,14I0TkuVDoI,18,28,test
+playing kickball,14Z2DC05cIg,19,29,test
+wrapping present,14ZQYMvwD04,1051,1061,test
+strumming guitar,14c5vPnu-Zk,3,13,test
+skiing crosscountry,156xthDE5zY,41,51,test
+tickling,15EFgyI_Ykc,60,70,test
+changing wheel,15IJyjh9ZQU,75,85,test
+beatboxing,15LQRBB1R1w,1,11,test
+carving pumpkin,15e85xRb6Nk,3,13,test
+faceplanting,15gt3SB-SfQ,4,14,test
+pull ups,15ypy7AMAsc,11,21,test
+climbing a rope,163u7ekawTY,4,14,test
+tying bow tie,164t1qL_uh8,71,81,test
+swimming butterfly stroke,16DuCTaAS9o,9,19,test
+clay pottery making,16PBTO6mjRA,72,82,test
+throwing discus,16gvYWZ5pjQ,0,10,test
+cooking sausages,16ot8-JP9Hs,281,291,test
+changing oil,177vp6HWqg4,78,88,test
+balloon blowing,178nlUMIuMg,0,10,test
+clapping,179M7qYa7Oo,55,65,test
+playing bass guitar,17G1DD6Z9Wc,286,296,test
+slapping,17MG4c3Fjek,2,12,test
+climbing a rope,17X0BUsQHY8,1,11,test
+contact juggling,17eMbQmjjN4,31,41,test
+riding a bike,17epYD2p0H4,11,21,test
+reading book,17w9fTxLHas,24,34,test
+javelin throw,17wjbvzPw8c,2,12,test
+waxing legs,189gd5wJlig,255,265,test
+diving cliff,189vdl0iKig,145,155,test
+making sushi,18Gutu_lsas,58,68,test
+texting,18REigE2N3g,117,127,test
+reading book,18yBGuGGeUM,53,63,test
+spray painting,1989jq9vto4,61,71,test
+singing,19IAAePdsR8,6,16,test
+playing trumpet,19Ic8so1fQg,14,24,test
+using computer,19WIm6qkRp8,0,10,test
+shaving legs,19WoFBh_Sys,23,33,test
+feeding goats,19ay-EKXC8Q,10,20,test
+checking tires,19ir3GudYBM,23,33,test
+juggling soccer ball,19jU9k3g0ao,23,33,test
+finger snapping,19xXExyzZRo,0,10,test
+shooting basketball,19y3w2QZP5M,0,10,test
+abseiling,1AANT7fHUbo,83,93,test
+swimming breast stroke,1AD6ltFmiaI,4,14,test
+marching,1AIYqSGUpKI,2,12,test
+bartending,1AP1AEInW8U,393,403,test
+tying knot (not on a tie),1APLef84nuc,326,336,test
+hitting baseball,1Ae12R0Xp3s,12,22,test
+air drumming,1B7lpxWnIME,2,12,test
+wrapping present,1BDSqOVwlkE,1,11,test
+jumpstyle dancing,1BJKGFBluqY,74,84,test
+drumming fingers,1BY-vX-Skeo,0,10,test
+making pizza,1BeuGk8q_to,231,241,test
+using remote controller (not gaming),1BimkdObkAM,16,26,test
+eating hotdog,1BqRb0ua7Nw,22,32,test
+playing bass guitar,1BvWkhVLx4k,22,32,test
+cleaning windows,1C455Fyvikc,28,38,test
+pushing cart,1C4vG-FncVs,197,207,test
+arranging flowers,1C5WeR-U6Ak,301,311,test
+stretching arm,1C5ZtTcWKpA,2,12,test
+skiing (not slalom or crosscountry),1COxRCk1xV8,5,15,test
+salsa dancing,1CYWw1TvrGs,185,195,test
+tasting beer,1Cel0DFa4uI,110,120,test
+skiing slalom,1Ciskh9usLU,189,199,test
+holding snake,1Cxu2N5mZiY,129,139,test
+climbing ladder,1D0alSEXDL0,19,29,test
+rock scissors paper,1D5LRYvCDRg,34,44,test
+high jump,1D8odouUJcE,92,102,test
+walking the dog,1DGJKC9emww,21,31,test
+kitesurfing,1DQAQ1G5YHg,1,11,test
+applying cream,1Dc22_ThPXA,56,66,test
+pushing cart,1Dn_sRhm1aI,2,12,test
+cooking egg,1Dv4_5y6a18,66,76,test
+long jump,1Dzi_DYGkcM,2,12,test
+shaking head,1DzvlrKhmZI,2,12,test
+cleaning pool,1E-haPrexzw,3,13,test
+cleaning gutters,1E2aZhywRJg,54,64,test
+carrying baby,1E9pm6UwrYU,34,44,test
+throwing axe,1ERsB4zgg7E,2,12,test
+playing organ,1EUjMJXtT5s,17,27,test
+testifying,1EXuHLxR90c,61,71,test
+parasailing,1EZ6kz9KC1w,31,41,test
+capoeira,1EgWpwDwH40,124,134,test
+bungee jumping,1EhBPgjForc,36,46,test
+snowmobiling,1EhQ5TtUsxQ,98,108,test
+eating hotdog,1Esr03jxLsE,40,50,test
+digging,1EwsD2zJfgc,38,48,test
+washing hands,1F81EC1_ZXU,20,30,test
+clay pottery making,1F8o8y9vR2U,58,68,test
+playing ukulele,1FiUFXERjck,135,145,test
+pole vault,1GASMTK81rU,22,32,test
+catching or throwing softball,1GELPHkTar8,2,12,test
+doing nails,1GGg-jm0eSA,27,37,test
+eating ice cream,1GLTVtXhhSA,34,44,test
+milking cow,1GWpGKRtFlk,2,12,test
+high kick,1G_WtE5QtWA,3,13,test
+bobsledding,1GiLHpM-KH8,213,223,test
+jetskiing,1GobAHimnfA,34,44,test
+clapping,1GtOlaS7Wzc,23,33,test
+brushing hair,1Gv9g3-9DgE,714,724,test
+country line dancing,1Gx5Y3ULWJo,168,178,test
+playing violin,1H4Mx998ths,168,178,test
+playing badminton,1HEgihY-znw,217,227,test
+extinguishing fire,1HYyqWrcyvw,48,58,test
+petting animal (not cat),1Ha0zuKzQyA,23,33,test
+tasting food,1Hih0lS2g2Y,561,571,test
+making jewelry,1HjQzcEOmZk,56,66,test
+yoga,1Hl2wnJjwo8,54,64,test
+applying cream,1HltV1oEXIk,28,38,test
+playing badminton,1HnXZn26hXA,42,52,test
+playing bass guitar,1IEyQ0YheH0,18,28,test
+pumping gas,1INqPUZx2r8,26,36,test
+motorcycling,1IPYsvxFdT4,192,202,test
+getting a haircut,1IbkFHNA7fg,36,46,test
+washing dishes,1IglfirR2GU,3,13,test
+making sushi,1IgvmDNZ5Qo,54,64,test
+hurling (sport),1Ijs9haKOdc,14,24,test
+recording music,1IkU3vd81RM,489,499,test
+triple jump,1IrzZ0TDEgY,15,25,test
+drumming fingers,1J2cFx0Krmo,10,20,test
+parkour,1JFAWaU_Wr0,0,10,test
+squat,1JFu6SZvFJM,31,41,test
+catching or throwing frisbee,1JOhN5wdEuo,9,19,test
+playing volleyball,1JY1puOURBg,326,336,test
+front raises,1Jc5k0NbLtg,10,20,test
+sweeping floor,1JdtpbCnYus,11,21,test
+dying hair,1Jg40E8_YKo,101,111,test
+riding mountain bike,1JrttG2cNIQ,109,119,test
+baking cookies,1K1jd5c63VI,88,98,test
+playing cello,1K2p-dyx3SE,71,81,test
+watering plants,1K7xaYRXXEk,8,18,test
+massaging back,1KDU3zY3ADU,194,204,test
+stomping grapes,1KDhttheBQg,128,138,test
+dancing gangnam style,1KJdjUtt7b4,5,15,test
+trimming or shaving beard,1KMRF7mzpnk,46,56,test
+cleaning floor,1KOfQNoUM6I,264,274,test
+doing nails,1KbsKVfBBRU,238,248,test
+making tea,1KkUHA1SetA,78,88,test
+checking tires,1L0Vs6l8Xpc,3,13,test
+tossing coin,1L7BV-UiaKw,32,42,test
+sled dog racing,1L81eqIDKfE,14,24,test
+parasailing,1LN7BRjA7gM,2,12,test
+paragliding,1LRoM6uXsJ4,341,351,test
+changing wheel,1LV673NSIzU,116,126,test
+milking cow,1LWDgv3HqBo,6,16,test
+answering questions,1LWUlv7twOg,57,67,test
+playing organ,1LdLHW4CTTw,48,58,test
+washing dishes,1M4Wa-PFQHs,96,106,test
+building cabinet,1M891QG1x3U,277,287,test
+swinging legs,1MB2E1uchEM,15,25,test
+stretching arm,1MIpoga5imI,75,85,test
+exercising with an exercise ball,1MOmydfbY2o,54,64,test
+cutting watermelon,1MRCSNIlKHE,9,19,test
+chopping wood,1MfnMW_EnQw,2,12,test
+gymnastics tumbling,1MqAHgtWR0E,2,12,test
+krumping,1N6knABzoS0,53,63,test
+trapezing,1N6nou7X2yc,16,26,test
+playing poker,1N8p8cdK6fY,61,71,test
+cleaning floor,1NJzshbZqH8,55,65,test
+tap dancing,1NLdVJXpHFA,6,16,test
+swing dancing,1NjhcQ1ehl4,12,22,test
+unboxing,1NksImP_YFk,105,115,test
+grinding meat,1NttrBc4Cd0,25,35,test
+skiing crosscountry,1O9YEO3Iw7A,523,533,test
+playing accordion,1OH7U-sEwxQ,31,41,test
+cheerleading,1OVY3QLS2ZM,162,172,test
+crawling baby,1OveBAPWC_o,39,49,test
+skiing slalom,1PJf-G9OWC0,3,13,test
+blowing leaves,1P_y_DLlg-E,8,18,test
+drinking beer,1Pwniz2rgQ0,558,568,test
+drumming fingers,1Q-bzMiwgik,121,131,test
+waxing legs,1QAEWlC5jGo,17,27,test
+water skiing,1QF1x7RqJjg,3,13,test
+punching bag,1QVEw8wIPbw,3,13,test
+making sushi,1Qd6SEAhmvM,68,78,test
+eating burger,1QjO3xDvNUY,429,439,test
+news anchoring,1QoZJMYDPio,26,36,test
+punching person (boxing),1Qy-sU2-M4A,70,80,test
+sharpening pencil,1RBfjHTF3BY,4,14,test
+fixing hair,1RPMJLJSAPI,1,11,test
+canoeing or kayaking,1Rf3GCL3QL4,49,59,test
+laying bricks,1RhFAK64tlQ,320,330,test
+news anchoring,1S-ZW3Ild60,4,14,test
+eating hotdog,1S0uilaMAw0,12,22,test
+tying tie,1S9F7ypjJmc,179,189,test
+bending metal,1SfsR-96f5U,406,416,test
+eating doughnuts,1SgJj0ch5Zo,16,26,test
+waxing eyebrows,1SphKGmEN84,126,136,test
+skiing slalom,1T0BtPF9QxA,256,266,test
+folding napkins,1T1gJbti4II,0,10,test
+fixing hair,1TItOYu2ugM,4,14,test
+surfing crowd,1TWdfP13jho,4,14,test
+playing tennis,1T_HmkwFHCQ,0,10,test
+playing bass guitar,1TgozNFNZyM,240,250,test
+swinging on something,1TiI3q3eU9I,3,13,test
+surfing crowd,1TotiwAZvrI,242,252,test
+tapping guitar,1Tpm8U32m4c,45,55,test
+giving or receiving award,1U-m7V8Hiww,11,21,test
+training dog,1U6NFJ2Yp68,68,78,test
+applauding,1UFInambKvY,3,13,test
+juggling soccer ball,1UIFD5TLnBo,7,17,test
+mowing lawn,1UWNHqP9Eas,73,83,test
+air drumming,1UfPEFVMPsg,4,14,test
+playing bagpipes,1UfiV7Sk9hU,34,44,test
+blowing leaves,1UqVaZCy8gU,28,38,test
+playing ukulele,1Us2RKNJJ7M,61,71,test
+hula hooping,1UwuBRvqufA,34,44,test
+ripping paper,1UyI_ibCKWY,904,914,test
+trimming trees,1V10xE5s9d4,0,10,test
+digging,1VB6jn9_WjU,62,72,test
+riding unicycle,1VDfWWUkOW8,84,94,test
+jumpstyle dancing,1VF8cUrbi2w,49,59,test
+parkour,1VKNAuQ-M6c,87,97,test
+stretching arm,1VNqUv7ChYI,28,38,test
+getting a haircut,1VkXX8YSb4w,120,130,test
+hugging,1VlLWTkNFdE,11,21,test
+slacklining,1Vsgxb7cCJ0,548,558,test
+spinning poi,1VyyeKbEr5s,141,151,test
+flying kite,1WC1xyUvVFY,13,23,test
+tossing salad,1WFeoRDpyoI,77,87,test
+dying hair,1WHWA79aRko,329,339,test
+playing saxophone,1Wi0spEZAa8,2,12,test
+playing poker,1WoJ1Hzcyj0,22,32,test
+scrambling eggs,1WqJxcPjN60,24,34,test
+garbage collecting,1WqrLAE7VZw,471,481,test
+playing violin,1XQpazerQ8w,56,66,test
+tossing salad,1XaT9xYP6b0,335,345,test
+jumpstyle dancing,1Xg2p28x4ik,22,32,test
+eating spaghetti,1XlSEPdHd5c,0,10,test
+knitting,1XoUepp-6TI,0,10,test
+ice climbing,1XvD0NFUWJw,323,333,test
+tying bow tie,1Y-dvwet9m4,21,31,test
+playing piano,1Y3yynzu3vc,20,30,test
+milking cow,1Y3zuXvwXvc,24,34,test
+front raises,1Y4V9NeqzOU,5,15,test
+javelin throw,1Y6s63HDBe0,2,12,test
+sharpening pencil,1YKivfJR6lg,63,73,test
+slacklining,1YLVxhXbRaU,4,14,test
+robot dancing,1Yd1cBWSAT8,195,205,test
+celebrating,1YnotEzjfDo,197,207,test
+washing feet,1YwUmEA6juM,341,351,test
+making snowman,1Z2HIracAi4,189,199,test
+playing didgeridoo,1Z5EfwDP5c4,62,72,test
+catching or throwing frisbee,1Z8I-955rfE,2,12,test
+sniffing,1ZcqubiAyO8,19,29,test
+throwing ball,1ZmrFaI7G6c,0,10,test
+crawling baby,1Zqg36cXblk,96,106,test
+tasting beer,1ZwMpYj4UDM,223,233,test
+riding unicycle,1_9m4zYtqRM,14,24,test
+playing trombone,1_HMsSmb9AE,86,96,test
+gargling,1_PiNdPt6RU,0,10,test
+snorkeling,1_YdSU1ryJ0,8,18,test
+sweeping floor,1_ZBBM48YwU,3,13,test
+setting table,1__C_-NTpIQ,152,162,test
+counting money,1_mtBmWRckI,17,27,test
+golf driving,1_nWnkOXt58,9,19,test
+tying knot (not on a tie),1_pmhFX1-dg,255,265,test
+decorating the christmas tree,1a-xVr1L_is,120,130,test
+jetskiing,1a7jWgW_0As,402,412,test
+waxing legs,1aBN1BNvKfI,7,17,test
+recording music,1abp6DBNOsQ,1,11,test
+playing violin,1aibdfwIU58,30,40,test
+skiing crosscountry,1aoYKtn1nIE,45,55,test
+bandaging,1asSfcxQsgM,9,19,test
+catching or throwing softball,1aufUc8dmfo,27,37,test
+clapping,1b1ExQtYn8A,75,85,test
+dancing macarena,1b1MbeNO7lg,114,124,test
+paragliding,1bBFFMRMS6k,2,12,test
+tai chi,1bH2GsP9clA,4,14,test
+singing,1bIgBb_WG7c,195,205,test
+side kick,1b_I5rNsieo,4,14,test
+drumming fingers,1bbtrysEjBg,10,20,test
+blowing nose,1btaIKzzh-8,22,32,test
+baby waking up,1bvqkiUIeYI,4,14,test
+trapezing,1bxIsFHTdJk,1,11,test
+extinguishing fire,1cKSPi_G3aw,31,41,test
+sweeping floor,1cTSRL4tZPs,59,69,test
+catching fish,1cVojvGcbJk,267,277,test
+pull ups,1cZ2I-8DR-Q,4,14,test
+recording music,1cjf7JRynzs,95,105,test
+counting money,1ckv6vZNANU,7,17,test
+playing poker,1csfxndySug,58,68,test
+breading or breadcrumbing,1d0yLhD9sIE,397,407,test
+balloon blowing,1dEccb97aiM,36,46,test
+crying,1dKstzDdXgQ,73,83,test
+headbanging,1dfXFbGAemo,0,10,test
+surfing crowd,1dhmNth9LKA,8,18,test
+catching or throwing baseball,1djOC-AzCG8,0,10,test
+hammer throw,1dj_ZZi6_ng,20,30,test
+sharpening pencil,1dmedSJHpv0,3,13,test
+trapezing,1e0ss2JoJwY,3,13,test
+playing organ,1e1OT72dgaA,267,277,test
+dancing gangnam style,1e9Qet0qudc,27,37,test
+stretching arm,1eRKwHATcmE,193,203,test
+climbing tree,1ebdMEnBwpM,0,10,test
+reading newspaper,1eglcPGJKoA,15,25,test
+ice fishing,1el0it8gRMI,93,103,test
+krumping,1eoGxqgAQyc,126,136,test
+arranging flowers,1epikZrZGck,280,290,test
+playing harp,1esObF7thb0,19,29,test
+sanding floor,1etAUK4w5ng,88,98,test
+testifying,1ey8M-eib-Y,53,63,test
+rock climbing,1eyGF8mfNQw,194,204,test
+news anchoring,1ezcJ3Sxkzs,0,10,test
+swimming butterfly stroke,1fGhiEXT8pc,17,27,test
+headbanging,1fNyrd8wAyo,1,11,test
+washing feet,1fQEFB5jLdM,1614,1624,test
+playing volleyball,1fQccT5Ckqk,40,50,test
+kicking soccer ball,1fXyGYA7z7M,28,38,test
+playing organ,1fYlqjTVhcs,304,314,test
+hugging,1fb0JoG90K0,54,64,test
+riding camel,1flO0_3ca0o,39,49,test
+tying tie,1fwiqtfIDjs,3,13,test
+extinguishing fire,1g-04CIRCKo,354,364,test
+skiing crosscountry,1g1AuXKREqY,170,180,test
+grooming dog,1g58eXvVmPc,31,41,test
+playing bass guitar,1g8CQKRKgXU,4,14,test
+playing cymbals,1gVbdogJ6FA,137,147,test
+breakdancing,1gk6SXx6gww,53,63,test
+cooking egg,1gloQRwGxIk,129,139,test
+playing volleyball,1gngvRHTefw,0,10,test
+writing,1gtXjEJfHYY,201,211,test
+waiting in line,1gxymSU9E0Y,77,87,test
+laying bricks,1h16FujgS6U,33,43,test
+grooming dog,1h8j-9wRLcY,148,158,test
+arranging flowers,1hChVGcLiYU,9,19,test
+folding clothes,1hE8ajn6N8o,4,14,test
+pumping fist,1hIqyLUE0NA,0,10,test
+opening bottle,1hQoQQ5XYjw,101,111,test
+sled dog racing,1habnDjBc0g,33,43,test
+drop kicking,1hlj7QlFeH8,0,10,test
+jogging,1hnKlUAiyvE,41,51,test
+waxing chest,1hp__4Jun9Q,209,219,test
+laying bricks,1i7ZOkOVpbA,69,79,test
+unloading truck,1iB2jvjvvzY,2,12,test
+dancing charleston,1iE2wXCA0qQ,47,57,test
+sticking tongue out,1iUvdkKPNJs,37,47,test
+rock climbing,1iaidR_ldf8,11,21,test
+playing saxophone,1ivOgq1b_VY,64,74,test
+drinking,1iz3UTeecZk,0,10,test
+playing saxophone,1j5MMfbQqp8,10,20,test
+hammer throw,1jCRF7lxV-E,1,11,test
+cheerleading,1jGIC6iWlqI,111,121,test
+dodgeball,1jN3PoIp2kw,12,22,test
+brush painting,1jOXEvzosVk,28,38,test
+playing harp,1jT9Xb2eOhw,20,30,test
+riding mountain bike,1jVHrS-jsF8,15,25,test
+playing trombone,1jYAtfpg8p4,10,20,test
+hockey stop,1jg1kkXYP5s,36,46,test
+pushing wheelchair,1jiVyolq2sU,0,10,test
+throwing axe,1k_0CVrpdV4,37,47,test
+sharpening pencil,1kcDDs5VGUw,21,31,test
+doing laundry,1ke3pdEKNP4,44,54,test
+hockey stop,1krdXl0lcEA,0,10,test
+paragliding,1l0_XbnzFD0,67,77,test
+smoking hookah,1lNgXvQxuXw,85,95,test
+bartending,1lO0gPJYoms,12,22,test
+playing paintball,1lUDZ_mGsTc,324,334,test
+jogging,1lUWAliliHI,1,11,test
+skateboarding,1lWi7co9JBk,58,68,test
+exercising with an exercise ball,1ldMMMNeEE0,52,62,test
+cleaning pool,1lkdyz6ZRNM,8,18,test
+answering questions,1lzsnmuLZzo,45,55,test
+playing piano,1lztLegtDLo,10,20,test
+playing piano,1m-9CAxnsys,175,185,test
+arm wrestling,1mCdFmhS4eI,1,11,test
+punching bag,1mGL2AXpdaM,2,12,test
+wrapping present,1mJbRuYjPDI,342,352,test
+applying cream,1mQ3d5npmoY,226,236,test
+blasting sand,1mUkyp3kF_k,18,28,test
+using segway,1me5Lq3YUak,245,255,test
+making sushi,1mfxP0E_9XQ,20,30,test
+weaving basket,1mpfJP2cO6A,1,11,test
+riding scooter,1mx-M5Dp-pM,33,43,test
+skydiving,1nDLwRQdMWk,13,23,test
+punching bag,1nNepkhI_XI,6,16,test
+grooming horse,1ni7jQ63uJo,170,180,test
+texting,1nsFsSUYedQ,7,17,test
+bouncing on trampoline,1o-7jhVIn-U,1,11,test
+washing hair,1o2qm7XVyZk,0,10,test
+hopscotch,1o3EA7zDER4,19,29,test
+swinging on something,1o5aC5-rwI4,49,59,test
+blasting sand,1oLzc8GaLy8,29,39,test
+golf driving,1oOHA06tqhs,4,14,test
+digging,1ocS1NHyKO0,12,22,test
+cleaning windows,1ocZj8gr2_o,80,90,test
+ice climbing,1otKdyQWU4k,31,41,test
+breakdancing,1ouIOTrmUUo,113,123,test
+cutting watermelon,1owewahHC1o,9,19,test
+diving cliff,1p8Ohx-zgeU,23,33,test
+cooking egg,1pB9Xgo_nHM,82,92,test
+pumping fist,1pIxluueWQ0,3,13,test
+skateboarding,1pMpgV-y-xA,5,15,test
+opening bottle,1pTuXnNmYU4,0,10,test
+stomping grapes,1phTtfe-arE,27,37,test
+breading or breadcrumbing,1pj0MG30yls,367,377,test
+eating carrots,1pjQyXCKPMo,58,68,test
+spraying,1q6YZsK4je8,382,392,test
+dancing charleston,1q78VQqIUbI,203,213,test
+doing nails,1q8q-mtAj_0,9,19,test
+catching or throwing baseball,1qHOUcwG9QY,0,10,test
+training dog,1qJGeFLWPDc,0,10,test
+tasting food,1qJoMiWp6VE,40,50,test
+drop kicking,1qUP89weHxg,4,14,test
+bartending,1qUb1VciOa4,275,285,test
+weaving basket,1qZEGdGwW_o,131,141,test
+riding unicycle,1qej0Q7q6xM,1,11,test
+punching bag,1qfoi-hM73g,86,96,test
+dunking basketball,1qtvoFycTVw,18,28,test
+sharpening knives,1r9D2ksx40E,249,259,test
+bobsledding,1rILxiq_c2E,72,82,test
+running on treadmill,1rINUsPruoQ,14,24,test
+giving or receiving award,1rJcNGqBSGQ,19,29,test
+bartending,1rJlY3THxWE,103,113,test
+unloading truck,1rWMhqhkpt4,1,11,test
+weaving basket,1rcyDNvRFy4,516,526,test
+blowing leaves,1rf7t4sYtIA,11,21,test
+stretching arm,1rkONf6TKGo,4,14,test
+hockey stop,1ruI5GExxFE,1,11,test
+eating watermelon,1ry9dJLCcCI,25,35,test
+folding napkins,1s-BsMf-ov8,145,155,test
+cutting pineapple,1s3k0bz-yr8,7,17,test
+making pizza,1s4gh2PRqUA,144,154,test
+changing oil,1sEOU7AZjbU,61,71,test
+jogging,1sLOq0Nyb_s,330,340,test
+krumping,1sNC2Cyg1lU,130,140,test
+pumping gas,1safhwBj4l4,26,36,test
+skipping rope,1scjpxusQx0,145,155,test
+hoverboarding,1seP0oLsrJY,143,153,test
+biking through snow,1si6JlMn9bY,100,110,test
+riding unicycle,1stazRiYfSQ,33,43,test
+shearing sheep,1t-AOtdEZgs,161,171,test
+applauding,1tKXMA4mGj0,6,16,test
+headbutting,1tQY83DgYY0,2,12,test
+welding,1ta1cvUldHo,136,146,test
+riding camel,1tsmMI_tsY0,4,14,test
+triple jump,1ttLiwSrlHY,11,21,test
+running on treadmill,1ttoN9ctd0k,53,63,test
+baking cookies,1tybdYSPNKs,195,205,test
+bee keeping,1tz0_78dIZ4,19,29,test
+playing harp,1u29Kpv49sI,190,200,test
+exercising arm,1u2kpRb6ACM,9,19,test
+decorating the christmas tree,1u4ClVmg5T0,67,77,test
+tying bow tie,1uB-iUfe4as,271,281,test
+passing American football (in game),1uOUWvSjDs4,2,12,test
+cleaning pool,1uWZAxvrhBw,36,46,test
+riding a bike,1uXw1DFyAI0,94,104,test
+bowling,1ux9bmxrxIw,78,88,test
+climbing ladder,1v-EKhiNxd8,14,24,test
+side kick,1v2YGLDjyYs,28,38,test
+playing squash or racquetball,1v70qiu3Eto,4,14,test
+kicking field goal,1vNX8Zxl5l4,1,11,test
+playing didgeridoo,1vqN96fVMLE,7,17,test
+building cabinet,1vzn0of_FfU,248,258,test
+walking the dog,1w17lD6V6bA,2,12,test
+recording music,1w2LenmobWs,420,430,test
+laying bricks,1w7YrEnq0fc,125,135,test
+cleaning floor,1wKhSNm8RIA,39,49,test
+sneezing,1wbUd2tIM8s,54,64,test
+playing trumpet,1widWpujNQg,0,10,test
+waxing chest,1wrwrn2waXs,7,17,test
+playing accordion,1wxFHJt6a3c,3,13,test
+smoking,1x3q02UFZsY,72,82,test
+dining,1x7RunSPxtI,61,71,test
+holding snake,1xSTxC00XV4,19,29,test
+dancing macarena,1xUmKp0rsSo,2,12,test
+riding elephant,1xczZ6fsDhw,8,18,test
+doing nails,1xhRjugNjLc,120,130,test
+tobogganing,1xxKBo-FuKo,244,254,test
+sharpening knives,1xxR2IgIub0,21,31,test
+snatch weight lifting,1yNtc36-3_o,17,27,test
+somersaulting,1yOL0QJaCpY,1,11,test
+trimming trees,1yXi37plPMs,8,18,test
+climbing a rope,1yYHLBmC3f4,3,13,test
+writing,1ygXNkLpXHg,164,174,test
+playing flute,1ylYuF5fxSg,122,132,test
+washing dishes,1yo3vZANEeY,89,99,test
+filling eyebrows,1yxcNI55chc,17,27,test
+carrying baby,1zBGrOa-cWA,186,196,test
+hitting baseball,1zSLyUBriT8,16,26,test
+tossing coin,1zcVsp1p-hI,12,22,test
+cutting pineapple,1zfSMYupu_s,0,10,test
+braiding hair,1zfek_qVjiA,3,13,test
+walking the dog,1zmsz6AUeic,0,10,test
+setting table,1zqvRA48eqs,3,13,test
+triple jump,1zya0jXlIvM,27,37,test
+golf driving,1zzbzbmpKVk,21,31,test
+changing wheel,2-BDI9anf5U,125,135,test
+cleaning floor,2-KNDuui0pk,13,23,test
+crying,2-eSGFv6Xqk,0,10,test
+playing volleyball,2-ikguPeNmU,108,118,test
+swinging legs,2-zyIS4gqMg,0,10,test
+massaging legs,201ZYPeyY9c,370,380,test
+reading newspaper,20HSWxieb9c,0,10,test
+egg hunting,20MShXAFp-c,6,16,test
+shining shoes,20Motb54GJI,47,57,test
+clean and jerk,20PIa7C9ftk,4,14,test
+eating cake,20TEgReQZOQ,21,31,test
+skydiving,20ZYOYVol-4,247,257,test
+tai chi,20jQNCUvDY0,40,50,test
+crying,20sFuurD_eo,1,11,test
+curling hair,20sa7X_f_q8,138,148,test
+surfing crowd,20tG8ZIZXW4,8,18,test
+brushing teeth,211rn_clPfA,113,123,test
+decorating the christmas tree,217xresAX-0,22,32,test
+playing trombone,21Sncl9Pu2c,87,97,test
+playing volleyball,21in1FcR-Ws,409,419,test
+driving tractor,21kmHJ9ywng,34,44,test
+riding mechanical bull,21nQwGSVTCU,3,13,test
+bee keeping,21tTGt6sa94,242,252,test
+playing cello,21wdk2B9268,136,146,test
+high kick,224lX4E3U1I,4,14,test
+tossing salad,22DvHK4ij5Y,400,410,test
+grinding meat,22UyFmkSjqU,33,43,test
+bending metal,22b5cNbT_2M,147,157,test
+cheerleading,22lXpKCnBQU,41,51,test
+sanding floor,22x_KnoNL5o,0,10,test
+golf driving,23FOiCkhsnE,3,13,test
+playing squash or racquetball,23KGtncP_cc,137,147,test
+massaging legs,23_A6ME-alA,9,19,test
+playing drums,23n5icFvqf8,220,230,test
+making a sandwich,23viTMoDeGE,241,251,test
+lunge,246blh5O9JU,3,13,test
+tasting beer,24TKRsYiEgE,11,21,test
+presenting weather forecast,24UmdtneqeA,115,125,test
+tasting food,24Yci74WGfo,130,140,test
+tying knot (not on a tie),24cA6ZY7zOI,53,63,test
+playing bagpipes,24rSgzYc2GI,11,21,test
+bobsledding,24sCTZAy36g,54,64,test
+spray painting,24uGdm6KNjU,79,89,test
+cleaning toilet,24vRyZ1k6q4,91,101,test
+pole vault,25Hy3xB1PGE,13,23,test
+bowling,25I4gehCiB8,2,12,test
+making tea,25M9H6F9w2U,171,181,test
+blowing glass,25ZrPRq9EkI,42,52,test
+spinning poi,25b6ei5y2yo,33,43,test
+high kick,25gW43H8ENY,2,12,test
+playing poker,25qjuG24-7E,20,30,test
+finger snapping,263sQJfZxY0,1,11,test
+washing hands,266QgyWs8L8,0,10,test
+riding mule,26CFvwsseLA,3,13,test
+playing cymbals,26KV-qC48Sk,27,37,test
+blasting sand,26cqhey0b1c,344,354,test
+sign language interpreting,26kww-HIsS0,6,16,test
+swing dancing,26n7NAwohfI,22,32,test
+spray painting,27-iHtxXL4I,116,126,test
+ski jumping,278hARaV4AI,1,11,test
+air drumming,27AWeX13Be8,0,10,test
+catching or throwing frisbee,27EFS2qhbSs,4,14,test
+grooming horse,27FrRvt6Daw,174,184,test
+smoking hookah,27RSg-6Xuv4,1,11,test
+parasailing,27qGjXKslb0,3,13,test
+wrapping present,27tui31Caks,0,10,test
+arranging flowers,27uXMjw1dv4,306,316,test
+waxing chest,27viyFraHxY,221,231,test
+somersaulting,28GftVTe0l4,3,13,test
+passing American football (in game),28W6JPz0UAU,1,11,test
+punching bag,28bwqKYGGRk,58,68,test
+flying kite,28fdN8fQb4o,20,30,test
+bartending,295zRl-KYRI,173,183,test
+breading or breadcrumbing,296LDxM-Ng4,19,29,test
+dying hair,298yI5LPEyE,165,175,test
+pushing car,29Co8_hY8eo,64,74,test
+crying,29HZYiJT8Io,3,13,test
+playing harp,29Mjd7aNgAk,32,42,test
+exercising with an exercise ball,29PACt41-9c,0,10,test
+shuffling cards,29a6gELetZo,72,82,test
+writing,29aC3BYARac,161,171,test
+hurdling,29quendvdsM,16,26,test
+headbutting,2A0J53bsGLI,3,13,test
+cooking sausages,2AGUpzl7lBI,136,146,test
+unboxing,2AWa6r7R2_s,89,99,test
+gargling,2Ac7zbCc0Qc,7,17,test
+pushing car,2AnSiujmvNA,16,26,test
+hopscotch,2Aq8I-B51_o,48,58,test
+watering plants,2AqV-x4tyEI,210,220,test
+peeling apples,2AyV3AS0gnw,9,19,test
+eating chips,2B-ZEkCfTmg,22,32,test
+welding,2BIFCsOB9Iw,85,95,test
+throwing ball,2BJQrIb8qkM,1,11,test
+pushing car,2BLN_D_hRKU,4,14,test
+biking through snow,2BOC2Bc4eSA,92,102,test
+waxing eyebrows,2BTAv3vmlpU,159,169,test
+riding mountain bike,2B_4CuDh208,185,195,test
+giving or receiving award,2BdBqdOAyKo,202,212,test
+catching fish,2Bg8IQ78ieA,59,69,test
+building shed,2BlVcgvWrw4,213,223,test
+building shed,2BsSQNWBeok,316,326,test
+riding camel,2C6-PvcrNe8,0,10,test
+using computer,2C8lw0X6lN8,49,59,test
+arm wrestling,2CKXgVMlFpY,3,13,test
+hula hooping,2CL0A27wIfo,69,79,test
+washing dishes,2CPokxyz7oM,0,10,test
+spraying,2Cp9SekzsuY,1037,1047,test
+windsurfing,2Cpa208-yuc,20,30,test
+playing ukulele,2CxIOlSrW1Y,122,132,test
+changing oil,2DJP40oQM2Q,15,25,test
+eating doughnuts,2DK4efBL8CI,3,13,test
+scuba diving,2DO46EjLYjs,20,30,test
+crawling baby,2Dah4qF0kNM,26,36,test
+hopscotch,2Db7dJd9WFc,0,10,test
+pushing cart,2Dp9T3zZ4go,0,10,test
+bending back,2Dr5BpRlEG8,60,70,test
+clay pottery making,2DuLhPzxoWU,372,382,test
+answering questions,2E-zLPqnS4U,211,221,test
+zumba,2E0h_X17joU,5,15,test
+playing drums,2E3bvem6gi4,150,160,test
+clay pottery making,2E7QYu0bW18,95,105,test
+playing clarinet,2E7boIohUCQ,201,211,test
+hugging,2EDVZsAqYTo,61,71,test
+tasting beer,2EJcpK--EjM,474,484,test
+exercising with an exercise ball,2EOxSeyd8RM,16,26,test
+washing hair,2EcRTCE3w20,281,291,test
+playing bagpipes,2En5ChRVsIs,49,59,test
+shoveling snow,2ExIUJ4an4I,2,12,test
+extinguishing fire,2F4vcngrLAc,57,67,test
+riding a bike,2F9UD4PvVbU,317,327,test
+kitesurfing,2FKML8S8zD8,58,68,test
+beatboxing,2Fb-kHMcJ5c,88,98,test
+front raises,2Fh-UG8Ag_s,1,11,test
+snowboarding,2Fs42nWQpzk,247,257,test
+strumming guitar,2G0RpnRcOX4,13,23,test
+playing keyboard,2G1sRvmbza0,0,10,test
+biking through snow,2G6nM2VXOlE,0,10,test
+juggling fire,2GCy7MMHZ30,3,13,test
+playing paintball,2GII7omqEdw,62,72,test
+tai chi,2GIxGCTuuCY,153,163,test
+singing,2GJj3EWBVfo,199,209,test
+hopscotch,2GVVfYCdnwA,3,13,test
+canoeing or kayaking,2GXlP-HVHIs,13,23,test
+finger snapping,2GhV9vhTrQI,3,13,test
+kicking soccer ball,2GhpNG6Dv1I,25,35,test
+waxing back,2GljRkJ_NOo,343,353,test
+spinning poi,2GuSMxQC1SI,188,198,test
+clapping,2H5bIYxzAjA,44,54,test
+playing guitar,2HD5QpzgQhM,59,69,test
+diving cliff,2HTor2TdmPs,4,14,test
+shuffling cards,2Hd_ov7FehA,18,28,test
+brushing hair,2Hdai2CTsOg,17,27,test
+holding snake,2HeV9rLamog,123,133,test
+sailing,2HfRfmrz288,73,83,test
+grinding meat,2HvPbNyOAQo,37,47,test
+pumping gas,2ID4lINnjjc,42,52,test
+playing squash or racquetball,2INV1zcdkhI,156,166,test
+washing dishes,2I_1fgRDfUE,20,30,test
+tobogganing,2IevFB9RS1w,0,10,test
+picking fruit,2If4Do1b4Rg,50,60,test
+rock climbing,2InREF9mums,2,12,test
+playing volleyball,2InfTytFCNU,66,76,test
+shooting basketball,2IoVosKC8Vs,5,15,test
+writing,2J-IF-nNw8s,97,107,test
+hurdling,2JAEEVSDT2A,60,70,test
+swing dancing,2JBXDfwXpOs,30,40,test
+playing badminton,2JC0_yFQeC0,47,57,test
+cracking neck,2JGqr35t6e8,3,13,test
+walking the dog,2JK6B4XrgiQ,58,68,test
+applauding,2JKC4hf74Oo,1,11,test
+playing monopoly,2JQQPPHdVHg,86,96,test
+pushing wheelchair,2Jd1iOHeNPs,97,107,test
+playing cymbals,2Jhi1NIcqsw,17,27,test
+plastering,2Jnnj7AEOS0,15,25,test
+kissing,2JoaPX8mg5s,39,49,test
+milking cow,2JuGxFaFSr0,19,29,test
+bartending,2K3Ax6PZOoM,46,56,test
+high kick,2K8X6urYYdo,65,75,test
+singing,2K8Xe7_vvd0,43,53,test
+playing cards,2KBywakve6I,22,32,test
+drumming fingers,2KQEbs7B2Vk,76,86,test
+riding or walking with horse,2KREPCb7Bj0,19,29,test
+slapping,2KS5PXz_be8,11,21,test
+washing hands,2KYNeKVT6r8,6,16,test
+making sushi,2Kj_krC90lI,1,11,test
+doing nails,2KkbHQhVEmE,2,12,test
+extinguishing fire,2KlBr7LOoPs,15,25,test
+catching or throwing baseball,2KtWxziboE4,19,29,test
+skiing slalom,2L2oX8Az2Sk,375,385,test
+peeling potatoes,2L37Xt-SUSU,18,28,test
+weaving basket,2LP3VnU412U,47,57,test
+bookbinding,2LWSYfzfCQs,201,211,test
+spray painting,2LZR2_vOCIs,1002,1012,test
+scrambling eggs,2Liv0mMRoo8,337,347,test
+driving tractor,2Lk_njyqCKE,1,11,test
+tying bow tie,2Lr6a_5gvXw,25,35,test
+peeling potatoes,2MCI3OB2-ug,45,55,test
+tapping guitar,2MKLi1AC1b8,21,31,test
+hula hooping,2MQz5j9KU1M,165,175,test
+hockey stop,2MS4gQRjJpA,2,12,test
+making sushi,2M_12AgJFEs,27,37,test
+feeding fish,2MfkP-Vsdl8,9,19,test
+spraying,2MjKCcjTktw,58,68,test
+dodgeball,2Mw0OzWgYfM,108,118,test
+golf driving,2ND-6vncLVc,0,10,test
+wrapping present,2NE0zp_5toM,675,685,test
+doing nails,2NEUgOOeDFk,50,60,test
+presenting weather forecast,2NRwXmYPGws,88,98,test
+running on treadmill,2O2SrxpJSzg,0,10,test
+riding mountain bike,2OAnDyteYJw,29,39,test
+juggling soccer ball,2OB9Z2SL3BE,24,34,test
+long jump,2ORMjjvs5es,0,10,test
+shaking hands,2OU_uGjLVaE,5,15,test
+playing flute,2OWd60VSaSY,101,111,test
+building cabinet,2O_X0b-Sklg,25,35,test
+bartending,2Oac01tKk5Q,20,30,test
+ice climbing,2OhQFP_79nA,61,71,test
+tapping pen,2Oh_2PV3Pvo,115,125,test
+eating chips,2OorTyO-3BE,10,20,test
+water sliding,2OrEnbO2cJA,7,17,test
+whistling,2Oyuktt5_t8,11,21,test
+egg hunting,2P6-7MDXbg0,129,139,test
+riding scooter,2PExFknJoRQ,12,22,test
+disc golfing,2PJBR7QOR7g,69,79,test
+cooking on campfire,2PaJRIJ-5PA,90,100,test
+ice skating,2PsOJUdiSHg,4,14,test
+playing guitar,2Q8zm2Vn-M0,70,80,test
+snowmobiling,2QAFnovrAeg,59,69,test
+washing hair,2QTW-QrvKhQ,28,38,test
+bartending,2QbjsfEsZK8,101,111,test
+drinking beer,2QchZjI9t8Y,26,36,test
+recording music,2QkMdpn0rsw,305,315,test
+playing poker,2Qn8Xf6i_98,312,322,test
+knitting,2Qv-ELc9BGE,340,350,test
+jogging,2R2-t8CtD_g,2,12,test
+playing controller,2RA3ZnZmuE4,52,62,test
+setting table,2RL9tr7_nt8,17,27,test
+hurling (sport),2RQtS3SwhfQ,0,10,test
+eating burger,2RRL1bWL7Ro,13,23,test
+grinding meat,2RTRRBN2aPQ,80,90,test
+playing badminton,2RkWWdwphmE,7,17,test
+blowing nose,2RwGWBvs80k,17,27,test
+whistling,2S-LTY4_bFs,484,494,test
+eating doughnuts,2SSN1kmTzjc,67,77,test
+making sushi,2SdRfpCz4Ww,185,195,test
+feeding birds,2ShmBpHWigc,41,51,test
+weaving basket,2Sv54ucZuf8,1023,1033,test
+swing dancing,2T6UZyqDt7k,65,75,test
+playing harmonica,2TW3C1isqjE,0,10,test
+driving tractor,2TWjjzAXzcI,8,18,test
+tapping pen,2TaLaOW7sj0,30,40,test
+cleaning windows,2TdMpAmdees,7,17,test
+playing cymbals,2TeiQ4mGonU,175,185,test
+setting table,2Tim_t-WP0c,3,13,test
+playing guitar,2Ts6q4c_ke0,41,51,test
+reading newspaper,2TsPqOSkbSI,1,11,test
+moving furniture,2U-y7-OpDJo,49,59,test
+shooting basketball,2U4P4H6ZNjw,15,25,test
+massaging person's head,2UFYQtLCPZ8,136,146,test
+kicking soccer ball,2UIZsQb0MGc,4,14,test
+curling hair,2UaYNPVCZXY,138,148,test
+dancing ballet,2UcHpI47KtE,96,106,test
+skiing (not slalom or crosscountry),2Un944fonCs,119,129,test
+yoga,2Uw1-i-Mr6g,34,44,test
+hurdling,2UzdRS6LpYw,6,16,test
+punching bag,2V19TspzaT0,4,14,test
+tossing coin,2VDlhn_zBEA,118,128,test
+tossing salad,2VFuLmRoKaQ,82,92,test
+dying hair,2VQjCo1hW_8,180,190,test
+roller skating,2VamOzOz3tc,144,154,test
+milking cow,2VhXjaMkWlc,365,375,test
+jumpstyle dancing,2VjLsap3Uz8,0,10,test
+bending back,2VphUyHlvB0,4,14,test
+spinning poi,2VsSHYrQ0pg,63,73,test
+checking tires,2VwCJe7gFrg,30,40,test
+bee keeping,2Vwla3qb-Z0,32,42,test
+tobogganing,2WBB55R1a-s,4,14,test
+playing organ,2WCSbGD8u9U,20,30,test
+playing harmonica,2WbNCb_wv6Q,14,24,test
+stretching arm,2WeesbSPjIg,22,32,test
+bending back,2Wt8L3oX1c0,856,866,test
+kitesurfing,2WuPHwcSZQM,159,169,test
+catching or throwing frisbee,2XbELdd6Mh0,33,43,test
+welding,2XrkvzJheF0,134,144,test
+applauding,2Xywy8DJS8o,22,32,test
+playing drums,2YE_8XDuDBI,49,59,test
+playing harmonica,2YNHZQL8KQA,13,23,test
+singing,2YUDqIvrz9M,162,172,test
+pumping gas,2YVnMSG8Mq8,0,10,test
+mowing lawn,2YkQpXjRzvk,203,213,test
+checking tires,2Yvab35N7Jg,136,146,test
+hurling (sport),2YvngfAqIfc,450,460,test
+passing American football (in game),2Z2S0KCojUA,8,18,test
+exercising with an exercise ball,2Z7OMuWoU5k,36,46,test
+roller skating,2ZM_YpZtb4o,680,690,test
+playing flute,2ZOO7dyT2Vc,9,19,test
+playing flute,2ZP4Tcq4nq8,20,30,test
+opening present,2ZPSyreaHUo,7,17,test
+front raises,2ZS1Ae5n90M,32,42,test
+decorating the christmas tree,2ZTvyhkwo_0,4,14,test
+air drumming,2ZWRZcc57W0,0,10,test
+recording music,2ZXLyeatI0s,347,357,test
+shuffling cards,2ZcLstTPPhE,10,20,test
+doing aerobics,2ZgOOx1OPqo,328,338,test
+dying hair,2Zr0VcQnQcs,179,189,test
+mowing lawn,2_FGRmdMegI,6,16,test
+eating ice cream,2_GRo8B5TQU,5,15,test
+driving tractor,2_NcZaS9gMo,3,13,test
+robot dancing,2_PdCib1Wnc,65,75,test
+headbanging,2a0NuIbw3nM,26,36,test
+cooking chicken,2a4rHbCT26M,203,213,test
+decorating the christmas tree,2aATGJ5hbUE,31,41,test
+parasailing,2aCBUmeJhEU,358,368,test
+blowing out candles,2aJB_WidAE8,52,62,test
+celebrating,2aOTahZ24F8,157,167,test
+tobogganing,2agC0Z3I-1o,33,43,test
+riding a bike,2apQFICLqLk,1,11,test
+making a cake,2atnKDF4_R0,85,95,test
+waxing chest,2ay3_sxXMDk,20,30,test
+throwing discus,2ayGynDOGxU,0,10,test
+krumping,2b1ZtTYTSno,61,71,test
+hammer throw,2bM0PShJvcc,4,14,test
+wrapping present,2bS7Zu9FQA0,30,40,test
+slacklining,2baqw5Hw2h8,4,14,test
+disc golfing,2ble1Yw5nio,1,11,test
+washing feet,2btt-TkHA4Q,158,168,test
+applauding,2byY1GCUICU,1,11,test
+skipping rope,2cTrXDpzV74,22,32,test
+headbutting,2cUgipZG54Q,4,14,test
+eating doughnuts,2ccAgfd90To,26,36,test
+yawning,2cfogg910YM,1,11,test
+dancing charleston,2cgL9LjPOvw,31,41,test
+cracking neck,2cibwZ6uLIQ,4,14,test
+skiing crosscountry,2covCu0FVz4,13,23,test
+making tea,2dAkcpOzczg,778,788,test
+exercising with an exercise ball,2dC2EA-PPm8,2,12,test
+getting a tattoo,2dCAo6RAbUE,24,34,test
+swimming breast stroke,2dD7-peMjIY,47,57,test
+peeling apples,2dUDOEWybVE,18,28,test
+golf putting,2damYoBWFyo,36,46,test
+cleaning windows,2dhsudoESOg,2,12,test
+dunking basketball,2e6ucivxFds,7,17,test
+dribbling basketball,2eEoy25ahB8,67,77,test
+washing feet,2eFIKufdFFA,85,95,test
+trapezing,2ejP9BJx5LI,0,10,test
+playing guitar,2enXX9xrIp0,7,17,test
+canoeing or kayaking,2esYXsqsJ8Y,3,13,test
+playing drums,2ezC43YNtu8,263,273,test
+moving furniture,2f0GGgTy0SU,0,10,test
+extinguishing fire,2f99TtjfSKc,0,10,test
+hula hooping,2fDSgkV8JaI,102,112,test
+changing wheel,2fHpZGKLGSY,14,24,test
+massaging feet,2fSwSj2XZ68,1,11,test
+climbing a rope,2fZpoRVuM6I,2,12,test
+playing organ,2f_TkRdO4eI,356,366,test
+golf driving,2fcIpE0NxiY,70,80,test
+pole vault,2fqZGKV3kAc,4,14,test
+making jewelry,2gCXojX-yOM,208,218,test
+getting a haircut,2gCqkt13U7c,4,14,test
+hurdling,2gH2HfstaVo,2,12,test
+decorating the christmas tree,2gMosma5gSM,0,10,test
+bartending,2gMptZ0dNWw,151,161,test
+sneezing,2g_2dYV4ngc,32,42,test
+country line dancing,2gcKiy4l2iA,106,116,test
+mowing lawn,2grwV7f-DSI,25,35,test
+bench pressing,2h1QhY-wWjI,0,10,test
+playing monopoly,2h89Ynbyq1w,31,41,test
+playing badminton,2hBK8Kncz0s,4,14,test
+kicking soccer ball,2hFrubjG8os,1,11,test
+shaking head,2hLDGv7XYIo,0,10,test
+peeling potatoes,2hVyrRQ9Kmk,1,11,test
+shredding paper,2hXguT9UCAc,22,32,test
+tai chi,2hf4H2zeRdc,159,169,test
+air drumming,2hx0FGkhjI8,4,14,test
+playing harmonica,2i9N28mBT-g,11,21,test
+hockey stop,2iJqhl5cHOc,10,20,test
+sweeping floor,2iURoa0R5hQ,72,82,test
+cleaning gutters,2iU_hhXRda8,3,13,test
+flipping pancake,2iUpLcGzFmA,15,25,test
+feeding goats,2iXsu55vTRI,1,11,test
+punching bag,2i_fEYesVgc,1,11,test
+dancing charleston,2idh3fQy49A,2,12,test
+welding,2il1Xy6iF8w,19,29,test
+decorating the christmas tree,2iocexR6Anc,26,36,test
+plastering,2iz6RV75Gjs,49,59,test
+shooting basketball,2j7s9hN20J4,43,53,test
+knitting,2jFnkmPfcf0,355,365,test
+writing,2jHGUYVUfW0,31,41,test
+carrying baby,2jMQiBsD8tg,68,78,test
+headbutting,2jWNTvG39Jc,7,17,test
+kicking soccer ball,2jYBZzaKNjQ,1,11,test
+blowing leaves,2jfH9a6Xg2I,6,16,test
+dancing gangnam style,2jvb2rohlMo,17,27,test
+shaving legs,2k-qlZxc9l4,181,191,test
+eating cake,2kBTfs20LEw,63,73,test
+assembling computer,2kDjeZS__C4,2,12,test
+eating burger,2kRusrDAN-o,14,24,test
+disc golfing,2k_u8FRnVGY,1,11,test
+bouncing on trampoline,2kaXpy1ro_U,19,29,test
+jumping into pool,2kcry3Pa8mA,9,19,test
+playing clarinet,2kdoPe4kg-s,146,156,test
+hammer throw,2keFeiel6iw,3,13,test
+swimming backstroke,2kgWzqHZ9PE,28,38,test
+playing harmonica,2klAbqiHaJc,11,21,test
+knitting,2korG3_DGX4,163,173,test
+hula hooping,2kq70TOaVDM,117,127,test
+clay pottery making,2krhYxH8sqU,326,336,test
+auctioning,2ks_Wm85xmc,130,140,test
+feeding goats,2kzzaM8lNKE,1,11,test
+throwing discus,2lNcM5gXAso,84,94,test
+assembling computer,2lNjrAQW4kQ,292,302,test
+jetskiing,2lP2LZqzDAY,1,11,test
+water sliding,2lQ7HOSkE2U,1,11,test
+using segway,2lS0hz_F-O8,5209,5219,test
+clean and jerk,2lU2Xh0CJJE,11,21,test
+brushing teeth,2lUjEQ2IAKc,0,10,test
+bee keeping,2lm7pLj8rJs,159,169,test
+dining,2ltkBpH_kX8,1096,1106,test
+tying bow tie,2mA79wxq7-c,18,28,test
+playing tennis,2mI4NIzEBik,54,64,test
+playing cymbals,2mJcVFDpkRw,25,35,test
+tickling,2mROBO6h1nQ,0,10,test
+drinking shots,2mS2nh-bfbo,0,10,test
+peeling apples,2mSFwqH7Cl4,17,27,test
+feeding birds,2mTbrdgJCKI,77,87,test
+auctioning,2mcGvs9SK0I,222,232,test
+hurling (sport),2mghANOwDF0,52,62,test
+rock scissors paper,2mlgKxhkcEw,83,93,test
+baby waking up,2mmLLcum2a0,0,10,test
+golf chipping,2mn6u0xx72g,48,58,test
+playing guitar,2n-vo6QRjbk,50,60,test
+celebrating,2n3Ttd2TomY,126,136,test
+exercising with an exercise ball,2nD_ZSQOIb8,5,15,test
+stomping grapes,2nH7jOQgHac,1,11,test
+shredding paper,2nHbmkWulhc,29,39,test
+playing cello,2nd5IiW_W20,19,29,test
+capoeira,2nmFOr-0p8g,27,37,test
+shaking head,2nmKq0crXew,43,53,test
+side kick,2nrJosjqN2U,10,20,test
+jumpstyle dancing,2nyTAhV_CKA,116,126,test
+clean and jerk,2o9tFI11brc,5,15,test
+driving tractor,2oLoh6mIp44,9,19,test
+waiting in line,2oTyUnJ0zPg,15,25,test
+making snowman,2odYhnzKNkI,0,10,test
+giving or receiving award,2olrQxdV1cM,67,77,test
+spraying,2oqA65F2ZWE,6,16,test
+stretching arm,2ozPIAf4gCg,87,97,test
+making a sandwich,2pC1OrUa3S8,160,170,test
+fixing hair,2pIg3TM2dQ8,9,19,test
+waxing chest,2pIt01OozXQ,66,76,test
+playing drums,2pR8rQ-ewno,18,28,test
+texting,2pVS3jTMX-M,71,81,test
+sanding floor,2pXVW7AvP-M,13,23,test
+parkour,2p_e9WwbMwA,3,13,test
+making tea,2pbeKZJ4gFE,1,11,test
+dribbling basketball,2pdFilukVN4,0,10,test
+marching,2pfgHVWf2zI,27,37,test
+feeding fish,2phfPPLSR24,6,16,test
+sign language interpreting,2pmYPqIienY,81,91,test
+surfing water,2ptdloHcTcs,210,220,test
+moving furniture,2qC5jRpEq0o,6,16,test
+punching bag,2qIWxxLvzXA,3,13,test
+blowing glass,2qTgHZ9IU9E,180,190,test
+bending metal,2qThBWhgdxM,2,12,test
+running on treadmill,2qfO-0rNxF0,0,10,test
+petting animal (not cat),2ql0Tcwtv-M,139,149,test
+blasting sand,2r1UBuDQVjc,0,10,test
+applauding,2r6q-OOXgnI,113,123,test
+writing,2rOpvQSPm9E,153,163,test
+brush painting,2rcMSFY-pPk,76,86,test
+whistling,2rckc_j1fHE,61,71,test
+cleaning windows,2rt9rBhSg-o,11,21,test
+playing organ,2ruvA07NaGk,5,15,test
+busking,2rxSxfpUfCA,14,24,test
+laying bricks,2sDH0McrJLo,453,463,test
+playing ice hockey,2sZPxUbzDXE,284,294,test
+windsurfing,2sZpfNq3aCY,0,10,test
+skateboarding,2sioB1EK0KQ,2,12,test
+water sliding,2svszvcZNwc,7,17,test
+fixing hair,2t75Cc43IwY,15,25,test
+flipping pancake,2t9DLmzt1IM,53,63,test
+setting table,2tMRmK-Ka_k,10,20,test
+whistling,2tObT37c_dI,130,140,test
+opening bottle,2tPWX21WAGc,1,11,test
+springboard diving,2tW2D1rptVI,0,10,test
+water skiing,2tYiDH6GxvE,71,81,test
+checking tires,2tgEZK3DQ_Q,23,33,test
+headbutting,2txxcWbiDLg,8,18,test
+swimming backstroke,2u1cupwE1I4,8,18,test
+clapping,2u98BTpTYdA,19,29,test
+peeling potatoes,2uR20_KH2po,28,38,test
+playing volleyball,2ucFYJM8S5I,71,81,test
+texting,2ujj8t98T0I,9,19,test
+riding scooter,2um55UyrbbU,7,17,test
+riding or walking with horse,2uqu5wnhVpQ,1,11,test
+drawing,2v6hCmRpCZQ,101,111,test
+cheerleading,2vG8X3LiwVg,57,67,test
+catching fish,2vL9-IOAqa8,2,12,test
+feeding goats,2vQS05M-8oE,8,18,test
+applauding,2vRmUEMKbLc,16,26,test
+passing American football (in game),2vS_PTvCDDo,1,11,test
+shoveling snow,2vUf32Bfzr0,23,33,test
+cleaning floor,2vZnJV7jOmk,90,100,test
+playing monopoly,2v_MOIzYNmc,64,74,test
+tobogganing,2vfOdK0qNHQ,1,11,test
+swimming butterfly stroke,2w-Jo8MIx6M,8,18,test
+setting table,2w9lZzKutfk,17,27,test
+drawing,2wARJLUtyc4,118,128,test
+cutting watermelon,2wHGwv3nqOc,13,23,test
+paragliding,2wIKoV9j2_4,7,17,test
+doing aerobics,2wLk69zuWHY,81,91,test
+cutting pineapple,2wLuTshD2xE,21,31,test
+feeding fish,2wNrCQaHkbg,32,42,test
+sneezing,2wR1cJqZMts,12,22,test
+clay pottery making,2wYU3GHYixQ,19,29,test
+hopscotch,2wbFkJ1dyuE,5,15,test
+holding snake,2wfSDJRNdEc,71,81,test
+skipping rope,2wkljHryyr0,31,41,test
+bending back,2wopHAclOnw,63,73,test
+playing badminton,2x4fx4riF3o,52,62,test
+waxing eyebrows,2x52GJMuka4,3,13,test
+catching or throwing baseball,2x7pFf6q4q0,6,16,test
+shaving legs,2xEkS3JI6r4,2,12,test
+throwing axe,2xFIa1ccjmM,43,53,test
+eating doughnuts,2xHl3LPMS10,86,96,test
+playing poker,2xWiEVNUvhE,64,74,test
+reading newspaper,2xbsj54i4mQ,0,10,test
+dining,2xxood8Qy_c,158,168,test
+tasting food,2y2DBCOhQr4,118,128,test
+recording music,2y6BkycgeRc,0,10,test
+yoga,2y6X30R8cCU,165,175,test
+contact juggling,2yS14k47jLs,4,14,test
+pushing wheelchair,2ye2hm72tUg,64,74,test
+washing hair,2yf6_k4mYRQ,7,17,test
+high kick,2ykq4fm2nb8,72,82,test
+salsa dancing,2z-bBq7XcFE,29,39,test
+wrapping present,2z5Deg2fbNw,173,183,test
+contact juggling,2z5dwVxHS_Y,91,101,test
+scuba diving,2z6Sitfq66k,4,14,test
+playing bagpipes,2zI9R7N0-iU,3,13,test
+diving cliff,2zLgXtG9X7M,0,10,test
+drinking,2zN5adxjPwA,104,114,test
+knitting,2zXJHfExtoA,29,39,test
+flying kite,2zYAgvDMnrI,4,14,test
+shredding paper,3-4QBYIKjk8,41,51,test
+smoking,3-R1oePNtMA,11,21,test
+whistling,3-W1OS-XE50,184,194,test
+blasting sand,3-WafLXpDnk,38,48,test
+vault,3-XjmKRKjkE,0,10,test
+sneezing,3-YiQt65nOU,0,10,test
+playing cello,3-gQN9Q_ACQ,189,199,test
+hurling (sport),3-tmr4SyqYU,5,15,test
+auctioning,305P2f9_lko,4145,4155,test
+pole vault,307JeJm4whk,14,24,test
+blowing glass,30Y8XclCO0U,27,37,test
+side kick,30rFjxM7p3g,4,14,test
+sword fighting,30sUQC8-xZc,26,36,test
+playing cricket,30sWSMBlqdk,113,123,test
+getting a haircut,30tG0XvLUeU,44,54,test
+salsa dancing,311CyJA_w8M,162,172,test
+contact juggling,317B_Wp_mc4,91,101,test
+watering plants,3198ZEPu2VI,9,19,test
+playing ice hockey,3199b62WPOY,17,27,test
+hula hooping,31F2aGN6jHM,39,49,test
+braiding hair,31G6tdKZryk,45,55,test
+getting a haircut,31TbEnR2yv4,66,76,test
+bending metal,31U7Pn-NyRE,30,40,test
+shoveling snow,31XDXez8XK4,19,29,test
+juggling balls,31i7SGQo83I,44,54,test
+playing bagpipes,32BK4CY2RzE,0,10,test
+clay pottery making,32KnPD_UIiU,83,93,test
+pushing cart,32LkRffU67c,3,13,test
+strumming guitar,32OamtxBQzY,221,231,test
+snatch weight lifting,32QhHyN2hcQ,3,13,test
+crawling baby,32Qvz-JV0-0,0,10,test
+playing paintball,32aGzgtRFH4,4,14,test
+snatch weight lifting,32adm6CKUl8,11,21,test
+shredding paper,32c4JP0pWXo,48,58,test
+swimming backstroke,32c6H2E0Hlk,16,26,test
+folding paper,32sG3LsePw4,10,20,test
+playing cards,32wj3HmtMNo,351,361,test
+blowing out candles,331yH-jGUcM,7,17,test
+singing,338wMaMpgFU,56,66,test
+bandaging,33Eg7Nfdrlc,2,12,test
+carving pumpkin,33IwutyHHm8,4,14,test
+blowing out candles,33sXReFmYMI,47,57,test
+sanding floor,33zEQAH-DtM,160,170,test
+bartending,34CNM13dP98,24,34,test
+moving furniture,34Hwk1FiupU,4,14,test
+shaking hands,34PPFQLbsEc,12,22,test
+grooming horse,34eLG3SO4g8,82,92,test
+reading newspaper,34sQtLBHCFs,81,91,test
+auctioning,34uipuDUAVw,16,26,test
+roller skating,34v7eTj_jZ4,89,99,test
+breading or breadcrumbing,353It4Faqos,1941,1951,test
+bowling,35BnwmtSZtQ,49,59,test
+frying vegetables,35CMh_4P1Ug,200,210,test
+climbing a rope,35HAcBlM3qg,40,50,test
+kitesurfing,35Nir0FjBDc,0,10,test
+hoverboarding,35fef59Xeu0,30,40,test
+doing nails,35gEgfTQxIE,190,200,test
+egg hunting,35iNXSGpRBM,5,15,test
+shaving head,35vVLc6hLwA,2,12,test
+ice skating,35z0Qhgfdd4,5,15,test
+training dog,36-4yxkAmmU,19,29,test
+tasting food,365H5PJeuvU,122,132,test
+cartwheeling,36Dx_mnHQjA,3,13,test
+setting table,36J2PXHySAo,45,55,test
+flipping pancake,36K0RLO8Hos,0,10,test
+riding camel,36SaGOCeFio,11,21,test
+snatch weight lifting,36gQOiM5dJc,2,12,test
+bowling,36hTGnAv3t0,24,34,test
+bee keeping,36jGJQbre5Y,71,81,test
+peeling apples,37451nFnLv8,67,77,test
+situp,374mozyGvo4,211,221,test
+cleaning shoes,374rtYrtmOI,3,13,test
+cleaning shoes,37EsjYRqg_k,24,34,test
+shuffling cards,37WO9NHoJuQ,168,178,test
+making bed,37jHnK3eB9M,2,12,test
+recording music,37lkwtd7aBU,3,13,test
+checking tires,37o69jolyLM,21,31,test
+shaving legs,38B26oxnkr4,60,70,test
+dying hair,38KdiUtaHQc,404,414,test
+kicking field goal,38OVgQv3Pt8,2,12,test
+ski jumping,38VAPki1Jik,1,11,test
+waxing back,38ddfmav-P8,66,76,test
+mowing lawn,38qpTblXDTw,3,13,test
+tying bow tie,395dF_unASo,1,11,test
+skiing slalom,39DafLjwlRg,11,21,test
+yoga,39G6i14g1vs,318,328,test
+playing ice hockey,39L6nmDcKCU,10,20,test
+capoeira,39La5jKfncs,681,691,test
+playing badminton,39jwEL0DbIs,0,10,test
+shot put,3A10pmLRjHg,14,24,test
+using segway,3A3toWW8iF8,35,45,test
+throwing axe,3A8xozP6k4M,0,10,test
+decorating the christmas tree,3AA-wIkwZNk,53,63,test
+waxing back,3AByRRN-9bI,191,201,test
+making a sandwich,3AGnr_dDWaw,67,77,test
+dancing charleston,3AKoOjk0X0k,32,42,test
+writing,3AWJwEb4nfs,299,309,test
+pushing cart,3AmMlVcLv6A,8,18,test
+pole vault,3B-iDLO0w4U,1,11,test
+hurling (sport),3B37E4jBA2k,14,24,test
+reading newspaper,3BFsNJreWk4,11,21,test
+motorcycling,3CC412OGLWk,27,37,test
+dunking basketball,3CEptcpsRPg,3,13,test
+playing chess,3CR1WwNjN-8,124,134,test
+training dog,3CSdUK_yVNE,19,29,test
+cleaning floor,3D3E_QPyU8M,9,19,test
+sailing,3D6dazYTpGY,4,14,test
+blowing out candles,3DDTRsPjzGU,0,10,test
+passing American football (in game),3DDWsLHjdNg,2,12,test
+blowing glass,3DFMOhF1aX0,2,12,test
+texting,3DFVl56I31o,99,109,test
+dancing gangnam style,3DPp3YbrvlI,252,262,test
+tossing salad,3DU2UzOhMkU,20,30,test
+making a sandwich,3DVGsU4OCQc,107,117,test
+cooking on campfire,3D_13uzDI-c,216,226,test
+somersaulting,3D_w_O6ZANU,1071,1081,test
+changing oil,3DdeJINYo0A,375,385,test
+pushing cart,3DuIsz9dIVY,51,61,test
+tying bow tie,3DvjjJMVit4,0,10,test
+drinking beer,3E4pZqb9LnE,59,69,test
+washing hair,3E66CDX8DOA,203,213,test
+shredding paper,3E6a_y-4XW0,0,10,test
+abseiling,3E7Jib8Yq5M,78,88,test
+gargling,3EEnzo0hHsg,20,30,test
+sled dog racing,3EKNcznuCK4,32,42,test
+laying bricks,3ERbXyutejU,1007,1017,test
+blowing out candles,3EXDrir-V14,35,45,test
+shearing sheep,3EfWLsn0AMc,5,15,test
+exercising with an exercise ball,3Ehb2BMReTk,35,45,test
+bobsledding,3El9o3VmXb8,16,26,test
+bookbinding,3EqDf8saetA,2,12,test
+auctioning,3F7dKBc_YA4,31,41,test
+unloading truck,3FLoP9q_50o,57,67,test
+fixing hair,3FeBymcEex4,3,13,test
+garbage collecting,3FeJBAtTaAM,28,38,test
+high jump,3FoIFMyIl-w,13,23,test
+mowing lawn,3Fr-6jttQBk,10,20,test
+tasting beer,3FwvmX6ryTs,21,31,test
+dribbling basketball,3G8XStjJ5Nc,370,380,test
+blasting sand,3GKdpZKzznU,29,39,test
+taking a shower,3GL4rKQM1zI,160,170,test
+arm wrestling,3GOevFWZuPY,94,104,test
+doing laundry,3GQT-GH8izs,19,29,test
+feeding goats,3GYbX6JHWqE,80,90,test
+riding mule,3GoHh_T7U10,23,33,test
+making sushi,3GoyRU8Lz1Y,18,28,test
+bobsledding,3Gpj-bdxLkg,4,14,test
+laughing,3Gwumc3_9R4,108,118,test
+skiing (not slalom or crosscountry),3H-HsVF447I,146,156,test
+flying kite,3H7mNFtMHpw,18,28,test
+sword fighting,3HN-D7_WSww,12,22,test
+cheerleading,3H_Z8heOml4,112,122,test
+getting a tattoo,3I-UChFhQwc,24,34,test
+ripping paper,3I7_eY9Q9ZA,60,70,test
+folding paper,3IAuq9AGACw,43,53,test
+playing trombone,3IDpKuAH_yg,216,226,test
+holding snake,3IFM2eXfJ8o,54,64,test
+riding elephant,3IPzZAfT0_E,88,98,test
+wrapping present,3ISacnoC4Z0,78,88,test
+shearing sheep,3IUHKPE7dLQ,161,171,test
+blowing out candles,3Idauh3B8_c,50,60,test
+decorating the christmas tree,3IjwvbKdkZ8,17,27,test
+brush painting,3Inw5UmZSBI,925,935,test
+swimming backstroke,3J99xj8u-wM,3,13,test
+catching fish,3JAHsIb7gFs,14,24,test
+throwing ball,3JJnI04nDuw,4,14,test
+peeling apples,3JPAWzm3Ad8,3,13,test
+bandaging,3JY9c0mCZ_o,110,120,test
+bouncing on trampoline,3J_4Kqd_uxk,5,15,test
+wrapping present,3J_QqRqV1hY,22,32,test
+shredding paper,3JaLVSKMKGA,0,10,test
+pushing car,3JhismIo3TU,4,14,test
+tapping pen,3JwTmsaULm0,34,44,test
+hurling (sport),3Jy56C6mm_s,135,145,test
+blowing out candles,3K-wsWq0-WA,1,11,test
+grinding meat,3KJNDf4y8OM,44,54,test
+checking tires,3KTlx1ImpNA,114,124,test
+surfing water,3KlhF1e1Ykk,78,88,test
+playing harp,3Kt2ZWk9qIY,11,21,test
+lunge,3KzaZ4gQd7g,4,14,test
+strumming guitar,3L6nHgxMo-w,269,279,test
+air drumming,3LBKoey9WSQ,14,24,test
+playing chess,3LMaBRJgsdo,1,11,test
+skateboarding,3LN3gAXr5S4,0,10,test
+drinking shots,3LTNar5wlVI,2,12,test
+cooking egg,3LceHPHacP4,4,14,test
+hopscotch,3LjuUPI4nTM,11,21,test
+smoking hookah,3LpqwSEBLVY,16,26,test
+riding mountain bike,3M1x_UO479s,158,168,test
+bending back,3MDflSpnlSg,6,16,test
+celebrating,3MaJGi1fahM,83,93,test
+running on treadmill,3MfqLb0IzjE,4,14,test
+waxing legs,3Ms-zONtf_g,131,141,test
+snowboarding,3MxLZORMymQ,137,147,test
+headbutting,3N-ACPl511k,0,10,test
+tapping guitar,3N8XvW-g03Y,153,163,test
+hockey stop,3NF8ziODRNU,159,169,test
+counting money,3NYk19hpwAw,304,314,test
+juggling balls,3NmFLC1tfjA,15,25,test
+mowing lawn,3Nor6uZ5NrU,0,10,test
+making a sandwich,3NrzsL0EuFY,72,82,test
+catching or throwing baseball,3OHhB_wjJOs,42,52,test
+riding mule,3OIRDA3O-8k,459,469,test
+riding camel,3OJaELmtCMk,40,50,test
+playing organ,3OK9_fH3IRg,55,65,test
+rock scissors paper,3OM0pWnxnAA,52,62,test
+brushing hair,3OSZNiiwgpc,22,32,test
+crawling baby,3OU86NvkiR0,2,12,test
+petting cat,3OYXFbe3nWE,53,63,test
+doing aerobics,3OcqNMtZF1w,70,80,test
+baking cookies,3OhmIirXi48,25,35,test
+ripping paper,3OlY_-kyRpk,47,57,test
+throwing ball,3Onkfn0sNnI,11,21,test
+tapping pen,3Oo5Qdm5MjU,40,50,test
+exercising with an exercise ball,3OpmBuxta9A,42,52,test
+kitesurfing,3Ox07Yyc1S0,3,13,test
+brushing teeth,3Oy4NYDO17s,9,19,test
+playing cello,3PHHZJsY8QM,88,98,test
+bending back,3PJhIkEK9Cc,5,15,test
+parkour,3PJpppSVClw,2,12,test
+springboard diving,3PLiUG_DuC8,2192,2202,test
+riding mechanical bull,3POK0jovdao,4,14,test
+bee keeping,3Pcf9P-l1fs,476,486,test
+reading newspaper,3PcgL16IpDs,3,13,test
+dining,3Pd3NV4lN-4,16,26,test
+using segway,3Pp8CNADs6E,13,23,test
+cooking on campfire,3PuuPoMnhzo,6,16,test
+tap dancing,3PyOyVAAYak,77,87,test
+tapping pen,3Q1s5pBW1hc,26,36,test
+paragliding,3Q2Lr2be9RY,22,32,test
+training dog,3Q2w8wsY7Eo,59,69,test
+punching bag,3Q6J4bR7bEY,2,12,test
+snowmobiling,3Q6ymQFYdK0,1,11,test
+skydiving,3Q9WmmVEYQ8,200,210,test
+grooming dog,3QOhv14dvnw,19,29,test
+mopping floor,3QYG33vcTik,21,31,test
+reading newspaper,3QYVg6GSU2E,29,39,test
+riding mule,3Qb__KLt2EY,17,27,test
+testifying,3QmEho0bDYg,136,146,test
+paragliding,3Qr1X06-L9Y,372,382,test
+shaking hands,3QubujXIQMI,33,43,test
+carrying baby,3QwYBLfGwf8,309,319,test
+training dog,3Qx8ySjEkOc,3,13,test
+training dog,3QxqG6uV4mE,133,143,test
+playing recorder,3Qzu2kZR6AY,65,75,test
+drinking,3R-mJSKERsQ,214,224,test
+shaking head,3R1tiPHHAl8,24,34,test
+making bed,3RMnbgmiM8Q,100,110,test
+driving tractor,3RaMu-hjdbc,515,525,test
+tasting food,3SD4DAIPRS0,34,44,test
+high kick,3SDJf2ezkCg,122,132,test
+playing saxophone,3SDRK7Fu8_M,89,99,test
+frying vegetables,3SKAdBlYcPE,259,269,test
+shaving head,3SKDHjrNPkw,5,15,test
+spray painting,3SKGkOs5eYY,199,209,test
+playing trumpet,3SM6W-vO8HA,2,12,test
+weaving basket,3STbTrh5Ah4,11,21,test
+surfing water,3SbuecocgOA,36,46,test
+canoeing or kayaking,3SmQ4f0dT_8,58,68,test
+trimming trees,3SnEMqYzRlE,4,14,test
+trimming trees,3T1-VOfzGfE,0,10,test
+riding a bike,3T3k2TsKuTw,8,18,test
+holding snake,3TT84pBGP9w,5,15,test
+playing paintball,3TX9bkA9ffs,76,86,test
+playing paintball,3TYRfRg4CIw,2,12,test
+writing,3TueJLIJyAA,20,30,test
+eating hotdog,3U-QIVWQCmg,408,418,test
+lunge,3U9v8qbvdM8,4,14,test
+sharpening pencil,3UKqTZoLPD0,31,41,test
+feeding fish,3UPkHaJamKM,20,30,test
+dining,3UmCYma9NjA,39,49,test
+cooking chicken,3V-hi2VGfDk,262,272,test
+curling hair,3V5heFPm9ZE,46,56,test
+cracking neck,3VRFEXyWj10,16,26,test
+golf driving,3VZnPZpU2QA,1,11,test
+barbequing,3Vg7BSiL60g,70,80,test
+watering plants,3VnIVgZdYMU,142,152,test
+making a cake,3VrSapxONjo,1,11,test
+catching fish,3VvC9Sep1kM,104,114,test
+decorating the christmas tree,3Vw2imzCEJ0,308,318,test
+paragliding,3W21NSwegjE,2,12,test
+shaking hands,3W2g-g2y_Jg,2,12,test
+plastering,3WGHdC-ZXvc,434,444,test
+weaving basket,3WK1p_Qyxnw,33,43,test
+water sliding,3WjEo8oRzd4,4,14,test
+tapping pen,3WmrcK54EK0,118,128,test
+shot put,3WnGZEI3ZQw,3,13,test
+presenting weather forecast,3WnYt2N7iyw,28,38,test
+faceplanting,3Wp4b2P62uk,1,11,test
+krumping,3WpIhppl0sM,292,302,test
+playing ice hockey,3Wxvb5214oA,44,54,test
+chopping wood,3WzPJ9c4zsk,4,14,test
+news anchoring,3X-JkYNvO88,15,25,test
+golf driving,3XFsW3NilGk,56,66,test
+throwing axe,3XQqsYmUmvM,16,26,test
+washing hands,3XckqpvCBhg,11,21,test
+skipping rope,3Xv0daZE16c,283,293,test
+blowing out candles,3XyQsG7lwiY,0,10,test
+playing cello,3Y-HBOTuQQU,130,140,test
+fixing hair,3Y4-06HU62Y,20,30,test
+kitesurfing,3Y7p52cS3lE,108,118,test
+knitting,3YB3Z2wCOtc,35,45,test
+springboard diving,3YFpYpSncAE,2,12,test
+laying bricks,3YIp0eJd-Ws,30,40,test
+brushing hair,3YYYMq-ag7E,80,90,test
+getting a haircut,3Yg4RnqiC10,28,38,test
+pushing car,3Yi-WBGKwPw,3,13,test
+roller skating,3YigHw4Gt6E,87,97,test
+diving cliff,3YmSpBKZR0Y,10,20,test
+giving or receiving award,3YqfYZUDgYo,2,12,test
+disc golfing,3YrKjjd8FVI,227,237,test
+hammer throw,3Z8t7ivPEYE,48,58,test
+jumping into pool,3ZC-pXujHek,7,17,test
+salsa dancing,3ZGGnMUdQ9o,233,243,test
+roller skating,3ZLAK_dVWso,99,109,test
+strumming guitar,3ZVA2LAoUVQ,47,57,test
+playing guitar,3ZWN7QUMjQQ,102,112,test
+making snowman,3Zei_UQLxLQ,595,605,test
+playing poker,3ZfjkACZd5M,4,14,test
+throwing discus,3Zx45FcLNPA,25,35,test
+changing wheel,3ZxNQ4gbdkc,1,11,test
+driving car,3_70QGHV97s,139,149,test
+cleaning pool,3_7svWJkWXs,0,10,test
+juggling fire,3_8UT-zz7RY,0,10,test
+punching person (boxing),3_90muFUJ7A,329,339,test
+playing volleyball,3_9LxPc65GE,51,61,test
+playing volleyball,3_J8f_tvqmo,146,156,test
+cooking sausages,3_M6sWVkZas,138,148,test
+hoverboarding,3_NdmXsLWFs,37,47,test
+waxing legs,3_R_yrOVjyQ,148,158,test
+cutting pineapple,3_Tyj_tHPxo,30,40,test
+salsa dancing,3_WJ3m1DG4w,264,274,test
+swimming breast stroke,3_Y3TE_gDtk,27,37,test
+riding scooter,3_ZGTuJn5S8,3,13,test
+brushing teeth,3__Ru9Ev_h0,53,63,test
+answering questions,3_b1B-aZTGU,160,170,test
+tap dancing,3_iJ_IKSo-Q,7,17,test
+doing aerobics,3_l-qDL19_E,31,41,test
+brushing teeth,3_xM0Fm-sKI,130,140,test
+jumpstyle dancing,3a2KOol1AX4,28,38,test
+drinking,3a3sv7bb8wA,13,23,test
+swimming butterfly stroke,3a66SP21m5M,0,10,test
+scrambling eggs,3aEUBxfJedo,510,520,test
+swimming breast stroke,3aFO0xRgwjY,0,10,test
+slapping,3aQ0WM-FmX4,1,11,test
+tap dancing,3aU74B4Rlos,96,106,test
+clapping,3aas7bwcjms,40,50,test
+archery,3adTA4yzlH4,0,10,test
+sharpening knives,3al2QD0uBrM,146,156,test
+massaging person's head,3aqNJZz93Jk,2088,2098,test
+auctioning,3atCflAaFQs,131,141,test
+riding or walking with horse,3atj54fFjqI,1,11,test
+busking,3awcJdscViA,49,59,test
+swinging legs,3b1B0OYrax4,0,10,test
+eating carrots,3b1fVIs2Ozc,50,60,test
+juggling fire,3bAfOO4zHIg,16,26,test
+riding elephant,3bGYWTRpRLQ,143,153,test
+using segway,3bI327bJRAI,0,10,test
+playing harmonica,3bJbzAiZfzY,25,35,test
+drawing,3bKlXQ80h3g,107,117,test
+getting a haircut,3bdQR_2juZQ,0,10,test
+dancing gangnam style,3biP94jf--E,81,91,test
+counting money,3biY5zSJG0M,0,10,test
+ski jumping,3bnmSR25SiI,0,10,test
+doing laundry,3btmXNKL8cQ,3,13,test
+braiding hair,3bz_HW5hZbA,4,14,test
+washing feet,3c8A4EKuYu8,58,68,test
+making sushi,3cAsnhlQMdk,129,139,test
+shearing sheep,3cFjblDkdZg,72,82,test
+eating ice cream,3cJ6x_CYPvU,20,30,test
+situp,3cSTXpnzHvw,9,19,test
+smoking hookah,3cUHYaCJ51M,2,12,test
+whistling,3cZTr__OzPI,91,101,test
+cooking sausages,3clwoBHCxxk,191,201,test
+clapping,3cyDJFfENyE,10,20,test
+playing saxophone,3dAUGAGE_zk,241,251,test
+dunking basketball,3dCvguXiWwQ,0,10,test
+balloon blowing,3dCwAX2KIgc,1,11,test
+opening bottle,3dEALJLwCa0,1,11,test
+swinging on something,3dGgpwXZcF8,38,48,test
+cooking egg,3dccJTsYW5A,102,112,test
+folding clothes,3diAXMmP0P4,0,10,test
+checking tires,3eCM2dINbBs,8,18,test
+springboard diving,3eNbLECLbko,70,80,test
+abseiling,3ePwnAvORvI,5,15,test
+sticking tongue out,3eUq0lslMZA,0,10,test
+doing nails,3eXWzmJCRlk,161,171,test
+jumping into pool,3ei6p3RHciQ,3,13,test
+javelin throw,3ek-uphsJvY,22,32,test
+hugging,3emi3QvN5FI,83,93,test
+cleaning toilet,3fLhLKp452Y,151,161,test
+spinning poi,3fNbYkV8Mlc,202,212,test
+dancing ballet,3fNeJtfvGx0,34,44,test
+feeding fish,3fPSS3IsTII,12,22,test
+unboxing,3fSENQnzMvs,422,432,test
+jogging,3fVOPSTnN3Q,1093,1103,test
+riding scooter,3fWKB9dXjQI,37,47,test
+garbage collecting,3fp3xEgPnfA,212,222,test
+zumba,3fs6cwh92zY,56,66,test
+stretching arm,3ftXJpLeg-I,2,12,test
+shoveling snow,3fxzlU4beKs,65,75,test
+passing American football (in game),3fyVXWXxJEU,3,13,test
+making bed,3gC1bqLsTPU,0,10,test
+surfing water,3gM3pmIVNM0,1,11,test
+flying kite,3gXcmvbma3M,11,21,test
+hitting baseball,3gXqSd8irxc,20,30,test
+playing basketball,3gZiM5pjhYk,1,11,test
+tapping pen,3gdZp6dvs6M,88,98,test
+playing cello,3gg2SRyI14c,98,108,test
+playing controller,3grNEWAKnWk,112,122,test
+air drumming,3gtj8GAiRG8,11,21,test
+running on treadmill,3gy0tYV40Eg,7,17,test
+arm wrestling,3h4-fvlK6bE,193,203,test
+paragliding,3h7THefLt5k,161,171,test
+cleaning floor,3hLgmi7lSxc,4,14,test
+flying kite,3hY29z_AZAc,28,38,test
+side kick,3hsQuEKIi3w,0,10,test
+hopscotch,3huVaz00zPQ,12,22,test
+cleaning floor,3hur1R4gfLI,112,122,test
+snowmobiling,3hxeQ7-VQyQ,38,48,test
+playing chess,3i2H9U4NZQc,142,152,test
+stretching leg,3iSsKJGRflc,3,13,test
+swimming backstroke,3iTrcQSpshs,38,48,test
+waiting in line,3id8n8lWg08,16,26,test
+playing flute,3idGuB0IuOM,148,158,test
+dining,3ieHFNufQqc,29,39,test
+shaving head,3j1qeK0LlBI,31,41,test
+using computer,3j2ZLPxirfE,0,10,test
+pushing car,3j6ZxbzG7Ew,43,53,test
+riding mule,3j8nvrllg8Q,1,11,test
+whistling,3jBynLosWLI,19,29,test
+shot put,3jHZSHyqEiY,2,12,test
+catching fish,3jhVUGzGqFM,30,40,test
+kicking field goal,3kSOcxsw3CQ,3,13,test
+sword fighting,3kUag5lMZx8,34,44,test
+playing badminton,3kYt3rWKn7Y,1,11,test
+riding camel,3kaNvFf9gQs,165,175,test
+spinning poi,3kpyXO3WEsM,427,437,test
+ironing,3krHMAJDcbc,15,25,test
+tying knot (not on a tie),3l7JSVtOaSM,70,80,test
+rock climbing,3l9E1lVWrio,29,39,test
+shredding paper,3lE5_ElMt0w,19,29,test
+shearing sheep,3lOPKTErbvE,125,135,test
+water sliding,3lZYTOuz-jc,57,67,test
+catching fish,3lfVWOTuaDk,4,14,test
+windsurfing,3ll_yNIUc_o,16,26,test
+stretching arm,3lm5wgmCBAM,71,81,test
+punching bag,3lqoSZVXdC0,174,184,test
+waxing back,3lxU76SFRp4,35,45,test
+hitting baseball,3m3Cg4ppw_M,58,68,test
+playing tennis,3m_dXkhybmA,83,93,test
+bobsledding,3mdHoMnIN64,14,24,test
+surfing water,3me_YJjq1k4,26,36,test
+water sliding,3mn25wkUKMY,10,20,test
+skateboarding,3monhIYbsPk,201,211,test
+petting animal (not cat),3mqOzz58K4A,17,27,test
+cooking egg,3mr1369jK8E,6,16,test
+blowing glass,3mzA8nxxD5U,129,139,test
+grinding meat,3n6XGDXeDsQ,181,191,test
+capoeira,3n9T-QDmDFo,133,143,test
+spraying,3nPyAG-RbJg,219,229,test
+swimming backstroke,3nTv7p64pQA,322,332,test
+swing dancing,3nZc9aH9IT8,70,80,test
+ski jumping,3nc9etnk-14,32,42,test
+swinging legs,3nhdmeCQ7SU,0,10,test
+sweeping floor,3ny1HLY-27w,34,44,test
+hopscotch,3o0XYUO38YU,18,28,test
+snorkeling,3o3bqqFXDMY,30,40,test
+playing harp,3o6Wk-yFuko,104,114,test
+tying bow tie,3oB-Y0fA-vg,162,172,test
+hoverboarding,3oEx3s5_AdA,155,165,test
+snowmobiling,3oImlx7LWK4,43,53,test
+bench pressing,3oUcDbz6g7g,2,12,test
+parkour,3oXxCLnOl1M,18,28,test
+roller skating,3obvmC6upxU,11,21,test
+high kick,3ofi5_bK94g,104,114,test
+throwing discus,3ojfCU20Hmo,104,114,test
+extinguishing fire,3oo1LN01InE,53,63,test
+jetskiing,3ox_a4pU_RQ,202,212,test
+cooking chicken,3p2X7QL2wO0,399,409,test
+snowkiting,3p4SdkxNOss,3,13,test
+bee keeping,3p5A9eu0_us,5,15,test
+sharpening pencil,3pDmr2oFbZQ,31,41,test
+climbing ladder,3pHRARvFMNk,1,11,test
+punching bag,3pUh9swFkqM,11,21,test
+roller skating,3pXK8U35_Uo,122,132,test
+cooking on campfire,3pcXR9v-oP0,130,140,test
+training dog,3pmEGiTWGpA,145,155,test
+contact juggling,3ptt1ntTA4k,169,179,test
+golf driving,3pyGwU3_jR0,2,12,test
+headbutting,3q080PBlcdo,3,13,test
+pumping gas,3q4H7Gj2xoY,12,22,test
+dancing macarena,3qGSho5ADdw,146,156,test
+celebrating,3qHdtIokjxw,25,35,test
+hopscotch,3qR3rg2lVwI,12,22,test
+playing harp,3qb-_7ryhbo,57,67,test
+unboxing,3qg8UTCp4LQ,142,152,test
+blowing glass,3qh3MAT1TuY,32,42,test
+writing,3qybi37A8VI,108,118,test
+sled dog racing,3r2RV0ObQMQ,3,13,test
+strumming guitar,3r4QtDA7RvQ,153,163,test
+cartwheeling,3r7SY5bcKZU,11,21,test
+playing paintball,3rEI_Z4XjI0,281,291,test
+dribbling basketball,3rLm8urtdkQ,13,23,test
+petting cat,3rUsSPoIIgw,27,37,test
+folding paper,3r_MuE66zT0,133,143,test
+snatch weight lifting,3rdhZjNxXgM,0,10,test
+playing guitar,3s7-V-ClBhA,353,363,test
+golf putting,3sDXzxRgN-Q,32,42,test
+ironing,3sEk_w2T8Fw,15,25,test
+egg hunting,3sFIc6jrhiQ,81,91,test
+riding mechanical bull,3sFOzhy8M74,3,13,test
+parasailing,3sJ76Nahy0M,240,250,test
+checking tires,3sLsPwNBOHY,4,14,test
+kitesurfing,3sP_Wjw-JEU,26,36,test
+paragliding,3sUueqFytqo,104,114,test
+paragliding,3sY6rCP6sak,97,107,test
+making bed,3sjCxRsJEiY,116,126,test
+petting animal (not cat),3st0_kkcFWA,50,60,test
+eating hotdog,3stKIQnyAMQ,4,14,test
+playing bass guitar,3t3HIHst3dE,32,42,test
+playing controller,3t6MJxTXjHI,102,112,test
+eating burger,3t8j3pngB-4,51,61,test
+triple jump,3tJiw2s-SbE,458,468,test
+skiing slalom,3tTUH3g-C24,434,444,test
+hammer throw,3u410L8GyBY,47,57,test
+drinking,3u4WB_IhvPQ,44,54,test
+feeding goats,3u9Ia7fwJzc,101,111,test
+shaking hands,3uBFmg5JJKI,102,112,test
+finger snapping,3uLmdPzg5q0,17,27,test
+massaging person's head,3uOwE_SnzoI,7,17,test
+jumping into pool,3uSViSsQTog,5,15,test
+dribbling basketball,3ueCCA3Kaks,49,59,test
+picking fruit,3uoKSH_BG5w,26,36,test
+petting cat,3uuchyj2eiQ,2,12,test
+eating doughnuts,3uw5tUt4V_k,32,42,test
+playing flute,3v7y2JlvFG4,45,55,test
+recording music,3vEGtdVejgk,258,268,test
+pumping gas,3vLs9jAiYNE,41,51,test
+eating spaghetti,3vgebXMvaXE,3,13,test
+cooking on campfire,3vrhGQhAdXU,37,47,test
+doing nails,3w6VIFcWtxQ,498,508,test
+weaving basket,3wCRlZLF3F8,2,12,test
+playing cards,3wPd4LwskFo,72,82,test
+filling eyebrows,3wV4aJiaLFc,79,89,test
+petting cat,3wZQQ_4XOBc,3,13,test
+playing cymbals,3wd-nmQ5jw0,3,13,test
+baking cookies,3wkPtqbqhYw,5,15,test
+driving tractor,3wpVzLVs6HE,49,59,test
+drinking beer,3wqFS8kRs28,102,112,test
+moving furniture,3wsN1O8s4sQ,45,55,test
+riding mechanical bull,3wxI6If1hvw,10,20,test
+shredding paper,3x2MHvpj7vQ,50,60,test
+blowing glass,3xDP5hDcBYE,19,29,test
+golf driving,3xSLmOR884U,0,10,test
+bending metal,3xYb1naN4yU,94,104,test
+sniffing,3xjFw8dn0Ho,273,283,test
+hammer throw,3xxCPie-73s,1,11,test
+juggling balls,3y8kXokwtJk,10,20,test
+reading newspaper,3yFSXtKVNCY,2447,2457,test
+sled dog racing,3yGET5Ggv8w,12,22,test
+exercising arm,3yGlTMPshOQ,8,18,test
+building cabinet,3yJHZwRmvBo,346,356,test
+building shed,3yMN6uWY0-4,26,36,test
+riding or walking with horse,3yOFYNOl0xI,58,68,test
+climbing ladder,3yV6x5pLr0c,16,26,test
+making snowman,3yYTZrMoIps,4,14,test
+juggling soccer ball,3ycheX5Y2SI,30,40,test
+jetskiing,3yhhcVpiJ1A,132,142,test
+canoeing or kayaking,3yj95g4yKFs,212,222,test
+wrapping present,3z3ZFBlTOec,321,331,test
+riding mountain bike,3zCkJsttNRY,13,23,test
+javelin throw,3zIQmB3LY8w,1,11,test
+opening present,3zRLSML31is,16,26,test
+playing trombone,3zyevcbop7s,21,31,test
+golf putting,4-476Mc-Czk,4,14,test
+contact juggling,4-LwX9_wP-Q,34,44,test
+folding napkins,4-_MVk8DdMk,77,87,test
+scrambling eggs,4-e2bCkzkIs,88,98,test
+flipping pancake,4-zRuTD8SwA,141,151,test
+skipping rope,408HK6TFhHM,210,220,test
+surfing crowd,40FxbOJjcMo,7,17,test
+vault,40HJgSQpNIM,1,11,test
+grinding meat,40Hvt1_bgBM,57,67,test
+rock scissors paper,40Sy5CGET4g,55,65,test
+high kick,40VhgbpNcXQ,2,12,test
+passing American football (in game),40bxK59LjGg,3,13,test
+making bed,40dtzbcZi5Q,378,388,test
+snatch weight lifting,40tfrxVSY_4,1,11,test
+washing dishes,40ui4EXr63M,86,96,test
+catching or throwing softball,418yDMN0FBQ,92,102,test
+pumping gas,419-aW4_CmA,30,40,test
+curling hair,419dJvXoVAs,238,248,test
+petting cat,41AtQxcue-0,4,14,test
+sneezing,41I7VsIJkuk,0,10,test
+throwing ball,41IJctSNsPQ,0,10,test
+shining shoes,41J1kVhbQ-s,37,47,test
+breakdancing,41bfGlzCY6c,1073,1083,test
+brush painting,41dBa_hYwPc,109,119,test
+assembling computer,41sq0RnPjeQ,140,150,test
+playing squash or racquetball,42-G3xkzThY,22,32,test
+building cabinet,421nchw7dpo,291,301,test
+playing guitar,422nAm9ofs0,15,25,test
+bending back,42EvCdlO0jE,31,41,test
+eating carrots,42JIUrN54bo,4,14,test
+reading newspaper,42KAwGHApqU,0,10,test
+brushing hair,42LeoagAbvs,0,10,test
+stretching arm,42Odfrj8JqM,10,20,test
+washing feet,42P73CdWFfU,51,61,test
+playing harmonica,42QbQZVBcwE,7,17,test
+waxing back,42RSoJ-ul-M,338,348,test
+hurdling,42_tL34DhXs,50,60,test
+frying vegetables,42amtFpkUhA,251,261,test
+skiing (not slalom or crosscountry),42fp6AmeMCA,71,81,test
+riding scooter,434bNipc-JQ,3,13,test
+situp,43_ib6cs5SM,1,11,test
+doing nails,43pKfgg_fQw,212,222,test
+feeding fish,43rQqYOfQmo,76,86,test
+folding paper,43wb6pIdgLk,289,299,test
+tasting beer,443icNdmeWc,228,238,test
+shooting goal (soccer),445d-eAny88,1,11,test
+snorkeling,446UdbuXjpA,136,146,test
+breakdancing,448uFpM9PoA,15,25,test
+skateboarding,44A_uU3tFtI,23,33,test
+playing cards,44CAFT-Znlo,69,79,test
+golf chipping,44JARfvnTfw,268,278,test
+riding unicycle,44QqaM_ahg0,27,37,test
+drumming fingers,44XU3RHYYuU,71,81,test
+yoga,44cHljBeY3Y,49,59,test
+side kick,44k1hbwwn84,6,16,test
+rock scissors paper,44sP9DumeGY,11,21,test
+rock scissors paper,453yNMDg-EA,2,12,test
+punching person (boxing),457q0HqqMA0,15,25,test
+playing bass guitar,459lqHWE3TM,719,729,test
+hockey stop,45Oj2PtjI2Q,54,64,test
+playing ukulele,45Q3NrEmZCE,103,113,test
+playing controller,45U9WXZUbdY,103,113,test
+doing aerobics,45VJ0Fs_BMw,415,425,test
+juggling balls,45cjJi8xKFk,0,10,test
+waxing chest,45qRbxYTs50,246,256,test
+eating hotdog,45tmw80iQ5w,28,38,test
+golf chipping,465y13a7WHs,4,14,test
+crossing river,46LbXzgD_W8,16,26,test
+breakdancing,46MReZCuFbU,157,167,test
+eating hotdog,46OxQ9F9xkM,18,28,test
+decorating the christmas tree,46YBNutTwKg,30,40,test
+building cabinet,46j0_BB-IYY,634,644,test
+riding mule,46rPdokrMK4,6,16,test
+washing dishes,478vgLwUzz8,7,17,test
+javelin throw,47BHuMxCbLU,1,11,test
+skiing crosscountry,47FZrs8WBJU,31,41,test
+recording music,47PdpfpGSoI,76,86,test
+blowing leaves,47Q4Pf9orqw,97,107,test
+motorcycling,47UAkgoCxS4,40,50,test
+pumping fist,47aQ5o01vRE,2,12,test
+shaking hands,47jjIJTNmTc,43,53,test
+dancing gangnam style,47lZToSi5AQ,10,20,test
+eating burger,47lh8Tnt104,0,10,test
+plastering,47r2aC7VnkA,30,40,test
+hoverboarding,482xPMzigrw,11,21,test
+snowmobiling,487RhEQtlHk,12,22,test
+finger snapping,48ApMGOh_90,9,19,test
+shooting goal (soccer),48CU4zkKcTY,2,12,test
+petting cat,48Fc9mXV1mc,1,11,test
+cracking neck,48PzPdCwtFg,3,13,test
+making bed,48Tm99amSK0,45,55,test
+golf chipping,48XXFrmcY_s,41,51,test
+riding scooter,48aZulr1gZM,11,21,test
+waxing back,48g4DCIcL8M,193,203,test
+eating cake,48hv5KtmUBA,2,12,test
+riding elephant,48jimHjEXS8,10,20,test
+eating cake,48k2utczthE,11,21,test
+riding elephant,48mF0mzm9CM,532,542,test
+waxing eyebrows,48rnw-QweLM,738,748,test
+using remote controller (not gaming),490efq8psbw,0,10,test
+curling hair,494z74VOCZg,10,20,test
+filling eyebrows,499J15Fl2OU,112,122,test
+balloon blowing,49AWt9CMawo,18,28,test
+playing flute,49T4gEvRiUY,19,29,test
+waxing eyebrows,49WKyOFfKmk,70,80,test
+sharpening knives,49cvCc5qI4o,209,219,test
+riding elephant,49ddo6Zt3pQ,3,13,test
+chopping wood,49eFCq1bgQ8,568,578,test
+swinging legs,49iMPckT4bU,0,10,test
+passing American football (not in game),4A82E3JGxRM,6,16,test
+changing oil,4AEBIstrurk,83,93,test
+shearing sheep,4AJpwxqVSnc,170,180,test
+watering plants,4AQ3TeVdHtw,100,110,test
+archery,4AUY5-8BTSk,2,12,test
+zumba,4A_cu7zXPZk,225,235,test
+catching or throwing baseball,4B46OrmuX54,19,29,test
+roller skating,4BEqQdfMeNc,0,10,test
+playing organ,4BGHbe1GJp4,0,10,test
+spinning poi,4BPMrhEWM_g,6,16,test
+throwing axe,4Ba0BG9nxaE,45,55,test
+catching or throwing softball,4BaaR6PWJpA,37,47,test
+catching fish,4BtYqh_lTGI,2,12,test
+counting money,4ByrdQCE6HY,127,137,test
+playing keyboard,4C3YPGW7_Ek,2,12,test
+grooming dog,4CAmwF5tKOA,18,28,test
+yawning,4CBaQiIOsDI,2,12,test
+arm wrestling,4CSDC2VKi7I,4,14,test
+petting cat,4ChkWiRgY0Q,6,16,test
+laughing,4ChmdQVeHSY,39,49,test
+setting table,4D0Q2TxEHq4,19,29,test
+riding mule,4DCmnh85q3A,30,40,test
+using segway,4DG9K81UTMc,0,10,test
+swimming butterfly stroke,4Dcixtmlrpo,43,53,test
+hurling (sport),4Dmu4XcWbwQ,312,322,test
+milking cow,4Dssjmu7MsI,9,19,test
+washing feet,4E3YKtjmAYg,54,64,test
+tango dancing,4EDozfvkDzQ,6,16,test
+doing aerobics,4EGbVz8FGhU,32,42,test
+push up,4EMzjEoIMtw,275,285,test
+eating watermelon,4EY6eAb3KMo,4,14,test
+scuba diving,4EZyj31hgZU,77,87,test
+watering plants,4EbwkpZQph0,73,83,test
+playing trumpet,4EopV8oSONY,75,85,test
+hopscotch,4FKde17nDBE,169,179,test
+cutting watermelon,4FQ7Y0ZbqJI,5,15,test
+tossing coin,4FTcgzrauds,3,13,test
+shaking head,4Fmn5nGBx6Y,2,12,test
+getting a haircut,4FoDfnMfY-o,82,92,test
+eating spaghetti,4FoUUbolsPA,3,13,test
+baking cookies,4Fq5o1ZNd8o,80,90,test
+crying,4FvopUjPjzM,43,53,test
+milking cow,4FzZYrjaK2w,1,11,test
+milking cow,4Fzym5GHiQc,98,108,test
+news anchoring,4G-7hK5TMj0,42,52,test
+moving furniture,4G1ButxhulY,37,47,test
+massaging feet,4GCXjSu0W1o,52,62,test
+hugging,4GDqLx3jBic,13,23,test
+blowing nose,4GHEmiuxcIg,23,33,test
+playing didgeridoo,4GIFp401zyA,4,14,test
+cheerleading,4GTCDLJFwr4,189,199,test
+swimming breast stroke,4GYdcCnJDHw,78,88,test
+jetskiing,4GflxyE29vA,144,154,test
+surfing crowd,4Gh3F-4g438,202,212,test
+cutting nails,4GjS8892Xdc,3,13,test
+bending back,4GoOrTB_FHw,1,11,test
+massaging feet,4H1WO_HM0Wo,0,10,test
+air drumming,4H6Y6RKuzTc,0,10,test
+surfing crowd,4H9jVDLMRBM,7,17,test
+somersaulting,4HOm0_c6E08,12,22,test
+javelin throw,4HZsmfYaTtk,15,25,test
+ripping paper,4HjEaqk6y4Y,29,39,test
+massaging legs,4Hkvn56KoCg,124,134,test
+golf putting,4Ht4JbJSRSY,1,11,test
+exercising arm,4Hul03A7piU,0,10,test
+dancing macarena,4I04bj28Umc,35,45,test
+pumping gas,4I4mRQBMxc8,19,29,test
+sharpening knives,4I4sGdIE27Y,180,190,test
+cutting pineapple,4IET1ZMzhu0,25,35,test
+tossing coin,4ILkMJohf3s,6,16,test
+changing wheel,4IRb308UjTA,41,51,test
+braiding hair,4IS3moGHTio,80,90,test
+ski jumping,4IWfgzwZL88,4,14,test
+welding,4IZlPsyzniU,90,100,test
+tying knot (not on a tie),4IdnuPafnVk,20,30,test
+cooking egg,4Ik3aA-tOSg,8,18,test
+cracking neck,4IoYnEhsN8I,2,12,test
+playing cello,4IsVr9zgozI,8,18,test
+swimming breast stroke,4J4R967Tcus,36,46,test
+headbutting,4JDDd7CX5Q4,1,11,test
+curling hair,4JDvA6ZHuj4,485,495,test
+riding scooter,4JK5fDcGyTo,0,10,test
+dunking basketball,4Ja2GuHx0rM,0,10,test
+petting cat,4JkejoKEiuw,21,31,test
+jumpstyle dancing,4Jl5cXor0_8,108,118,test
+snorkeling,4Jwf-FihZ68,103,113,test
+tobogganing,4JxlgLcuIdk,90,100,test
+bending metal,4K34jkwS4PI,70,80,test
+making bed,4KObc8LymbM,33,43,test
+grooming horse,4KTv7ym2NIg,105,115,test
+tapping pen,4KaFe-lwE8s,47,57,test
+unboxing,4KviJ4lachs,148,158,test
+cooking egg,4LU_1g4Zw1s,2,12,test
+snowmobiling,4LV2cI1xZQo,52,62,test
+skiing crosscountry,4LZb3ygZjRQ,399,409,test
+jumpstyle dancing,4L_HsIZAkyw,67,77,test
+playing piano,4LgMCWVKrOA,60,70,test
+situp,4LgvgtW8aF8,128,138,test
+snorkeling,4LjSTeDrd5Q,33,43,test
+dying hair,4Lk3NrQSWlU,224,234,test
+bungee jumping,4LrgMu5xyCo,7,17,test
+brush painting,4M1JQ950nqI,280,290,test
+swinging on something,4MIkw5lEDHo,6,16,test
+snowboarding,4MLxaojR5Mg,0,10,test
+petting animal (not cat),4MYVAutElKI,9,19,test
+using computer,4MZJAmsUerE,3,13,test
+making pizza,4MvZG6b31p0,11,21,test
+faceplanting,4Mwyc9xyQBE,1,11,test
+waxing legs,4NJChRWGQFc,25,35,test
+watering plants,4NWrgirloNc,54,64,test
+auctioning,4NZ63JXI_Xw,41,51,test
+yawning,4Ni6sgTlz2Y,40,50,test
+roller skating,4NtBk6DzHuY,228,238,test
+gargling,4Nu1YdRCdgg,83,93,test
+getting a haircut,4O9K8c1xUEA,2,12,test
+folding clothes,4OKGThngxBc,123,133,test
+ice fishing,4OMJ_31xEiU,3,13,test
+using computer,4ONhquw75vg,8,18,test
+arm wrestling,4O_QMgB0IYA,17,27,test
+arm wrestling,4Oa0ZUIDbOU,83,93,test
+drumming fingers,4Okl_0qpA3A,16,26,test
+clean and jerk,4OtAjxpSQ6I,120,130,test
+presenting weather forecast,4OtLG8nLAwo,60,70,test
+paragliding,4PBnhCHK0_M,3,13,test
+egg hunting,4PJ2d3IpMmQ,555,565,test
+making a sandwich,4POVU2tA90w,50,60,test
+disc golfing,4PS_UkKDR04,484,494,test
+balloon blowing,4PVuzPJdnis,14,24,test
+scuba diving,4PdLQ56zyWA,354,364,test
+juggling soccer ball,4PhTbVXSIwg,10,20,test
+playing clarinet,4Psld5kC4Q0,26,36,test
+ski jumping,4PwQaBXxjXk,3,13,test
+parasailing,4Q5Dnpg12_U,28,38,test
+pumping fist,4Q5mkLiREuE,19,29,test
+marching,4QAjd42zPuE,29,39,test
+shooting goal (soccer),4QESrBcrCc8,9,19,test
+ironing,4QaxAKqt2wk,121,131,test
+making a cake,4QeBOUy_azM,485,495,test
+playing cello,4QetITKyIis,2,12,test
+massaging feet,4Qyz4EZJlYM,1355,1365,test
+ski jumping,4RBXlIDbxag,27,37,test
+parkour,4RC7_yG_jIc,45,55,test
+ice climbing,4RCwWj3jIsY,4,14,test
+shaving legs,4RH5s6P5Rpo,2,12,test
+bench pressing,4RKNVaA17bA,8,18,test
+pumping fist,4RRkYhZEuSU,0,10,test
+bookbinding,4RV0CFfNVuI,2033,2043,test
+playing bagpipes,4RedP54nWxI,0,10,test
+building shed,4RqmdXO4OGM,290,300,test
+cleaning windows,4Rvu1nCCoSM,3,13,test
+dancing charleston,4Rw2uMWX_0E,19,29,test
+playing accordion,4S23nCepuHI,51,61,test
+air drumming,4S3ZoEKA_cs,37,47,test
+peeling potatoes,4S8Uxr6DnPM,1,11,test
+headbanging,4SJaK-oI9P0,120,130,test
+hurdling,4Sbm-NyeCWI,34,44,test
+laying bricks,4SpFTruMQh0,87,97,test
+kicking soccer ball,4St66fM6zCI,46,56,test
+hopscotch,4SwftYGWEWg,3,13,test
+recording music,4T2b7mjbxuQ,159,169,test
+playing didgeridoo,4TKI7Q2rJqQ,6,16,test
+bungee jumping,4TP1XRZnouI,45,55,test
+scuba diving,4Ts_q56HaOY,208,218,test
+skiing crosscountry,4Tv99-yihNU,4,14,test
+eating hotdog,4Ty73-Mu6T0,5,15,test
+kicking soccer ball,4UEXg0tMzrY,27,37,test
+decorating the christmas tree,4UK4IyTff-Y,26,36,test
+doing aerobics,4UO2LR3nr7k,162,172,test
+ski jumping,4UTaYDAI6iQ,5,15,test
+mowing lawn,4UdxT6Zmero,81,91,test
+punching bag,4UlHU5siDUE,7,17,test
+writing,4UlmrKifwqc,24,34,test
+news anchoring,4UwsbcCP8GM,4,14,test
+somersaulting,4UzQnoGQzP4,3,13,test
+exercising with an exercise ball,4V1oaP85r7Y,2,12,test
+reading newspaper,4V9hf4U4qWg,3,13,test
+bee keeping,4VFA0KlqIDo,441,451,test
+bartending,4VJ05wbK7ec,177,187,test
+cooking on campfire,4Vgty9xDcic,35,45,test
+climbing tree,4VuGP6SAoHE,52,62,test
+climbing tree,4W9VvZL-WT8,6,16,test
+baby waking up,4WASfO8cv_U,9,19,test
+riding elephant,4WCtYm5m6sI,77,87,test
+playing tennis,4WDZLU7odeA,55,65,test
+making pizza,4WKIqKfL9vQ,290,300,test
+waxing legs,4WRt7UoAESQ,34,44,test
+archery,4WeXb8xc89U,49,59,test
+eating cake,4Wig5ngmxrQ,15,25,test
+playing volleyball,4WkNZaeve6A,8,18,test
+slacklining,4X1lXrD9o70,56,66,test
+catching fish,4X7d9ZFSOO0,187,197,test
+bobsledding,4X8D_C-aP-k,139,149,test
+balloon blowing,4XFNlK65z4M,3,13,test
+slapping,4XI_s9vnwFk,0,10,test
+egg hunting,4XKg9iNQBJk,15,25,test
+playing trombone,4XLoFz6fGng,41,51,test
+riding or walking with horse,4XMA3x1yXCo,44,54,test
+egg hunting,4XMO6ALrb9o,154,164,test
+canoeing or kayaking,4XOszX6VIvo,33,43,test
+kicking soccer ball,4XV2CTyC-Kw,3,13,test
+high jump,4XW0aiXWbfA,4,14,test
+washing feet,4XXaoGGx5mo,31,41,test
+snowmobiling,4Xc1Hn_Xd5E,0,10,test
+swinging legs,4XdDRzgB_Fc,16,26,test
+golf driving,4XghbM5A4zQ,2,12,test
+golf chipping,4XrN_lz1jaI,6,16,test
+crying,4YNavyw0HcM,9,19,test
+scuba diving,4YNw5J75fPs,4,14,test
+motorcycling,4YOLhB6elbs,59,69,test
+skydiving,4YYO_3oNUqA,143,153,test
+riding camel,4YZDZn5CwGM,0,10,test
+making a sandwich,4Ya-wof5_EY,165,175,test
+motorcycling,4YoP6sIxggE,239,249,test
+swimming butterfly stroke,4ZJK6k2Axio,0,10,test
+playing tennis,4ZbnbJfqUks,2,12,test
+skiing crosscountry,4ZfG4kofjUM,281,291,test
+rock scissors paper,4Zm0tHi5Qm4,1,11,test
+grooming dog,4Zr021tCe6A,5,15,test
+making snowman,4ZsUer35cxE,114,124,test
+springboard diving,4ZuQNhF1CkM,0,10,test
+shearing sheep,4_1o39Uc-Y0,75,85,test
+playing piano,4_W_sRF-beM,11,21,test
+blowing glass,4_XiY-4UsBA,16,26,test
+ironing,4_kF6hOW-SU,13,23,test
+ripping paper,4_rnmu8Ndc0,26,36,test
+peeling potatoes,4aGkHhuLkqE,85,95,test
+cooking on campfire,4aaHiEvFGKc,309,319,test
+drinking beer,4agLnDHcPlk,37,47,test
+presenting weather forecast,4ahEF8UqVug,56,66,test
+parkour,4ahWYUGLclQ,33,43,test
+snatch weight lifting,4alMQt_iqk4,9,19,test
+pole vault,4alb0Dr3qJg,5,15,test
+trimming or shaving beard,4amJmUHLUxU,80,90,test
+waxing legs,4amtRKCLeoQ,86,96,test
+using computer,4aoiXaA-2wk,13,23,test
+washing hands,4ap0jcZH9RY,26,36,test
+front raises,4asMwQOZGSU,27,37,test
+changing wheel,4b41nndZL5w,34,44,test
+dancing charleston,4b4NkiqMR-8,13,23,test
+whistling,4bKtloDoNKE,15,25,test
+playing drums,4bTWt1sU5YI,33,43,test
+juggling soccer ball,4bWmIn2rIfU,48,58,test
+dodgeball,4b_AL850sIs,3,13,test
+riding unicycle,4bcnnAWRfxA,13,23,test
+skiing slalom,4be6qUHCi0w,64,74,test
+tasting beer,4bjWk9DJ9L0,318,328,test
+swinging on something,4btKt4z0Jo0,18,28,test
+blasting sand,4c231SJsXoY,6,16,test
+country line dancing,4cBLYiF57CQ,128,138,test
+exercising with an exercise ball,4cDYjXcwhMM,143,153,test
+peeling potatoes,4cO7MTPxuyw,18,28,test
+playing tennis,4cSWtbhOJTg,323,333,test
+golf driving,4cT-he9iVeI,1,11,test
+laughing,4cV8EYsfFH4,119,129,test
+long jump,4cdeQHj4LEw,0,10,test
+plastering,4cgJ20m67QY,78,88,test
+hopscotch,4cjAR-ze2KU,44,54,test
+clay pottery making,4cjceY87rsI,1,11,test
+dancing gangnam style,4cqVogHoNwI,0,10,test
+grooming dog,4cri2BUC-3Q,9,19,test
+triple jump,4d1dNL-cKxg,10,20,test
+extinguishing fire,4d5kU6a1PkU,101,111,test
+gargling,4dAwHuO-GkE,159,169,test
+cleaning shoes,4dE3wN6sJsU,181,191,test
+feeding goats,4dt797AsY3s,0,10,test
+playing volleyball,4dvTMBIQX3g,4,14,test
+cleaning pool,4dxb71NYfjg,0,10,test
+jumping into pool,4dyZSQ9yOw8,1,11,test
+playing badminton,4eAdJJffdbY,72,82,test
+kicking field goal,4eBqes1SauQ,0,10,test
+waxing legs,4eLpBuVy5TQ,72,82,test
+shot put,4eQyOk7oMPk,1,11,test
+planting trees,4efgUwjTl_0,122,132,test
+cutting pineapple,4ejIWuOPDL0,2,12,test
+peeling apples,4ejor3so2Zk,1,11,test
+shoveling snow,4esKRaKDPLU,23,33,test
+trapezing,4etzU6aZHUU,13,23,test
+playing tennis,4f0M3D1FaDE,48,58,test
+scrambling eggs,4f5glWr7zNY,282,292,test
+headbutting,4f9GrJFIIrs,3,13,test
+playing ukulele,4fBQr-uH2U0,2,12,test
+bandaging,4fNmmjJu1ls,259,269,test
+golf putting,4fSex6n4FTw,6,16,test
+sharpening knives,4fUOkygazk8,21,31,test
+tapping guitar,4fVZZDsvBcM,422,432,test
+air drumming,4fZMIhzlLm8,51,61,test
+punching person (boxing),4fd0DxuSX6U,149,159,test
+long jump,4fl5bLFQ84Q,47,57,test
+trimming or shaving beard,4fxao1xDIJc,51,61,test
+shaving legs,4g3KQ7tCeEg,91,101,test
+playing trumpet,4gBf9xk6Sbo,36,46,test
+clay pottery making,4gPKl6jH0gY,8,18,test
+busking,4gWFdwy-sYU,3,13,test
+bandaging,4gWX-rJNfi8,27,37,test
+counting money,4gXNd5edEFk,20,30,test
+building cabinet,4gf9MmMQmpY,11,21,test
+gargling,4gkKQl2vT6k,90,100,test
+doing laundry,4gupfJsXvzM,339,349,test
+krumping,4h6adR_49GY,403,413,test
+parasailing,4h8FRTyktNs,24,34,test
+tickling,4hGthICbdlo,72,82,test
+playing squash or racquetball,4hPYMMFR_Cw,107,117,test
+making bed,4hXIpgZA4Yo,372,382,test
+riding mule,4hoA4vntsh8,12,22,test
+bandaging,4i4-q6kwrx0,80,90,test
+skydiving,4iFGni08p2U,305,315,test
+climbing a rope,4iIIhF2oxMA,3,13,test
+hockey stop,4iKEEwSpcso,4,14,test
+pushing wheelchair,4iM3HXC0CkM,4,14,test
+dancing ballet,4iQ2KWxF8as,4,14,test
+throwing ball,4iT7RMVS1V0,22,32,test
+blowing nose,4ig3fdET2js,0,10,test
+sailing,4j1BDSsSZY0,11,21,test
+side kick,4j1w--TjqVY,327,337,test
+news anchoring,4jD3JMzVj5A,52,62,test
+swimming breast stroke,4jgZlFTOxyA,6,16,test
+brush painting,4k4J9rAMIjw,557,567,test
+recording music,4k4klkfJRts,228,238,test
+punching bag,4kDuN6IqwmA,2,12,test
+folding napkins,4kJbScwIaIE,0,10,test
+gargling,4kalDk9sk9w,38,48,test
+grooming dog,4keU6jRzuRs,55,65,test
+moving furniture,4klKaGPnmZY,15,25,test
+grooming horse,4kq1CRaLDak,255,265,test
+passing American football (in game),4l4MPWTX5Jw,4,14,test
+egg hunting,4l4QO_L47jo,169,179,test
+parasailing,4l6Yslx0z04,22,32,test
+waxing legs,4lASAL_olVY,2,12,test
+abseiling,4lFmhj4x43c,66,76,test
+playing didgeridoo,4lIXdK_6eas,100,110,test
+shaving head,4lQuRpY316s,105,115,test
+celebrating,4lbfQuVSD4Q,0,10,test
+hurdling,4lmMWlm0QnI,2,12,test
+applying cream,4lvDmoqsFv0,7,17,test
+tossing salad,4lyXY38PXdw,144,154,test
+swimming backstroke,4mBL4o0z6Tg,17,27,test
+playing piano,4mP6HN0dMm0,289,299,test
+knitting,4mQANKn8LEo,103,113,test
+feeding fish,4mQT_MV1md0,14,24,test
+hopscotch,4mQbPntWUZA,15,25,test
+feeding fish,4mSDETCL7XU,2,12,test
+scrambling eggs,4mWwXZVMLAw,84,94,test
+taking a shower,4mZINWzMtps,118,128,test
+arm wrestling,4me5WvLX9uo,3,13,test
+arranging flowers,4mi5mIX0jWQ,37,47,test
+carving pumpkin,4mk6tIDC2Cs,901,911,test
+sharpening pencil,4mlUBrfBsj8,0,10,test
+ice skating,4mqRDxqzg5U,0,10,test
+waiting in line,4n0WtCpGsic,18,28,test
+drinking beer,4n2raqzGPM4,11,21,test
+climbing a rope,4o8nISTy9io,39,49,test
+brushing teeth,4oEHRSA3frI,104,114,test
+eating doughnuts,4oJG9NnPY_E,67,77,test
+opening bottle,4oKOORJ1ktQ,4,14,test
+chopping wood,4oXujOgoiS8,78,88,test
+playing ice hockey,4ok6uCxo6NQ,12,22,test
+belly dancing,4okxWH6PYdA,38,48,test
+kitesurfing,4ontYwRww-Y,7,17,test
+mowing lawn,4ot6CQO00l4,1245,1255,test
+driving tractor,4oyLiDhwYnQ,237,247,test
+arm wrestling,4oz_QZjvIS8,2,12,test
+faceplanting,4ozv50n_clQ,17,27,test
+doing nails,4p3I9Apg4YE,59,69,test
+eating hotdog,4p5I-P7NNx0,678,688,test
+bungee jumping,4pFyVk6k_PY,43,53,test
+brushing hair,4pMzZTT-BAQ,30,40,test
+reading book,4pRZ4JmsUCw,379,389,test
+dancing macarena,4pRkIUeIJ20,9,19,test
+yawning,4pSgfo0372U,7,17,test
+abseiling,4pW1rqbeleQ,23,33,test
+tap dancing,4pWMmccr_54,29,39,test
+playing saxophone,4pWwLQZi_uU,9,19,test
+headbutting,4pZBE3wS6w8,5,15,test
+ripping paper,4pfJ4GamApc,2,12,test
+bending metal,4phiOv-FZ2A,104,114,test
+playing cello,4pnPFUNfM08,3,13,test
+changing oil,4pxIGmINY7k,114,124,test
+ice climbing,4pzT6-RvVzU,234,244,test
+triple jump,4q9zdYHxZ4o,11,21,test
+hugging,4qBgm2720M8,0,10,test
+waxing eyebrows,4qEQ2AYovfA,91,101,test
+ripping paper,4qFqNiPJ828,2,12,test
+playing squash or racquetball,4qI69vmD1-w,75,85,test
+bartending,4qKJMnmoGmg,0,10,test
+kicking field goal,4qKeNWoUCBY,112,122,test
+salsa dancing,4qLswIlrVu0,217,227,test
+applying cream,4qdG163YBjk,7,17,test
+playing bass guitar,4rCkM6eg3Yw,4,14,test
+archery,4rK2U5cAAJQ,14,24,test
+washing feet,4rKFZgrMzeo,115,125,test
+hammer throw,4re-jZRdZAU,0,10,test
+texting,4rkXq5uA01g,48,58,test
+opening bottle,4rltGOPOtTw,12,22,test
+yoga,4rt7pkS1hpg,191,201,test
+breakdancing,4rusbDdhCvg,13,23,test
+opening present,4sADxhq8L_g,29,39,test
+cutting nails,4sDz55pdD8Y,18,28,test
+snowboarding,4tCzSDM8M84,7,17,test
+shaving head,4tPc7y41zPk,73,83,test
+smoking hookah,4tPolNn--hs,140,150,test
+playing trombone,4tRZwCA22qc,12,22,test
+making bed,4tS8gDY6w7I,118,128,test
+swimming backstroke,4tUKBrKmA04,6,16,test
+getting a haircut,4tUi30VIjCY,21,31,test
+massaging person's head,4tWRmLzSvxc,442,452,test
+trimming trees,4t_0T326CRY,48,58,test
+cooking on campfire,4tc0s2nNnJs,4,14,test
+tapping pen,4tk5x9HkNRg,0,10,test
+exercising with an exercise ball,4tmU1QoFh_0,1,11,test
+playing violin,4tnW9atZKo0,19,29,test
+playing ice hockey,4uKOaCz1Waw,31,41,test
+sign language interpreting,4uMIC8SOLPY,88,98,test
+air drumming,4uOoFFSa_So,217,227,test
+presenting weather forecast,4uTFBbAzzzA,33,43,test
+milking cow,4utrpIun37I,2,12,test
+texting,4uvd5P38Ysg,112,122,test
+waxing back,4uxBfNlqJsA,10,20,test
+robot dancing,4vBZu9zvENg,8,18,test
+setting table,4vD2hk4Ka3A,30,40,test
+passing American football (not in game),4vWcGj8MHrU,261,271,test
+shining shoes,4v_k_oGDiJA,188,198,test
+capoeira,4veY_RmUA8Y,47,57,test
+presenting weather forecast,4veZgyBkOq4,141,151,test
+waxing chest,4veptxnYjVM,7,17,test
+capoeira,4vmqY47WeAY,29,39,test
+sailing,4vmxnjxjVQg,28,38,test
+bending back,4vrtTIKCnyw,22,32,test
+recording music,4w-FATj9DWI,1,11,test
+tango dancing,4w-H2iKHsOQ,0,10,test
+kicking soccer ball,4wNfFNX3IxE,8,18,test
+folding napkins,4wUCb9-0iew,37,47,test
+feeding fish,4wXFofJsIXw,53,63,test
+weaving basket,4wnLB-vGIaM,245,255,test
+snorkeling,4wzMj2HAmPk,31,41,test
+riding or walking with horse,4xIdmkA3o3s,31,41,test
+pole vault,4xWpxB2YxOQ,4,14,test
+waxing legs,4xwj0-idqmg,0,10,test
+shooting goal (soccer),4y2RzIION0c,67,77,test
+cleaning toilet,4y9Pjxzu11I,10,20,test
+archery,4y9jsLg4Uc8,42,52,test
+driving car,4yAOWThnFuE,3,13,test
+throwing axe,4yNp1HLN0VE,26,36,test
+eating watermelon,4yPp0HfcFDE,72,82,test
+washing feet,4yQhu1arsnU,156,166,test
+playing kickball,4yTLUOg-cfg,10,20,test
+gymnastics tumbling,4yTnAHb4OGQ,137,147,test
+situp,4yUh0ds3a9w,7,17,test
+braiding hair,4yo9BwoQIpM,18,28,test
+tapping guitar,4z4kNGDTfu0,27,37,test
+catching or throwing baseball,4zAbxDdlvho,2,12,test
+shuffling cards,4zToX641vwE,32,42,test
+cooking on campfire,4z_iRkeqCf0,158,168,test
+hugging,5-CqP_O17mY,134,144,test
+getting a tattoo,5-IU3G72vos,53,63,test
+dying hair,5-LGYQSwO68,107,117,test
+baking cookies,5-Q0k532xSA,4,14,test
+skiing slalom,5-QfgUKYP0k,63,73,test
+skipping rope,5-abwBb_htA,85,95,test
+diving cliff,5-b14_5xFEA,7,17,test
+playing organ,5-csMN2WvWM,58,68,test
+dining,5-iOKnq0_ng,18,28,test
+jumping into pool,5-nw_kGMVg4,1,11,test
+passing American football (not in game),50ABFXM35sg,18,28,test
+throwing ball,50SvPRqXq_E,3,13,test
+shaving head,50TEMPrXgIo,61,71,test
+shining shoes,50cfBvkMy9c,70,80,test
+jogging,50d7FxNrsd4,9,19,test
+setting table,50i5ExSdVzA,99,109,test
+testifying,5101UDPfG_s,98,108,test
+pumping fist,510oJaB8Zv4,27,37,test
+playing didgeridoo,511rGN-0ve4,10,20,test
+laying bricks,51FaaxLZVo0,13,23,test
+arm wrestling,51G5IytnlSY,59,69,test
+hockey stop,51KvhGMqMoM,4,14,test
+cutting nails,51PDx4_57A4,2,12,test
+tying knot (not on a tie),51Pr9xdOU7U,121,131,test
+making bed,51ZkTgglI0s,54,64,test
+ice fishing,51_ys-ne74c,63,73,test
+sanding floor,51b-ppp_DK8,241,251,test
+playing recorder,520WHnI3FKg,21,31,test
+answering questions,52152FgCqw4,2,12,test
+skydiving,523P0lf66Ko,57,67,test
+peeling apples,528mf7pDb0I,32,42,test
+swimming butterfly stroke,52TPDipzkCg,29,39,test
+drinking beer,52Xa1JSscC8,4,14,test
+golf driving,52aZehtlab4,24,34,test
+blasting sand,52klPOeaMsI,60,70,test
+ice fishing,52mYx4fJMkg,374,384,test
+windsurfing,52qiwaLzkS4,96,106,test
+training dog,52rHPVWmjw4,25,35,test
+beatboxing,52tASMOW0_Y,1,11,test
+answering questions,52vO4-3tclg,344,354,test
+water skiing,52wG6_1m1kc,25,35,test
+baby waking up,52wiJAz-nZ8,58,68,test
+beatboxing,52ymBbxHeZo,58,68,test
+bungee jumping,53-DpWC9WWY,112,122,test
+dodgeball,538LnE1A6jY,5,15,test
+hula hooping,53IIgYqZDdE,106,116,test
+surfing crowd,53XMiD6RCkk,3,13,test
+making jewelry,53fH7KY9EoU,135,145,test
+making pizza,53jEfsbjvbo,157,167,test
+parkour,53nIHO1qGQk,10,20,test
+setting table,53rVUILiJWs,13,23,test
+sneezing,54B_Ac3_kZM,21,31,test
+juggling fire,54Ut0bzbAcI,0,10,test
+cartwheeling,54gdL35VGz4,1,11,test
+washing hair,54l6xHpPL-Q,15,25,test
+eating chips,55Hd73NeKL4,67,77,test
+filling eyebrows,55XL2a_ftjw,24,34,test
+robot dancing,55bavi7DBSA,2,12,test
+side kick,55nixd93Q8E,352,362,test
+rock climbing,55wpH9koUZ4,225,235,test
+surfing crowd,560mh4vz3vs,0,10,test
+tobogganing,56Bv6EMXJwU,21,31,test
+playing accordion,56Y6ECg7m9A,173,183,test
+playing saxophone,56iRLZ4RoL8,102,112,test
+tying knot (not on a tie),5700bUkjeRs,44,54,test
+recording music,575X64dVrC0,249,259,test
+playing kickball,57LOKwYCMaU,130,140,test
+sword fighting,57PFOOyu9Gc,7,17,test
+flipping pancake,57gzv-_zt6g,3,13,test
+blasting sand,57hNCzezN7A,19,29,test
+pushing wheelchair,57qY0VPnS0w,723,733,test
+exercising with an exercise ball,57vk8d4yBCw,4,14,test
+riding or walking with horse,58-9khU-x-E,89,99,test
+punching person (boxing),5853SFNgzQA,164,174,test
+motorcycling,589RDnMVguM,183,193,test
+grinding meat,58AgaJVe1mE,31,41,test
+cheerleading,58B_vSFOt2c,138,148,test
+surfing crowd,58RCbv5pPkc,1,11,test
+biking through snow,58SkggzvipY,8,18,test
+presenting weather forecast,58fh4XEQQcA,1,11,test
+playing kickball,58uUH_64AvI,205,215,test
+playing xylophone,58zuYSVx4iI,31,41,test
+counting money,59EbZzJkW8U,59,69,test
+punching bag,59_n-rZtGMc,5,15,test
+riding camel,59kT9Fjl0Fg,5,15,test
+gymnastics tumbling,59muGKbppd4,137,147,test
+cleaning toilet,5A04xVYpI5U,55,65,test
+pushing cart,5A69JdoRjZE,151,161,test
+playing organ,5AC5lMlvvdg,183,193,test
+cooking on campfire,5AgsLF-AbmU,331,341,test
+cracking neck,5AkgSP4UxIM,1,11,test
+contact juggling,5AtU9I_RKqA,39,49,test
+canoeing or kayaking,5Av2rt-xYhM,49,59,test
+ripping paper,5B-u5PTUPck,201,211,test
+using computer,5BEjqTBhsxM,81,91,test
+chopping wood,5BF2Xs_2itE,146,156,test
+exercising with an exercise ball,5BHv3h3NJlE,3,13,test
+situp,5BLCLngn30c,12,22,test
+pushing cart,5BZeJjZXAy4,53,63,test
+riding elephant,5B_ybp3AEvQ,17,27,test
+playing squash or racquetball,5ByFpFY7FJY,34,44,test
+playing saxophone,5C035eGnTSk,0,10,test
+eating cake,5C06x9m9avo,46,56,test
+frying vegetables,5CNNaWsf27A,182,192,test
+curling hair,5CRrD3rMA_o,290,300,test
+playing didgeridoo,5CSw0PsRNMw,17,27,test
+springboard diving,5CWEDPNzZns,36,46,test
+watering plants,5CWK5IayvGc,0,10,test
+auctioning,5CfOXpYu1pc,137,147,test
+climbing tree,5Cn4rMCgHQM,59,69,test
+playing harp,5Cvfu-K0loc,97,107,test
+texting,5Czepujf2Fw,19,29,test
+weaving basket,5CzyzmmHN_w,146,156,test
+assembling computer,5D1lFJlgvxQ,319,329,test
+shaking head,5D73U9Rg_LM,11,21,test
+swinging on something,5D7H8mDOWtw,36,46,test
+riding or walking with horse,5DZBcm60BFQ,65,75,test
+skipping rope,5DcZKIn2res,63,73,test
+golf chipping,5DmSrfQYGpo,29,39,test
+wrapping present,5DyLif-rR5g,69,79,test
+spray painting,5DzHA_bPf5c,5,15,test
+bench pressing,5DzQXU44Sro,11,21,test
+high kick,5E-YPH3hA6k,10,20,test
+frying vegetables,5E20wCGF6Ig,122,132,test
+tap dancing,5EBm908Fz3s,13,23,test
+throwing ball,5EDsxibHEwo,21,31,test
+tying knot (not on a tie),5EJEYAzatm0,209,219,test
+playing bass guitar,5Eh4NmbJ5-0,29,39,test
+climbing a rope,5ElqOhJcP44,4,14,test
+riding or walking with horse,5EnukW_zudE,29,39,test
+walking the dog,5EpwNEjp6l4,59,69,test
+washing dishes,5EtzGo62Od0,284,294,test
+curling hair,5FDohEShoEs,660,670,test
+shaking head,5FECmx_aDL8,15,25,test
+picking fruit,5FIs5WG-yTI,58,68,test
+pole vault,5FTXZ6671SE,1,11,test
+golf driving,5Fc67Ld_zoc,4,14,test
+throwing axe,5Fi509ykHdM,0,10,test
+blowing out candles,5FjeIBC_S1Y,2,12,test
+ironing,5FouJN6NZMw,96,106,test
+applauding,5Fql4bsKKVc,1,11,test
+opening bottle,5GBwTp2uwr8,3,13,test
+vault,5GL-5jbUs7A,2,12,test
+picking fruit,5GdjqzbVNeU,17,27,test
+massaging person's head,5GkTZ8bcVxg,7,17,test
+climbing a rope,5GoF9GDlLV8,1,11,test
+strumming guitar,5Gp4q6mcvJI,453,463,test
+playing harmonica,5GsSKJdmdX4,12,22,test
+news anchoring,5HZrmqA2IKs,1,11,test
+flipping pancake,5HfGynid66c,10,20,test
+tai chi,5HfVWcxtGsY,42,52,test
+juggling balls,5HktwN8wd24,4,14,test
+playing bass guitar,5I06AWNjOpA,143,153,test
+snowmobiling,5IwSRlfOBa4,5,15,test
+surfing water,5JA22mAxcOw,34,44,test
+riding mechanical bull,5JCdNjf4ou8,12,22,test
+applauding,5JCmAD9MLms,5,15,test
+laughing,5JJJDLcu8k0,12,22,test
+playing cymbals,5JRShEdPUWs,25,35,test
+spraying,5JRfjom8ugw,10,20,test
+eating watermelon,5JVP3Y0Sw0Q,1,11,test
+setting table,5JZ4c772RCc,7,17,test
+dancing ballet,5JeiEjCiDBo,3,13,test
+snowmobiling,5Jk1caVQbtI,28,38,test
+dunking basketball,5JrUTpXnJ5Q,19,29,test
+washing dishes,5JtCaSQIxxI,0,10,test
+krumping,5K-tzvFWv0I,20,30,test
+eating cake,5K0328Azaso,176,186,test
+krumping,5K54eePNUZY,8,18,test
+watering plants,5KC_0t0Cf8k,78,88,test
+drop kicking,5KFUpKtvw1I,1,11,test
+playing volleyball,5KHY7PIb_B0,204,214,test
+swinging legs,5KKufGSK7YI,26,36,test
+playing badminton,5KVSixvpOkc,2,12,test
+washing dishes,5KZaIrppdj8,734,744,test
+eating doughnuts,5KcM3hTNP0Q,10,20,test
+playing paintball,5KctPbK3phM,502,512,test
+scrambling eggs,5KgZY2Z-VIE,552,562,test
+washing feet,5Kky_zYQNto,690,700,test
+braiding hair,5KmoiK5Hj9U,7,17,test
+side kick,5KnaiWuZruU,3,13,test
+laying bricks,5L--7Y72fT8,0,10,test
+riding mule,5L1MpmoxT-g,86,96,test
+finger snapping,5L2CHYIiLRo,1,11,test
+dunking basketball,5L3b8mzcvoU,1,11,test
+giving or receiving award,5LR0_kFyeIM,69,79,test
+singing,5LdNXzRzIqU,233,243,test
+cracking neck,5LsChw469c4,3,13,test
+playing kickball,5Lv0g7ISQVU,21,31,test
+high kick,5Lvptxo6fYM,12,22,test
+playing trombone,5M-bY3WMUqc,63,73,test
+climbing ladder,5M6QZEt3qB0,54,64,test
+drawing,5M7aX0WcqCk,408,418,test
+surfing water,5MFNpo8cq48,14,24,test
+strumming guitar,5MKbR_rzIjg,37,47,test
+tai chi,5MeDmw72ypE,23,33,test
+making a sandwich,5MndUGNl7NE,31,41,test
+cartwheeling,5MpH64C-Mqw,43,53,test
+decorating the christmas tree,5MqCjnba0fY,49,59,test
+clay pottery making,5N3yas0uJWA,454,464,test
+using segway,5NDrqG6D0xI,0,10,test
+playing keyboard,5NLFSwX3nyY,0,10,test
+swimming butterfly stroke,5NM8Y2AycvU,61,71,test
+tying tie,5Nh2PIMjQ6Y,64,74,test
+bench pressing,5Nh6i16tjek,0,10,test
+bee keeping,5Nmghw4GAeo,536,546,test
+windsurfing,5Nn5t4lOtk0,53,63,test
+riding or walking with horse,5NuVdUaGSo8,13,23,test
+bungee jumping,5Ny6CyFrevM,3,13,test
+recording music,5NzCkT0V9rA,60,70,test
+drinking,5O4VKlveAGQ,11,21,test
+busking,5OJDyaHkICM,27,37,test
+washing hands,5OSOzhOt744,58,68,test
+pumping gas,5OWp1R-M54E,9,19,test
+braiding hair,5OdToaFkC2g,12,22,test
+finger snapping,5Opz7hOBpb0,1,11,test
+windsurfing,5Oy19kN4UAY,62,72,test
+busking,5OyG8lucO7U,23,33,test
+somersaulting,5P0E75ZYYGA,5,15,test
+pushing car,5P12sBOqIfU,32,42,test
+swinging legs,5P7PoDbHWe0,3,13,test
+blowing leaves,5PMtuccj6Yk,0,10,test
+dodgeball,5PO6S_3fd5A,233,243,test
+finger snapping,5PO_c4qDz0g,0,10,test
+krumping,5PcMRH9hz8g,3,13,test
+jumpstyle dancing,5PjfZrqF_4w,50,60,test
+playing cello,5Px3TMJBSXs,131,141,test
+zumba,5Q4V_HFQsCw,189,199,test
+skiing slalom,5QI9UYyFlKk,406,416,test
+blowing nose,5QnymN1FwrU,1,11,test
+stretching arm,5R5HYlRCQIY,54,64,test
+picking fruit,5RKKPJKFV4A,9,19,test
+finger snapping,5Rhw9TL0z3g,1,11,test
+taking a shower,5RjBxXL36iU,96,106,test
+clay pottery making,5RyQtjyUSnA,25,35,test
+wrestling,5S3t1jWzO3Y,0,10,test
+plastering,5SCmvN1NT8o,10,20,test
+clapping,5SE8HfwB-4I,1,11,test
+unboxing,5SQOgaCdQWU,272,282,test
+pushing cart,5Stpa1NY-Us,27,37,test
+kicking field goal,5SuBeH-OtJU,3,13,test
+drawing,5Sx-cGBIVv8,2056,2066,test
+sharpening knives,5T3W9dqi8lA,13,23,test
+swimming backstroke,5T53JTzTMnU,3,13,test
+cooking egg,5TCvF8bxevE,17,27,test
+yawning,5TDdf1XlRD4,1,11,test
+surfing crowd,5TMrJZ_LQO0,14,24,test
+tossing salad,5TT1GZqk1C0,77,87,test
+situp,5TaUptVo0Lw,1,11,test
+ice climbing,5TeDkyhU7Hk,46,56,test
+playing tennis,5TeRUmxq0cw,27,37,test
+pushing car,5TkgRqa6pU8,2,12,test
+parasailing,5U1el0yiH6E,107,117,test
+sharpening knives,5U90wKeiYWQ,89,99,test
+feeding goats,5USq5UOXRkc,76,86,test
+bartending,5Uj8uUYz38o,235,245,test
+cleaning gutters,5Ujx0-D-eKk,49,59,test
+tapping pen,5Us67VMQlSk,20,30,test
+slacklining,5V3crlXPQC4,13,23,test
+disc golfing,5V8MlgqUaCA,17,27,test
+using computer,5VH9bcZXGk8,52,62,test
+slapping,5VJ4B2hDZe4,13,23,test
+paragliding,5VY94KwZhK8,49,59,test
+riding mule,5VZj4ANeA-s,17,27,test
+picking fruit,5Vcp3jt6DNc,6,16,test
+krumping,5VjbIBHIJc0,75,85,test
+riding unicycle,5VlPtlLGHgk,7,17,test
+mopping floor,5W7d3yGjbeo,28,38,test
+pushing car,5W7zyTyGEps,2,12,test
+biking through snow,5WCkbJZmr4U,2,12,test
+pumping fist,5WK1089lTHg,0,10,test
+stomping grapes,5WYW_H4hdhI,300,310,test
+smoking hookah,5WcC0xcWm_s,8,18,test
+tai chi,5WnjhKpRXPU,163,173,test
+wrapping present,5Wp2dxIAocI,128,138,test
+playing clarinet,5Wxaag6MJd4,54,64,test
+javelin throw,5X2PCJM_i_k,58,68,test
+hurling (sport),5XCssmfijAE,216,226,test
+feeding birds,5XFQBXMvO58,7,17,test
+riding or walking with horse,5XGo2rq68qs,5,15,test
+bobsledding,5XMOY_sf7K4,6,16,test
+smoking,5XmQ15ZRyhY,260,270,test
+blowing nose,5Xq0uN0t82w,0,10,test
+shooting goal (soccer),5XrEWDxrRho,0,10,test
+blowing out candles,5Y-n0INBd9o,8,18,test
+eating cake,5Y8WG17lfQw,53,63,test
+swing dancing,5Y9y3q-45xs,13,23,test
+hugging,5YIBpxpGfYs,12,22,test
+playing kickball,5YOEBpXj2EM,4,14,test
+cutting watermelon,5YTGaGq4OQU,11,21,test
+unloading truck,5YUgw7Xxj3s,53,63,test
+fixing hair,5YbWyeOy5SE,67,77,test
+parasailing,5YdkZjWE5DY,76,86,test
+eating cake,5Ye3otc3npc,14,24,test
+cooking on campfire,5Yeu8iGAUu4,79,89,test
+playing bass guitar,5YgYJALnIZE,82,92,test
+sharpening knives,5Yzo43e8WyM,296,306,test
+riding elephant,5Z6CJBcmNmw,32,42,test
+waxing chest,5ZJuMXxSKYY,81,91,test
+pole vault,5ZQVeu_8dv4,1,11,test
+making snowman,5Z_LT8pI6BE,27,37,test
+making jewelry,5ZbxAhAFOqE,3,13,test
+sailing,5ZcyI9_9CzQ,132,142,test
+squat,5ZdLVW0AQsw,1,11,test
+skiing crosscountry,5ZnUIzHU-mM,78,88,test
+cooking sausages,5ZqtuWfT5Vk,54,64,test
+headbutting,5_96Lptj0q8,5,15,test
+breakdancing,5_H2iB04OBo,97,107,test
+vault,5_H7Gt52ie0,2,12,test
+skiing slalom,5_OzEiHQMU4,54,64,test
+writing,5_QvfifwZfM,129,139,test
+hitting baseball,5_TjdVDNVgM,3,13,test
+cutting nails,5_V4XZn7Fmw,11,21,test
+shot put,5_WAkX7Ws5c,8,18,test

@@ -13,6 +13,9 @@ __pycache__/
 !/data/*.sh
 !/data/*.names
 
+# TMP data files
+!/data/kinetics_splits
+
 # Images downloading
 geckodriver.log
 
@@ -21,6 +24,3 @@ geckodriver.log
 
 # MyPy
 .mypy_cache/
-
-# TMP data files
-kinetics_splits/
