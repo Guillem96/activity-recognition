@@ -73,7 +73,7 @@ $ python -m ar.models.video.train \
      LRCN <model-args>
 ```
 
-DYI:
+#### DIY
 
 ```python
 import ar
