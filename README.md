@@ -94,6 +94,47 @@ loss.backward()
 
 TBD
 
+## Project structure
+
+The project is thought to be a single python package called `ar`.
+
+```
+├── LICENSE
+├── README.md          <- README with basic information
+├── data/              <- Directory containing bash scripts to download the data 
+|                         as well as some class to index files. 
+|                         My recommendation is to store the raw data here too.
+│
+├── notebooks          <- Jupyter notebooks. Just for exploration and examples. 
+|                         By default the notebooks are not reproducible.
+│
+├── requirements.txt   <- `pip freeze > requirements.txt`
+│
+├── ar                 <- Main python package. `import ar`
+│   │
+│   ├── data           <- Mainly for `torch.utils.data.Dataset` and other data
+|   |                     utilities.
+│   │
+│   ├── models         <- Models definition and training scripts.
+│   │   │                 
+│   │   ├── video      <- Video models and video training scripts
+│   │   ├── audio      <- Audio models and audio training scripts
+│   │   └── image      <- Image models and image training scripts
+│   │
+│   ├── utils  <- Python and PyTorch utilities to avoid boilerplate code
+│   |
+|   ├── transforms <- Data transformations compatible with `torchvision`
+│   |                 transformations API. `import ar.transforms.functional as F`
+|   |                 and `import ar.transforms as T`.
+|   |
+|   ├── metrics <- Useful metrics for classification such as ``top_k_accuracy``
+|   |
+|   └── typing.py  <- Convenient type aliases.
+|
+└── mypy.ini       <- MyPy configuration
+```
+
+
 ## References
 
 - [1] The Kinetics Human Action Video Dataset - https://arxiv.org/abs/1705.06950
