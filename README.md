@@ -121,7 +121,7 @@ The project is thought to be a single python package called `ar`.
 │   │   ├── audio      <- Audio models and audio training scripts
 │   │   └── image      <- Image models and image training scripts
 │   │
-│   ├── utils  <- Python and PyTorch utilities to avoid boilerplate code
+│   ├── utils          <- Python and PyTorch utilities to avoid boilerplate code
 │   |
 |   ├── transforms <- Data transformations compatible with `torchvision`
 │   |                 transformations API. `import ar.transforms.functional as F`

@@ -44,7 +44,8 @@ class VideoRandomErase(object):
         if scale[0] < 0 or scale[1] > 1:
             raise ValueError('range of scale should be between 0 and 1')
         if p < 0 or p > 1:
-            raise ValueError('range of random erasing probability should be between 0 and 1')
+            raise ValueError('range of random erasing probability'
+                             'should be between 0 and 1')
 
         self.p = p
         self.scale = scale
