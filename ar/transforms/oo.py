@@ -3,7 +3,7 @@ import random
 from typing import Callable, Collection, Tuple, Sequence, List, Union
 
 import torch
-import ar.transforms.functional as F
+from . import functional as F
 
 Transform = Callable[[torch.Tensor], torch.Tensor]
 
@@ -85,7 +85,7 @@ class VideoRandomErase(object):
                 i = random.randint(0, h - e_h)
                 j = random.randint(0, w - e_w)
 
-                return i, j, h, w, value
+                return i, j, e_h, e_w, value
 
         # Return original image
         return 0, 0, h, w, video
