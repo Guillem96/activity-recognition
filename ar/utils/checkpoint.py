@@ -33,8 +33,9 @@ class SerializableModule(nn.Module, abc.ABC):
              **kwargs: Any) -> Tuple[T, dict]:
 
         checkpoint = torch.load(path, map_location=map_location)
-        
-        instance = cls(**checkpoint.pop('config'), **kwargs)
+        config = dict(checkpoint.pop('config'),**kwargs)
+
+        instance = cls(**config)
         instance.to(map_location)
         instance.load_state_dict(checkpoint.pop('model'))
 
