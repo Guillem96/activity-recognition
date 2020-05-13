@@ -4,6 +4,9 @@ tqdm>=4.45.0
 # Scikit stack
 pandas>=1.0.3
 
+# PyTorch
+torch>=1.5.0
+
 # Video processing
 av>=7.0.1
 pytube3>=9.6.4

@@ -1,10 +1,11 @@
 import uuid
 import json
 import time
-import requests
+import urllib
 import subprocess
 import multiprocessing
 from pathlib import Path
+from filelock import FileLock
 from functools import partial
 from typing import Union, Mapping, Any, Tuple
 
@@ -62,7 +63,8 @@ def download_clip(video_identifier: str,
                   start_time: int, 
                   end_time: int,
                   tmp_dir: Union[str, Path] = '/tmp/kinetics',
-                  url_base: str = 'https://www.youtube.com/watch?v=') -> Tuple[bool, str]:
+                  url_base: str = 'https://www.youtube.com/watch?v=') \
+                      -> Tuple[bool, str]:
     """Download a video from youtube if exists and is not blocked.
 
     Parameters
@@ -88,14 +90,13 @@ def download_clip(video_identifier: str,
               .get_lowest_resolution()
               .download(output_path=str(tmp_dir), 
                         filename=str(fname)))
-    except requests.exceptions.HTTPError as err:
-        if err.response.status_code == 429:
-            import sys
-            print('Stopping downloading because we reached' 
-                  'the maximum requests per day')
-            sys.exit(1)
-        print('Error', str(err))
-        return False, str(err.response.status_code)
+    except urllib.error.HTTPError as err: # type: ignore[attr-defined]
+            if err.code == 429:
+                print('Stopping downloading because we reached '
+                      'the maximum requests per day')
+
+            print('Error', str(err))
+            return False, str(err.code)
 
     except Exception as err:
         print('Error', str(err))
@@ -127,20 +128,20 @@ def download_clip_wrapper(row: Mapping[str, Any],
                           label_to_dir: Mapping[str, Path],
                           tmp_dir: Union[str, Path],
                           queue: multiprocessing.Queue,
-                          fail_file: Union[str, Path]) -> None:
+                          fail_file: Union[str, Path]) -> Tuple[bool, str]:
     """Wrapper for parallel processing purposes."""
-    
-    with Path(fail_file).open() as f:
-        register = json.load(f)
-        if row['video-id'] in register:
-            return
+    with FileLock(str(fail_file) + '.lock'):
+        with Path(fail_file).open() as f:
+            register = json.load(f)
+            if row['video-id'] in register:
+                return False, 'Error already registered'
 
     output_filename = construct_video_filename(
         row, label_to_dir)
 
     clip_id = output_filename.stem
     if output_filename.exists():
-        return 
+        return True, 'Fail already exists'
 
     downloaded, log = download_clip(row['video-id'], output_filename,
                                     row['start-time'], row['end-time'],
@@ -149,7 +150,7 @@ def download_clip_wrapper(row: Mapping[str, Any],
     if not downloaded:
         queue.put((row['video-id'], log))
 
-    # return clip_id, downloaded, str(log)
+    return downloaded, str(log)
 
 
 def parse_kinetics_annotations(input_csv: str, 
@@ -189,14 +190,21 @@ def writer(q: multiprocessing.Queue,
     fail_file = Path(fail_file)
 
     while 1:
-        video_id, log = q.get()
-        with fail_file.open('r') as f:
-            register = json.load(f)
-            register[video_id] = log
-        
-        with fail_file.open('w') as f:
-            json.dump(register, f)
-            f.flush()
+        recv = q.get()
+        if isinstance(recv, tuple):
+            with FileLock(str(fail_file) + '.lock'):
+                video_id, log = recv
+                with fail_file.open('r') as f:
+                    register = json.load(f)
+                    register[video_id] = log
+            
+            with FileLock(str(fail_file) + '.lock'):
+                with fail_file.open('w') as f:
+                    json.dump(register, f)
+                    f.flush()
+
+        elif isinstance(recv, str):
+            if recv == 'done': return
 
 
 @click.command()
@@ -237,16 +245,27 @@ def main(input_csv: str,
     manager = multiprocessing.Manager()
     queue = manager.Queue()
     pbar = tqdm.tqdm(total=dataset.shape[0])
-    def update(*args: Any) -> None:
+    
+    def update(args: Any) -> None:
+        successful, log = args
+        if not successful and log == '429':
+            pool.terminate()
+
         pbar.update(1)
         pbar.refresh()
     
     try:
         pool.apply_async(writer, args=(queue, failed_file))
         
+        jobs = []
         for i, row in dataset.iterrows():
             args = (row, label_to_dir, tmp_dir, queue, failed_file)
-            pool.apply_async(download_clip_wrapper, args=args, callback=update)
+            j = pool.apply_async(download_clip_wrapper, args=args, 
+                                 callback=update)
+            jobs.append(j)
+        
+        for j in jobs: j.get()
+        queue.put('done')
 
     except KeyboardInterrupt:
         print('Stopped downloads pressing CTRL + C')
