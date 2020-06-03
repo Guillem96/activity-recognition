@@ -1,6 +1,6 @@
 import abc
-from typing import Any, Tuple, TypeVar, Type
-
+from pathlib import Path
+from typing import Any, Tuple, TypeVar, Type, Union
 
 import torch
 import torch.nn as nn
@@ -40,3 +40,41 @@ class SerializableModule(nn.Module, abc.ABC):
         instance.load_state_dict(checkpoint.pop('model'))
 
         return instance, checkpoint
+
+    @classmethod
+    def from_pretrained(cls: Type[T], 
+                        name_or_path: Union[str, Path],
+                        map_location: torch.device = torch.device('cpu'),
+                        dst_file: str = None) -> T:
+
+        bucket = 'ml-generic-purpose-pt-models'
+        base_url = f'https://storage.googleapis.com/{bucket}/ar'
+
+        names_url = {
+            'sentinel': f'{base_url}/lrcn-attn.pt',
+        }
+
+        path = Path(name_or_path)
+        name = str(name_or_path)
+
+        if path.is_file():
+            model, _ = cls.load(str(path), map_location=map_location)
+        elif name in names_url:
+            if dst_file is None:
+                dst_file = Path.home() / '.ar' / (name + '.pt')
+                dst_file.parent.mkdir(exist_ok=True)
+            
+            if not dst_file.exists():
+                res = requests.get(names_url[name])
+                with open(str(dst_file), 'wb') as f:
+                    f.write(res.content)
+
+            model, _ = cls.load(str(dst_file), map_location=map_location)
+        else:
+            available_names = ','.join(f'"{o}"' for o in names_url)
+            raise ValueError(f'{name_or_path} is not a valid model reference.'
+                             f'You can reference a model using a path or an '
+                             f'available name. The available model names are: '
+                             f'{available_names}')
+        
+        return model

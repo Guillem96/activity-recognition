@@ -33,8 +33,7 @@ class _LRCNFeatureExtractor(nn.Module):
         
         hidden_size = rnn_units * (2 if bidirectional else 1)
         
-        self.agg_weights = nn.Parameter(
-            torch.ones(hidden_size) * (1. / hidden_size))
+        self.attention = nn.MultiheadAttention(hidden_size, num_heads=8)
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (BATCH, CHANNELS, FRAMES, HEIGHT, WIDTH)
@@ -57,9 +56,13 @@ class _LRCNFeatureExtractor(nn.Module):
 
         # lstm_out: (BATCH, FRAMES, HIDDEN_SIZE)
         lstm_out, _ = self.rnn(x)
+
+        # lstm_out: (FRAMES, BATCH, HIDDEN_SIZE)
+        lstm_out = lstm_out.permute(1, 0, 2)
         
-        # weighted_sum: (BATCH, HIDDEN_SIZE)
-        return (self.agg_weights * lstm_out).sum(1)
+        # attn_output: (BATCH, HIDDEN_SIZE)
+        attn_output, _  = self.attention(lstm_out, lstm_out, lstm_out)
+        return attn_output.sum(0)
 
 
 class LRCN(utils.checkpoint.SerializableModule):

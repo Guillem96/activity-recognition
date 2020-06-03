@@ -75,6 +75,9 @@ def train_one_epoch(dl: torch.utils.data.DataLoader,
         
         logger(loss=loss.item(), lr=get_lr(optimizer))
 
+    optimizer.step()
+    optimizer.zero_grad()
+
 
 @torch.no_grad()
 def evaluate(dl: torch.utils.data.DataLoader,

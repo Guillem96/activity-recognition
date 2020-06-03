@@ -161,6 +161,7 @@ def train(model: ar.checkpoint.SerializableModule,
                                   scheduler=scheduler,
                                   loss_fn=criterion_fn,
                                   epoch=epoch,
+                                  grad_accum_steps=kwargs['grad_accum_steps'],
                                 #   mixed_precision=kwargs['fp16'],
                                   print_freq=kwargs['print_freq'],
                                   device=device)
