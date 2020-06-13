@@ -10,7 +10,7 @@ from ar import utils
 
 ################################################################################
 
-class _LRCNFeatureExtractor(nn.Module):
+class VideoEncoder2D(nn.Module):
 
     def __init__(self, 
                  feature_extractor: str, 
@@ -19,7 +19,7 @@ class _LRCNFeatureExtractor(nn.Module):
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False) -> None:
         
-        super(_LRCNFeatureExtractor, self).__init__()
+        super(VideoEncoder2D, self).__init__()
         
         self.features, in_classifier = utils.nn.image_feature_extractor(
             feature_extractor, pretrained=pretrained)
@@ -89,7 +89,7 @@ class LRCN(utils.checkpoint.SerializableModule):
         self.rnn_units = rnn_units
 
         # Declare nn modules
-        self.features = _LRCNFeatureExtractor(
+        self.features = VideoEncoder2D(
             feature_extractor=self.feature_extractor,
             rnn_units=self.rnn_units,
             bidirectional=self.bidirectional,
@@ -151,7 +151,7 @@ class LRCNWithAudio(utils.checkpoint.SerializableModule):
         self.n_mel_features = n_mel_features
 
         # Declare feature extractor for video
-        self.features = _LRCNFeatureExtractor(
+        self.features = VideoEncoder2D(
             feature_extractor=self.feature_extractor,
             rnn_units=self.rnn_units,
             bidirectional=self.bidirectional,

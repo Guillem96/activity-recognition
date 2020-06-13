@@ -53,14 +53,13 @@ def train_one_epoch(dl: torch.utils.data.DataLoader,
         predictions = model(x)
         
         loss = loss_fn(predictions, y)
-        loss = loss / grad_accum_steps
     
         # if scaler is not None:
         #     loss = scaler.scale(loss)
             
-        loss.backward()
+        (loss / grad_accum_steps).backward()
 
-        if ((i + 1) % grad_accum_steps) == 0:
+        if (i + 1) % grad_accum_steps == 0:
             
             # if scaler is not None:
             #     scaler.step(optimizer)

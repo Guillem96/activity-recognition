@@ -23,6 +23,7 @@ def load_datasets(
         dataset_type: str, 
         root: str, 
         frames_per_clip: int,
+        steps_between_clips: int,
         workers: int = 1,
         annotations_path: str = None,
         validation_size: float = .1,
@@ -39,14 +40,16 @@ def load_datasets(
     if dataset_type == 'kinetics400':
         train_ds = ar.data.Kinetics400(
             root=root, split='train', 
-            frames_per_clip=frames_per_clip, 
+            frames_per_clip=frames_per_clip,
+            step_between_clips=steps_between_clips,
             extensions=('.mp4',),
             num_workers=workers,
             transform=train_transforms)
         
         valid_ds = ar.data.Kinetics400(
             root=root, split='validate', 
-            frames_per_clip=frames_per_clip, 
+            frames_per_clip=frames_per_clip,
+            step_between_clips=steps_between_clips,
             extensions=('.mp4',),
             num_workers=workers,
             transform=valid_transforms)
@@ -59,11 +62,13 @@ def load_datasets(
         train_ds = ar.data.UCF101(
             root=root, annotation_path=annotations_path,
             frames_per_clip=frames_per_clip, split='train', 
+            step_between_clips=steps_between_clips,
             transform=train_transforms, num_workers=workers)
 
         valid_ds = ar.data.UCF101(
             root=root, annotation_path=annotations_path, 
             frames_per_clip=frames_per_clip, split='test',
+            step_between_clips=steps_between_clips,
             transform=valid_transforms, num_workers=workers)
 
     return train_ds, valid_ds
@@ -93,12 +98,11 @@ def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
                 VT.VideoResize((300, 300)),
                 VT.VideoRandomCrop((224, 224)),
             ]),
-            VT.VideoCenterCrop((224, 224)),
             VT.VideoResize((224, 224))
         ]),
         VT.VideoRandomHorizontalFlip(),
-        VT.VideoRandomErase(scale=(0.02, 0.15)),
-        VT.VideoNormalize(**VT.imagenet_stats)
+        VT.VideoNormalize(**VT.imagenet_stats),
+        VT.VideoRandomErase(scale=(0.02, 0.15))
     ])
 
     valid_tfms = T.Compose([
@@ -107,12 +111,16 @@ def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
         VT.VideoNormalize(**VT.imagenet_stats),
     ])
 
-    train_ds, valid_ds = load_datasets(kwargs['dataset'], kwargs['data_dir'],
-                                       kwargs['frames_per_clip'], 
-                                       kwargs['data_loader_workers'],
-                                       kwargs['annots_dir'], 
-                                       kwargs['validation_split'],
-                                       train_tfms, valid_tfms)
+    train_ds, valid_ds = load_datasets(
+        dataset_type=kwargs['dataset'],
+        root=kwargs['data_dir'],
+        annotations_path=kwargs['annots_dir'], 
+        frames_per_clip=kwargs['frames_per_clip'], 
+        steps_between_clips=kwargs['clips_stride'],
+        workers=kwargs['data_loader_workers'],
+        validation_size=kwargs['validation_split'],
+        train_transforms=train_tfms, 
+        valid_transforms=valid_tfms)
 
     if hasattr(train_ds, 'video_clips'):
         train_sampler = RandomClipSampler(train_ds.video_clips, 10)
@@ -133,7 +141,7 @@ def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
                                 sampler=valid_sampler,
                                 collate_fn=collate_fn,
                                 pin_memory=True)
- 
+
     return train_dl, valid_dl
 
 
@@ -268,6 +276,7 @@ def _load_model(model_name: str,
 @click.option('--validation-split', type=float, default=.1)
 @click.option('--data-loader-workers', type=int, default=2)
 @click.option('--frames-per-clip', type=int, required=True)
+@click.option('--clips-stride', type=int, default=1)
 
 @click.option('--audio/--no-audio', 
               default=False, help='Use audio for training too')

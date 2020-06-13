@@ -1,6 +1,7 @@
 import abc
+import requests
 from pathlib import Path
-from typing import Any, Tuple, TypeVar, Type, Union
+from typing import Any, Tuple, TypeVar, Type, Union, Optional
 
 import torch
 import torch.nn as nn
@@ -45,7 +46,7 @@ class SerializableModule(nn.Module, abc.ABC):
     def from_pretrained(cls: Type[T], 
                         name_or_path: Union[str, Path],
                         map_location: torch.device = torch.device('cpu'),
-                        dst_file: str = None) -> T:
+                        dst_file: Optional[Union[str, Path]] = None) -> T:
 
         bucket = 'ml-generic-purpose-pt-models'
         base_url = f'https://storage.googleapis.com/{bucket}/ar'
@@ -64,7 +65,7 @@ class SerializableModule(nn.Module, abc.ABC):
                 dst_file = Path.home() / '.ar' / (name + '.pt')
                 dst_file.parent.mkdir(exist_ok=True)
             
-            if not dst_file.exists():
+            if not Path(dst_file).exists():
                 res = requests.get(names_url[name])
                 with open(str(dst_file), 'wb') as f:
                     f.write(res.content)
