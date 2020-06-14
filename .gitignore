@@ -24,3 +24,6 @@ geckodriver.log
 
 # MyPy
 .mypy_cache/
+
+# TensorBoard
+logs/

@@ -129,3 +129,12 @@ def video_normalize(vid: torch.Tensor,
     mean_ = torch.as_tensor(mean).reshape(shape)
     std_ = torch.as_tensor(std).reshape(shape)
     return (vid - mean_) / std_
+
+
+def video_unnormalize(vid: torch.Tensor, 
+                      mean: Tuple[float, float, float], 
+                      std: Tuple[float, float, float]) -> torch.Tensor:
+    shape = (-1,) + (1,) * (vid.dim() - 1)
+    mean_ = torch.as_tensor(mean).reshape(shape)
+    std_ = torch.as_tensor(std).reshape(shape)
+    return vid.mul(std_).add(mean_)

@@ -106,11 +106,11 @@ def train(**kwargs: Any) -> None:
                                   scheduler=scheduler,
                                   loss_fn=criterion_fn,
                                   epoch=epoch,
-                                  print_freq=kwargs['print_freq'],
                                   device=device)
         
         ar.engine.evaluate(dl=valid_dl,
                            model=model,
+                           epoch=epoch,
                            metrics=[ar.metrics.accuracy],
                            loss_fn=criterion_fn,
                            device=device)
@@ -145,9 +145,6 @@ def train(**kwargs: Any) -> None:
 @click.option('--learning-rate', type=float, default=1e-3)
 @click.option('--scheduler', type=click.Choice(['OneCycle', 'Step', 'None']),
               default='None')
-
-@click.option('--print-freq', type=int, default=20, 
-              help='Print training epoch progress every n steps')
 
 @click.option('--resume-checkpoint', type=click.Path(dir_okay=False),
               default=None, help='Resume training from')

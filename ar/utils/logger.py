@@ -1,10 +1,14 @@
 import time
-from typing import Deque
 from collections import deque
+from typing import Deque, Tuple, Any, Mapping
 
 import torch
+import tqdm.auto as tqdm
 
-from ar.typing import Number
+from ar.typing import Number, TensorBoard
+from ar.data.datasets import VideoDataset
+from ar.transforms import imagenet_stats
+from ar.transforms.functional import video_unnormalize
 
 
 class LogValue(object):
@@ -66,45 +70,108 @@ class ValuesLogger(object):
     ----------
     *values: sequence of LogValue
         LogValues to manage
-    print_freq: int, default 10
-        Print LogValues every print_freq steps
+    total_steps: int
+        Total logger lifetime
     header: str, default ''
         Text to add befor the values logs
     """
     def __init__(self, 
                  *values: LogValue, 
-                 print_freq: int = 10, 
+                 total_steps: int, 
                  header: str = '') -> None:
-        self.header = header
-        self.print_freq = print_freq
         self.values = {v.name: v for v in values}
-        self.values['time'] = LogValue(name='time_per_step', window_size=10)
-        self.steps = 0
-        self.inital_time = time.time()
+        self.t = tqdm.trange(total_steps, desc=header, leave=True)
 
     def __call__(self, **kwargs: Number) -> None:
-        self.steps += 1
 
         # Update the values
         for k, v in kwargs.items():
             self.values[k](v)
 
-        elapsed = time.time() - self.inital_time
-        self.values['time'](elapsed)
-        
-        # Log if is time to do so
-        if self.steps % self.print_freq == 0:
-            logs = ' '.join(str(v) for v in self.values.values())
-            time_str = str(self.values['time'])
-            header = self.header.format(step=self.steps)
-            print(f'{header} {logs}')
+        self.t.set_postfix(self.as_dict())
+        self.t.update()
+        self.t.refresh()
 
-        # Update initial time
-        self.inital_time = time.time()
-    
     def reset(self) -> None:
         """Reset all values and set steps to 0"""
         for v in self.values.values():
             v.reset()
-        self.steps = 0
-        self.inital_time = time.time()
+
+    def as_dict(self) -> Mapping[str, Number]:
+        return {k: v.mean.item() for k, v in self.values.items()}
+
+
+class DummySummaryWritter(object):
+
+    def add_scalar(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+    def add_scalars(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+    def add_video(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+    def add_hparams(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+
+def log_random_videos(ds: VideoDataset, 
+                      writer: TensorBoard,
+                      samples: int = 4,
+                      unnormalize_videos: bool = False,
+                      video_format: str = 'THWC') -> None:
+    """
+    Log `samples` clips to tensorboard
+
+    Parameters
+    ----------
+    ds: ar.data.VideoDataset
+        Dataset to get the random samples
+    writer: TensorBoard
+        TensorBoard summary writer
+    samples: int, default 4
+        Pick n samples of the dataset
+    unnormalize_videos: bool, default False
+        Wether to unnormalize the videos or not
+    video_format: str, default "THWC"
+        Shape of the video returned by the dataset. 
+            - T timesteps
+            - H height
+            - W width
+            - C color channels 
+    """
+    for c in 'THWC':
+        if c not in video_format:
+            raise ValueError(f'video_format does not contain {c}')
+    
+    for c in video_format:
+        if c not in 'THWC':
+            raise ValueError(f'Invalid character {c} for video_format')
+    
+    indices = torch.randint(high=len(ds), size=(samples,)).tolist()
+    videos = []
+    labels = []
+    for i in indices:
+        video, _, label, _ = ds[i]
+        if unnormalize_videos:
+            video = video.permute(video_format.index('C'), 
+                                  video_format.index('T'),
+                                  video_format.index('H'),
+                                  video_format.index('W'))
+            video = video_unnormalize(video, **imagenet_stats)
+            
+        video = video.permute(video_format.index('T'), 
+                              video_format.index('C'),
+                              video_format.index('H'),
+                              video_format.index('W'))
+        print('Label +++++++++++++++++', label)
+
+        label_name = ds.classes[int(label)]
+        videos.append(video)
+        labels.append(label_name)
+    
+    videos = torch.stack(videos)
+    tag = ' - '.join(labels)
+
+    writer.add_video(tag, videos)

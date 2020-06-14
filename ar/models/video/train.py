@@ -4,6 +4,7 @@ from typing import Any, Tuple, Optional, Union, Sequence, Type, Dict
 import torch
 import torch.optim as optim
 import torch.utils.data as data
+from torch.utils.tensorboard import SummaryWriter
 
 import torchvision.transforms as T
 from torchvision.datasets.samplers import UniformClipSampler, RandomClipSampler
@@ -74,7 +75,8 @@ def load_datasets(
     return train_ds, valid_ds
 
 
-def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
+def data_preparation(writer: ar.typing.TensorBoard, 
+                     **kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
     """
     Loads the datasets with corresponding transformations and creates two data
     loaders, one for train and validation
@@ -122,6 +124,11 @@ def data_preparation(**kwargs: Any) -> Tuple[data.DataLoader, data.DataLoader]:
         train_transforms=train_tfms, 
         valid_transforms=valid_tfms)
 
+    ar.logger.log_random_videos(train_ds, 
+                                writer=writer, 
+                                unnormalize_videos=True,
+                                video_format='CTHW')
+    
     if hasattr(train_ds, 'video_clips'):
         train_sampler = RandomClipSampler(train_ds.video_clips, 10)
         valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
@@ -149,6 +156,7 @@ def train(model: ar.checkpoint.SerializableModule,
           train_dl: data.DataLoader, 
           valid_dl: data.DataLoader,
           train_from: dict,
+          summary_writer: ar.typing.TensorBoard,
           **kwargs: Any) -> None:
     """
     Trains the models along specified epochs with the given train and validation
@@ -163,24 +171,27 @@ def train(model: ar.checkpoint.SerializableModule,
     # TODO: Enable mixed precision when pytorch 1.6.0
     
     for epoch in range(starting_epoch, kwargs['epochs']):
-        ar.engine.train_one_epoch(dl=train_dl,
-                                  model=model,
-                                  optimizer=optimizer,
-                                  scheduler=scheduler,
-                                  loss_fn=criterion_fn,
-                                  epoch=epoch,
-                                  grad_accum_steps=kwargs['grad_accum_steps'],
-                                #   mixed_precision=kwargs['fp16'],
-                                  print_freq=kwargs['print_freq'],
-                                  device=device)
+        ar.engine.train_one_epoch(
+            dl=train_dl,
+            model=model,
+            optimizer=optimizer, 
+            scheduler=scheduler,
+            loss_fn=criterion_fn,
+            grad_accum_steps=kwargs['grad_accum_steps'],
+            #   mixed_precision=kwargs['fp16'],
+            epoch=epoch,
+            summary_writer=summary_writer,
+            device=device)
         
-        ar.engine.evaluate(dl=valid_dl,
-                           model=model,
-                           metrics=[ar.metrics.accuracy, 
-                                    ar.metrics.top_3_accuracy],
-                           loss_fn=criterion_fn,
-                        #    mixed_precision=kwargs['fp16'],
-                           device=device)
+        metrics = ar.engine.evaluate(
+            dl=valid_dl,
+            model=model,
+            metrics=[ar.metrics.accuracy, ar.metrics.top_3_accuracy],
+            loss_fn=criterion_fn,
+            epoch=epoch,
+            summary_writer=summary_writer,
+            #    mixed_precision=kwargs['fp16'],
+            device=device)
         
         # Save the model jointly with the optimizer
         model.save(
@@ -188,6 +199,17 @@ def train(model: ar.checkpoint.SerializableModule,
             epoch=epoch,
             optimizer=optimizer.state_dict(),
             scheduler=scheduler.state_dict() if scheduler is not None else {})
+
+    summary_writer.add_hparams({**model.config(),
+                                'optimizer': kwargs['optimizer'],
+                                'learning_rate': kwargs['learning_rate'],
+                                'grad_accum_steps': kwargs['grad_accum_steps'],
+                                'scheduler': kwargs['scheduler'],
+                                'epochs': kwargs['epochs'],
+                                'batch_size': kwargs['batch_size'],
+                                'clips_stride': kwargs['clips_stride'],
+                                'frames_per_clip': kwargs['frames_per_clip']},
+                                metrics)
 
 
 def load_optimizer(
@@ -298,8 +320,9 @@ def _load_model(model_name: str,
                    'computation with mixed precision. The backward pass stays'
                    'with fp32')
 # Logging options
-@click.option('--print-freq', type=int, default=20, 
-              help='Print training epoch progress every n steps')
+@click.option('--logdir', type=str, default=None, 
+              help='Directory for tensorboard logs. If set to None no logs will'
+                   ' be generated')
 
 # Checkpointing options
 @click.option('--resume-checkpoint', type=click.Path(dir_okay=False),
@@ -311,11 +334,17 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
     ar.engine.seed()
     ctx.ensure_object(dict)
 
-    train_dl, valid_dl = data_preparation(**kwargs)
+    if kwargs['logdir'] is None:
+        summary_writer = ar.logger.DummySummaryWritter()
+    else:
+        summary_writer = SummaryWriter(log_dir=kwargs['logdir'], flush_secs=20)
+    
+    train_dl, valid_dl = data_preparation(summary_writer, **kwargs)
 
     ctx.obj['common'] = kwargs
     ctx.obj['train_dl'] = train_dl
     ctx.obj['valid_dl'] = valid_dl
+    ctx.obj['summary_writer'] = summary_writer
 
 
 @main.command(name='LRCN')
@@ -369,7 +398,9 @@ def train_LRCN(ctx: click.Context, **kwargs: Any) -> None:
                                         bidirectional=kwargs['bidirectional'])
     model.to(device)
 
-    train(model, train_dl, valid_dl, train_from=checkpoint, **kwargs)
+    train(model, train_dl, valid_dl, 
+          summary_writer=ctx.obj['summary_writer'],
+          train_from=checkpoint, **kwargs)
 
 
 if __name__ == "__main__":
