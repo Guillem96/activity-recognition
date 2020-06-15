@@ -1,6 +1,6 @@
 import time
 from collections import deque
-from typing import Deque, Tuple, Any, Mapping
+from typing import Union,Deque, Tuple, Any, Mapping
 
 import torch
 import tqdm.auto as tqdm
@@ -97,23 +97,8 @@ class ValuesLogger(object):
         for v in self.values.values():
             v.reset()
 
-    def as_dict(self) -> Mapping[str, Number]:
+    def as_dict(self) -> Mapping[str, float]:
         return {k: v.mean.item() for k, v in self.values.items()}
-
-
-class DummySummaryWritter(object):
-
-    def add_scalar(self, *args: Any, **kwargs: Any) -> None:
-        pass
-
-    def add_scalars(self, *args: Any, **kwargs: Any) -> None:
-        pass
-
-    def add_video(self, *args: Any, **kwargs: Any) -> None:
-        pass
-
-    def add_hparams(self, *args: Any, **kwargs: Any) -> None:
-        pass
 
 
 def log_random_videos(ds: VideoDataset, 
@@ -149,6 +134,9 @@ def log_random_videos(ds: VideoDataset,
         if c not in 'THWC':
             raise ValueError(f'Invalid character {c} for video_format')
     
+    if writer is None:
+        return
+        
     indices = torch.randint(high=len(ds), size=(samples,)).tolist()
     videos = []
     labels = []
@@ -165,7 +153,6 @@ def log_random_videos(ds: VideoDataset,
                               video_format.index('C'),
                               video_format.index('H'),
                               video_format.index('W'))
-        print('Label +++++++++++++++++', label)
 
         label_name = ds.classes[int(label)]
         videos.append(video)

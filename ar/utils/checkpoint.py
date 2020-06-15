@@ -52,7 +52,7 @@ class SerializableModule(nn.Module, abc.ABC):
         base_url = f'https://storage.googleapis.com/{bucket}/ar'
 
         names_url = {
-            'sentinel': f'{base_url}/lrcn-attn.pt',
+            'lrcn-ucf-101': f'{base_url}/lrcn-attn.pt',
         }
 
         path = Path(name_or_path)

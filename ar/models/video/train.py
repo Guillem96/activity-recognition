@@ -200,16 +200,18 @@ def train(model: ar.checkpoint.SerializableModule,
             optimizer=optimizer.state_dict(),
             scheduler=scheduler.state_dict() if scheduler is not None else {})
 
-    summary_writer.add_hparams({**model.config(),
-                                'optimizer': kwargs['optimizer'],
-                                'learning_rate': kwargs['learning_rate'],
-                                'grad_accum_steps': kwargs['grad_accum_steps'],
-                                'scheduler': kwargs['scheduler'],
-                                'epochs': kwargs['epochs'],
-                                'batch_size': kwargs['batch_size'],
-                                'clips_stride': kwargs['clips_stride'],
-                                'frames_per_clip': kwargs['frames_per_clip']},
-                                metrics)
+    if summary_writer is not None:
+        hparams = {**model.config(),
+                   'optimizer': kwargs['optimizer'],
+                   'learning_rate': kwargs['learning_rate'],
+                   'grad_accum_steps': kwargs['grad_accum_steps'],
+                   'scheduler': kwargs['scheduler'],
+                   'epochs': kwargs['epochs'],
+                   'batch_size': kwargs['batch_size'],
+                   'clips_stride': kwargs['clips_stride'],
+                   'frames_per_clip': kwargs['frames_per_clip']}
+
+        summary_writer.add_hparams(hparams, metrics)
 
 
 def load_optimizer(
@@ -334,8 +336,10 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
     ar.engine.seed()
     ctx.ensure_object(dict)
 
+    summary_writer: ar.typing.TensorBoard = None
+
     if kwargs['logdir'] is None:
-        summary_writer = ar.logger.DummySummaryWritter()
+        summary_writer = None
     else:
         summary_writer = SummaryWriter(log_dir=kwargs['logdir'], flush_secs=20)
     

@@ -9,8 +9,9 @@ import torch.nn as nn
 import numpy as np
 
 from .nn import get_lr
-from .logger import LogValue, ValuesLogger, DummySummaryWritter
-from ar.typing import Optimizer, LossFn, MetricFn, TensorBoard, Scheduler
+from .logger import LogValue, ValuesLogger
+from ar.typing import (Optimizer, LossFn, MetricFn, TensorBoard, Scheduler, 
+                       TensorBoard)
 
 
 def seed(seed: int = 0) -> None:
@@ -28,7 +29,7 @@ def train_one_epoch(
         epoch: int,
         grad_accum_steps: int = 1,
         scheduler: Scheduler = None,
-        summary_writer: TensorBoard = DummySummaryWritter(),
+        summary_writer: TensorBoard = None,
         # mixed_precision: bool = False,
         device: torch.device = torch.device('cpu')) -> None:
     
@@ -76,11 +77,13 @@ def train_one_epoch(
         
         # Write logs to tensorboard
         step = epoch * len(dl) + i
-        summary_writer.add_scalar('learning_rate', 
-                                  get_lr(optimizer), 
-                                  global_step=step)
-        summary_writer.add_scalars('train', {'loss': loss.item()},
-                                   global_step=step)
+
+        if summary_writer is not None:
+            summary_writer.add_scalar('learning_rate', 
+                                    get_lr(optimizer), 
+                                    global_step=step)
+            summary_writer.add_scalars('train', {'loss': loss.item()},
+                                    global_step=step)
 
     optimizer.step()
     optimizer.zero_grad()
@@ -93,7 +96,7 @@ def evaluate(dl: torch.utils.data.DataLoader,
              metrics: Collection[MetricFn],
             #  mixed_precision: bool = False,
              epoch: int,
-             summary_writer: TensorBoard = DummySummaryWritter(),
+             summary_writer: TensorBoard = None,
              device: torch.device = torch.device('cpu')) -> Mapping[str, float]:
     
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
@@ -116,7 +119,8 @@ def evaluate(dl: torch.utils.data.DataLoader,
         updates_values['loss'] = loss.item()
         logger(**updates_values)
 
-    summary_writer.add_scalars('validation', logger.as_dict(),
-                               global_step=epoch)
+    if summary_writer is not None:
+        summary_writer.add_scalars('validation', logger.as_dict(),
+                                   global_step=epoch)
 
     return logger.as_dict()
