@@ -341,7 +341,7 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
     if kwargs['logdir'] is None:
         summary_writer = None
     else:
-        summary_writer = SummaryWriter(log_dir=kwargs['logdir'], flush_secs=20)
+        summary_writer = ar.logger.build_summary_writter(kwargs['logdir'])
     
     train_dl, valid_dl = data_preparation(summary_writer, **kwargs)
 
@@ -405,6 +405,35 @@ def train_LRCN(ctx: click.Context, **kwargs: Any) -> None:
     train(model, train_dl, valid_dl, 
           summary_writer=ctx.obj['summary_writer'],
           train_from=checkpoint, **kwargs)
+
+
+@main.command(name='fstcn')
+
+@click.option('--feature-extractor', 
+              type=click.Choice(list(ar.nn._FEATURE_EXTRACTORS)),
+              default='resnet18')
+@click.option('--freeze-fe/--no-freeze-fe', default=False,
+              help='Wether or not to fine tune the pretrained'
+                   ' feature extractor')
+
+@click.pass_context
+def train_FstCN(ctx: click.Context, **kwargs: Any) -> None:
+    kwargs.update(ctx.obj['common'])
+
+    train_dl, valid_dl = ctx.obj['train_dl'], ctx.obj['valid_dl']
+
+    n_classes = len(train_dl.dataset.classes)
+
+    model = ar.video.FstCN(kwargs['feature_extractor'], 
+                           n_classes=n_classes,
+                           clips_length=kwargs['frames_per_clip'],
+                           pretrained=True,
+                           freeze_feature_extractor=kwargs['freeze_fe'])
+    model.to(device)
+
+    train(model, train_dl, valid_dl, 
+          summary_writer=ctx.obj['summary_writer'],
+          train_from=dict(), **kwargs)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
-import time
+from datetime import datetime
 from collections import deque
-from typing import Union,Deque, Tuple, Any, Mapping
+from typing import Union, Deque, Tuple, Any, Mapping
 
 import torch
 import tqdm.auto as tqdm
@@ -99,6 +99,26 @@ class ValuesLogger(object):
 
     def as_dict(self) -> Mapping[str, float]:
         return {k: v.mean.item() for k, v in self.values.items()}
+
+
+def build_summary_writter(
+        log_dir: str) -> torch.utils.tensorboard.SummaryWriter:
+    """
+    Builds a hierarchical log directory structure for ease of experiments 
+    tracking
+
+    Parameters
+    ----------
+    log_dir: str
+        Base log directory. Given a log_dir this method adds a unique identifier
+        as a postfix
+    """
+    if log_dir.endswith('/'):
+        log_dir = log_dir[:-1]
+
+    current_time = datetime.now().strftime('%b%d_%H_%M_%S')
+    log_dir = f'{log_dir}_{current_time}'
+    return torch.utils.tensorboard.SummaryWriter(log_dir, flush_secs=20)
 
 
 def log_random_videos(ds: VideoDataset, 
