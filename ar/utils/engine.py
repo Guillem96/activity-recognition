@@ -27,15 +27,19 @@ def train_one_epoch(
         optimizer: Optimizer,
         loss_fn: LossFn,
         epoch: int,
+        metrics: Collection[MetricFn] = (),
         grad_accum_steps: int = 1,
         scheduler: Scheduler = None,
         summary_writer: TensorBoard = None,
         # mixed_precision: bool = False,
         device: torch.device = torch.device('cpu')) -> None:
     
+
+    metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
     logger = ValuesLogger(
         LogValue('loss', window_size=len(dl)),
         LogValue('lr', 1),
+        *metrics_log,
         total_steps=len(dl),
         header=f'Epoch[{epoch}]')
 
@@ -73,17 +77,19 @@ def train_one_epoch(
         if scheduler is not None:
             scheduler.step()
         
-        logger(loss=loss.item(), lr=get_lr(optimizer))
+        current_metrics = {m.__name__: m(predictions, y).item() for m in metrics}
+        logger(loss=loss.item(), lr=get_lr(optimizer), **current_metrics)
         
         # Write logs to tensorboard
         step = epoch * len(dl) + i
 
         if summary_writer is not None:
             summary_writer.add_scalar('learning_rate', 
-                                    get_lr(optimizer), 
-                                    global_step=step)
-            summary_writer.add_scalars('train', {'loss': loss.item()},
-                                    global_step=step)
+                                      get_lr(optimizer), 
+                                      global_step=step)
+            summary_writer.add_scalars('train', dict(loss=loss.item(), 
+                                                     **current_metrics),
+                                       global_step=step)
 
     optimizer.step()
     optimizer.zero_grad()

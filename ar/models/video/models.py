@@ -312,21 +312,31 @@ class TemporalConv(nn.Module):
     def __init__(self, clips_length: int, out_features: int) -> None:
         super(TemporalConv, self).__init__()
 
-        self.conv1 = nn.Conv2d(clips_length, out_features // 2, 3, padding=1)
-        self.conv2 = nn.Conv2d(clips_length, out_features // 2, 5, padding=3)
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(clips_length, out_features // 2, 3, padding=1),
+            nn.BatchNorm2d(out_features // 2),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(.5))
+
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(clips_length, out_features // 2, 5, padding=2),
+            nn.BatchNorm2d(out_features // 2),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(.5))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x1 = F.dropout2d(F.relu(self.conv1(x)), training=self.training)
-        x2 = F.dropout2d(F.relu(self.conv1(x)), training=self.training)
+        x1 = self.conv1(x)
+        x2 = self.conv2(x)
         return torch.cat([x1, x2], dim=1)
 
 
 class FstCN(utils.checkpoint.SerializableModule):
 
     def __init__(self, 
-                 feature_extractor: str, 
+                 feature_extractor: str,
                  n_classes: int,
-                 clips_length: int,
+                 scl_features: int = 256,
+                 tcl_features: int = 256,
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False) -> None:
         super(FstCN, self).__init__()
@@ -336,8 +346,11 @@ class FstCN(utils.checkpoint.SerializableModule):
         self.n_classes = n_classes
         self.pretrained = pretrained
 
+        # Spatial aware hyperparams
+        self.scl_features = scl_features
+
         # Temporal aware hyperparams
-        self.clips_length = clips_length
+        self.tcl_features = tcl_features
 
         self.scl = SCL(
             feature_extractor=self.feature_extractor,
@@ -346,16 +359,32 @@ class FstCN(utils.checkpoint.SerializableModule):
 
         scl_out_features = self.scl.out_channels
 
-        self.tcl_conv = nn.Conv2d(scl_out_features, 64, 1, 1)
-        self.tcl_temp_conv = TemporalConv(clips_length, 64)
+        # TCL Branch
+        self.tcl_conv = nn.Sequential(
+            nn.Conv2d(scl_out_features, self.tcl_features, 1, 1),
+            nn.BatchNorm2d(self.tcl_features),
+            nn.ReLU(inplace=True))
+        self.P = nn.Parameter(torch.randn(self.tcl_features, self.tcl_features))
+        self.tcl_temp_conv = TemporalConv(self.tcl_features, self.tcl_features)
         self.tcl_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.tcl_linear = MLP(64, 64, 64, hidden_layers=0)
+        self.tcl_linear = MLP(input_features=self.tcl_features, 
+                              output_features=self.tcl_features, 
+                              hidden_size=self.tcl_features, 
+                              hidden_layers=0)
         
-        self.xtra_conv = nn.Conv2d(scl_out_features, 64, 1, 1)
+        # Get more abstract SCL features branch
+        self.xtra_conv = nn.Sequential(
+            nn.Conv2d(scl_out_features, self.scl_features, 1, 1),
+            nn.BatchNorm2d(self.tcl_features),
+            nn.ReLU(inplace=True))
         self.xtra_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.xtra_linear = MLP(64, 64, 64, hidden_layers=0)
+        self.xtra_linear = MLP(input_features=self.scl_features, 
+                               output_features=self.scl_features, 
+                               hidden_size=self.scl_features, 
+                               hidden_layers=0)
         
-        self.classifier = nn.Linear(128, self.n_classes)
+        self.classifier = nn.Linear(self.scl_features + self.tcl_features, 
+                                    self.n_classes)
 
     def config(self) -> dict:
         return {
@@ -363,7 +392,8 @@ class FstCN(utils.checkpoint.SerializableModule):
             'n_classes': self.n_classes,
             'pretrained': False,
             'freeze_feature_extractor': True,
-            'clips_length': self.clips_length
+            'scl_features': self.tcl_features,
+            'tcl_features': self.tcl_features
         }
     
     def forward(self, clips: torch.Tensor) -> torch.Tensor:
@@ -390,11 +420,17 @@ class FstCN(utils.checkpoint.SerializableModule):
         # xtra_features: (BATCH, FEATURES)
         xtra_features = xtra_features.mean(1)
 
-        # tcl_features: (BATCH, *FRAMES, FEATURES, H', W')
+        # tcl_features: (BATCH * FRAMES, FEATURES, H', W')
         tcl_features = self.tcl_conv(x)
 
         # tcl_features: (BATCH, FRAMES, FEATURES, H' x W')
-        tcl_features = tcl_features.view(b, f, 64, -1)
+        tcl_features = tcl_features.view(b, f, self.tcl_features, -1)
+
+        # tcl_features: (BATCH, FRAMES, H' x W', FEATURES')
+        tcl_features = tcl_features.permute(0, 1, 3, 2) @ self.P
+
+        # tcl_features: (BATCH, FEATURES', FRAMES, H' x W')
+        tcl_features = tcl_features.permute(0, 3, 1, 2)
 
         # tcl_features: (BATCH, TEMP_FEATURES, FEATURES, H'x W')
         tcl_features = self.tcl_temp_conv(tcl_features)

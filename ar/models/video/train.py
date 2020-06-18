@@ -168,6 +168,9 @@ def train(model: ar.checkpoint.SerializableModule,
                                           len(train_dl),
                                           **kwargs)
     starting_epoch = train_from.get('epoch', -1) + 1
+        
+    metrics = [ar.metrics.accuracy, ar.metrics.top_3_accuracy]
+    
     # TODO: Enable mixed precision when pytorch 1.6.0
     
     for epoch in range(starting_epoch, kwargs['epochs']):
@@ -177,16 +180,17 @@ def train(model: ar.checkpoint.SerializableModule,
             optimizer=optimizer, 
             scheduler=scheduler,
             loss_fn=criterion_fn,
+            metrics=metrics,
             grad_accum_steps=kwargs['grad_accum_steps'],
             #   mixed_precision=kwargs['fp16'],
             epoch=epoch,
             summary_writer=summary_writer,
             device=device)
         
-        metrics = ar.engine.evaluate(
+        eval_metrics = ar.engine.evaluate(
             dl=valid_dl,
             model=model,
-            metrics=[ar.metrics.accuracy, ar.metrics.top_3_accuracy],
+            metrics=metrics,
             loss_fn=criterion_fn,
             epoch=epoch,
             summary_writer=summary_writer,
@@ -211,7 +215,7 @@ def train(model: ar.checkpoint.SerializableModule,
                    'clips_stride': kwargs['clips_stride'],
                    'frames_per_clip': kwargs['frames_per_clip']}
 
-        summary_writer.add_hparams(hparams, metrics)
+        summary_writer.add_hparams(hparams, eval_metrics)
 
 
 def load_optimizer(
@@ -426,7 +430,6 @@ def train_FstCN(ctx: click.Context, **kwargs: Any) -> None:
 
     model = ar.video.FstCN(kwargs['feature_extractor'], 
                            n_classes=n_classes,
-                           clips_length=kwargs['frames_per_clip'],
                            pretrained=True,
                            freeze_feature_extractor=kwargs['freeze_fe'])
     model.to(device)
