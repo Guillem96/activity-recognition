@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Sequence
 
 import torch
 import torch.nn as nn
@@ -13,27 +13,27 @@ from ar import utils
 class MLP(nn.Module):
 
     def __init__(self, 
-                 input_features: int, 
-                 output_features: int,
-                 hidden_size: int,
-                 hidden_layers: int = 1,
+                 features: Sequence[int],
+                 batch_norm: bool = True,
                  dropout: float = .3) -> None:
         
         super(MLP, self).__init__()
 
-        self.mlp = nn.Sequential(
-            nn.Linear(input_features, hidden_size),
-            nn.ReLU(inplace=True),
-            nn.Dropout(dropout))
+        def build_block(in_f: int, out_f: int, idx: int) -> nn.Module:
+            block = nn.Sequential()
+            block.add_module(f'block_{idx}_linear', nn.Linear(in_f, out_f))
+            block.add_module(f'block_{idx}_ReLU', nn.ReLU(inplace=True))
+            if batch_norm:
+                block.add_module(f'block_{idx}_BatchNorm', 
+                                 nn.BatchNorm1d(out_f))
+            block.add_module(f'block_{idx}_Dropout', nn.Dropout(dropout))
+            return block
         
-        for i in range(hidden_layers):
-            self.mlp.add_module(f'hidden_{i}', 
-                                nn.Linear(hidden_size, hidden_size))
-            self.mlp.add_module(f'hidden_ReLU_{i}', nn.ReLU(inplace=True))
-            self.mlp.add_module(f'hidden_Dropout_{i}', nn.Dropout(dropout))
-
-        self.mlp.add_module('linear_output', 
-                            nn.Linear(hidden_size, output_features))
+        blocks = []
+        for i, (in_f, out_f) in enumerate(zip(features[:-1], features[1:])):
+            blocks.append(build_block(in_f, out_f, idx=i))
+        
+        self.mlp = nn.Sequential(*blocks)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.mlp(x)
@@ -161,10 +161,8 @@ class LRCN(utils.checkpoint.SerializableModule):
 
         hidden_size = self.rnn_units * (2 if self.bidirectional else 1)
 
-        self.linear = MLP(hidden_size, 
-                          self.n_classes, 
-                          512,
-                          hidden_layers=0, 
+        self.linear = MLP(features=[hidden_size, 512, self.n_classes], 
+                          batch_norm=False,
                           dropout=.5)
 
     def config(self) -> dict:
@@ -236,10 +234,9 @@ class LRCNWithAudio(utils.checkpoint.SerializableModule):
             audio_sample_rate=audio_sample_rate)
 
         video_output_size = self.rnn_units * (2 if self.bidirectional else 1)
-        self.linear = MLP(video_output_size + audio_features, 
-                          self.n_classes, 
-                          512,
-                          hidden_layers=1,
+        self.linear = MLP(features=[video_output_size + audio_features,
+                                    512, self.n_classes],
+                          batch_norm=False,
                           dropout=.5)
 
     def config(self) -> dict:
@@ -335,8 +332,8 @@ class FstCN(utils.checkpoint.SerializableModule):
     def __init__(self, 
                  feature_extractor: str,
                  n_classes: int,
-                 scl_features: int = 256,
-                 tcl_features: int = 256,
+                 scl_features: int = 64,
+                 tcl_features: int = 64,
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False) -> None:
         super(FstCN, self).__init__()
@@ -367,23 +364,16 @@ class FstCN(utils.checkpoint.SerializableModule):
         self.P = nn.Parameter(torch.randn(self.tcl_features, self.tcl_features))
         self.tcl_temp_conv = TemporalConv(self.tcl_features, self.tcl_features)
         self.tcl_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.tcl_linear = MLP(input_features=self.tcl_features, 
-                              output_features=self.tcl_features, 
-                              hidden_size=self.tcl_features, 
-                              hidden_layers=0)
-        
+        self.tcl_linear = MLP([self.tcl_features, 4096, 2048])
+        print(self.tcl_linear)
         # Get more abstract SCL features branch
         self.xtra_conv = nn.Sequential(
             nn.Conv2d(scl_out_features, self.scl_features, 1, 1),
             nn.BatchNorm2d(self.tcl_features),
             nn.ReLU(inplace=True))
         self.xtra_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.xtra_linear = MLP(input_features=self.scl_features, 
-                               output_features=self.scl_features, 
-                               hidden_size=self.scl_features, 
-                               hidden_layers=0)
-        
-        self.classifier = nn.Linear(self.scl_features + self.tcl_features, 
+        self.xtra_linear = MLP([self.scl_features, 4096, 2048])
+        self.classifier = nn.Linear(2048 * 2, 
                                     self.n_classes)
 
     def config(self) -> dict:
@@ -391,7 +381,7 @@ class FstCN(utils.checkpoint.SerializableModule):
             'feature_extractor': self.feature_extractor,
             'n_classes': self.n_classes,
             'pretrained': False,
-            'freeze_feature_extractor': True,
+            'freeze_feature_extractor': False,
             'scl_features': self.tcl_features,
             'tcl_features': self.tcl_features
         }
@@ -414,6 +404,10 @@ class FstCN(utils.checkpoint.SerializableModule):
         # xtra_features: (BATCH * FRAMES, FEATURES, 1, 1)
         xtra_features = self.xtra_avg_pool(xtra_features)
 
+        # xtra_features: (BATCH * FRAMES, FEATURES)
+        xtra_features = xtra_features.view(b * f, -1)
+        xtra_features = self.xtra_linear(xtra_features)
+        
         # xtra_features: (BATCH, FRAMES, FEATURES)
         xtra_features = xtra_features.view(b, f, -1)
         
@@ -437,6 +431,7 @@ class FstCN(utils.checkpoint.SerializableModule):
 
         # tcl_features: (BATCH, TEMP_FEATURES)
         tcl_features = self.tcl_avg_pool(tcl_features).view(b, -1)
+        tcl_features = self.tcl_linear(tcl_features)
 
         features = torch.cat([xtra_features, tcl_features], dim=1)
         return self.classifier(features).log_softmax(-1)

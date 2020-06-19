@@ -169,7 +169,9 @@ def train(model: ar.checkpoint.SerializableModule,
                                           **kwargs)
     starting_epoch = train_from.get('epoch', -1) + 1
         
-    metrics = [ar.metrics.accuracy, ar.metrics.top_3_accuracy]
+    metrics = [ar.metrics.accuracy, 
+               ar.metrics.top_3_accuracy, 
+               ar.metrics.top_5_accuracy]
     
     # TODO: Enable mixed precision when pytorch 1.6.0
     
@@ -428,15 +430,25 @@ def train_FstCN(ctx: click.Context, **kwargs: Any) -> None:
 
     n_classes = len(train_dl.dataset.classes)
 
-    model = ar.video.FstCN(kwargs['feature_extractor'], 
-                           n_classes=n_classes,
-                           pretrained=True,
-                           freeze_feature_extractor=kwargs['freeze_fe'])
+    resume_checkpoint = kwargs['resume_checkpoint']
+    if resume_checkpoint is None:
+        checkpoint: dict = dict()
+        
+        model = ar.video.FstCN(kwargs['feature_extractor'], 
+                               n_classes=n_classes,
+                               pretrained=True,
+                               freeze_feature_extractor=kwargs['freeze_fe'])
+    else:
+        model, checkpoint = ar.video.FstCN.load(
+            resume_checkpoint,
+            map_location=device,
+            freeze_feature_extractor=kwargs['freeze_fe'])
+
     model.to(device)
 
     train(model, train_dl, valid_dl, 
           summary_writer=ctx.obj['summary_writer'],
-          train_from=dict(), **kwargs)
+          train_from=checkpoint, **kwargs)
 
 
 if __name__ == "__main__":

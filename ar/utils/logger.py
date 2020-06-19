@@ -1,6 +1,6 @@
 from datetime import datetime
 from collections import deque
-from typing import Union, Deque, Tuple, Any, Mapping
+from typing import Union, Deque, Tuple, Any, Mapping, Dict
 
 import torch
 import tqdm.auto as tqdm
@@ -97,7 +97,7 @@ class ValuesLogger(object):
         for v in self.values.values():
             v.reset()
 
-    def as_dict(self) -> Mapping[str, float]:
+    def as_dict(self) -> Dict[str, float]:
         return {k: v.mean.item() for k, v in self.values.items()}
 
 

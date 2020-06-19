@@ -77,19 +77,30 @@ def train_one_epoch(
         if scheduler is not None:
             scheduler.step()
         
-        current_metrics = {m.__name__: m(predictions, y).item() for m in metrics}
+        current_metrics = {m.__name__: 
+                           m(predictions, y).item() for m in metrics}
         logger(loss=loss.item(), lr=get_lr(optimizer), **current_metrics)
         
         # Write logs to tensorboard
         step = epoch * len(dl) + i
 
         if summary_writer is not None:
-            summary_writer.add_scalar('learning_rate', 
-                                      get_lr(optimizer), 
+            summary_writer.add_scalar('learning_rate', get_lr(optimizer), 
                                       global_step=step)
-            summary_writer.add_scalars('train', dict(loss=loss.item(), 
-                                                     **current_metrics),
+            summary_writer.add_scalar('train_loss', loss.item(), 
+                                      global_step=step)
+            summary_writer.add_scalars('train_metrics', current_metrics,
                                        global_step=step)
+
+    if summary_writer is not None:
+        log_values = logger.as_dict()
+        del log_values['lr']
+        
+        summary_writer.add_scalar('epoch_train_loss', log_values.pop('loss'), 
+                                  global_step=epoch)
+        
+        summary_writer.add_scalars('epoch_train_metrics', log_values, 
+                                   global_step=epoch)
 
     optimizer.step()
     optimizer.zero_grad()
@@ -126,7 +137,10 @@ def evaluate(dl: torch.utils.data.DataLoader,
         logger(**updates_values)
 
     if summary_writer is not None:
-        summary_writer.add_scalars('validation', logger.as_dict(),
+        log_values = logger.as_dict()
+        summary_writer.add_scalar('validation_loss', log_values.pop('loss'),
+                                  global_step=epoch)
+        summary_writer.add_scalars('validation_metrics', log_values,
                                    global_step=epoch)
 
     return logger.as_dict()
