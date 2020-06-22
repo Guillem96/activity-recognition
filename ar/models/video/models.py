@@ -364,16 +364,20 @@ class FstCN(utils.checkpoint.SerializableModule):
         self.P = nn.Parameter(torch.randn(self.tcl_features, self.tcl_features))
         self.tcl_temp_conv = TemporalConv(self.tcl_features, self.tcl_features)
         self.tcl_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.tcl_linear = MLP([self.tcl_features, 4096, 2048])
-        print(self.tcl_linear)
+        self.tcl_linear = MLP([self.tcl_features, 
+                               self.tcl_features, 
+                               self.tcl_features])
+
         # Get more abstract SCL features branch
         self.xtra_conv = nn.Sequential(
             nn.Conv2d(scl_out_features, self.scl_features, 1, 1),
-            nn.BatchNorm2d(self.tcl_features),
+            nn.BatchNorm2d(self.scl_features),
             nn.ReLU(inplace=True))
         self.xtra_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.xtra_linear = MLP([self.scl_features, 4096, 2048])
-        self.classifier = nn.Linear(2048 * 2, 
+        self.xtra_linear = MLP([self.scl_features, 
+                                self.scl_features, 
+                                self.scl_features])
+        self.classifier = nn.Linear(self.scl_features +  self.tcl_features, 
                                     self.n_classes)
 
     def config(self) -> dict:
