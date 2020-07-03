@@ -1,6 +1,6 @@
-BASE_URL=https://www.crcv.ucf.edu/data/UCF101/
-DATASET_URL=${BASE_URL}UCF101.rar
-ANNOTATION_URL=${BASE_URL}UCF101TrainTestSplits-RecognitionTask.zip
+BASE_URL=https://www.crcv.ucf.edu/
+DATASET_URL=${BASE_URL}datasets/human-actions/ucf101/UCF101.rar
+ANNOTATION_URL=${BASE_URL}wp-content/uploads/2019/03/UCF101TrainTestSplits-RecognitionTask.zip
 
 mkdir -p ucf-101/videos
 
