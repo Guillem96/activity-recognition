@@ -53,6 +53,8 @@ class SerializableModule(nn.Module, abc.ABC):
 
         names_url = {
             'lrcn-ucf-101': f'{base_url}/lrcn-attn.pt',
+            'sf-densenet-kinetics-400': f'{base_url}/kinetics_image_densenet121.pt'
+            'sf-resnet-kinetics-400': f'{base_url}/kinetics_image_resnet18.pt'
         }
 
         path = Path(name_or_path)
