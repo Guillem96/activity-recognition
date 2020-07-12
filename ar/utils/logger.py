@@ -6,7 +6,7 @@ import torch
 import tqdm.auto as tqdm
 
 from ar.typing import Number, TensorBoard
-from ar.data.datasets import VideoDataset
+from ar.data import ClipLevelDataset
 from ar.transforms import imagenet_stats
 from ar.transforms.functional import video_unnormalize
 
@@ -121,7 +121,7 @@ def build_summary_writter(
     return torch.utils.tensorboard.SummaryWriter(log_dir, flush_secs=20)
 
 
-def log_random_videos(ds: VideoDataset, 
+def log_random_videos(ds: ClipLevelDataset, 
                       writer: TensorBoard,
                       samples: int = 4,
                       unnormalize_videos: bool = False,
@@ -131,7 +131,7 @@ def log_random_videos(ds: VideoDataset,
 
     Parameters
     ----------
-    ds: ar.data.VideoDataset
+    ds: ar.data.ClipLevelDataset
         Dataset to get the random samples
     writer: TensorBoard
         TensorBoard summary writer

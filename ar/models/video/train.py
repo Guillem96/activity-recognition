@@ -30,14 +30,14 @@ def load_datasets(
         validation_size: float = .1,
         train_transforms: Transform = None,
         valid_transforms: Transform = None) \
-            -> Tuple[ar.data.VideoDataset, ar.data.VideoDataset]:
+            -> Tuple[ar.data.ClipLevelDataset, ar.data.ClipLevelDataset]:
     """
     Given a dataset type, performs a set of operations to generate a train
     and validation dataset
     """
     
-    train_ds: Optional[ar.data.VideoDataset] = None
-    valid_ds: Optional[ar.data.VideoDataset] = None
+    train_ds: Optional[ar.data.ClipLevelDataset] = None
+    valid_ds: Optional[ar.data.ClipLevelDataset] = None
     if dataset_type == 'kinetics400':
         train_ds = ar.data.Kinetics400(
             root=root, split='train', 
@@ -95,21 +95,17 @@ def data_preparation(writer: ar.typing.TensorBoard,
         
     train_tfms = T.Compose([
         VT.VideoToTensor(),
-        VT.OneOf([
-            T.Compose([
-                VT.VideoResize((300, 300)),
-                VT.VideoRandomCrop((224, 224)),
-            ]),
-            VT.VideoResize((224, 224))
-        ]),
+        VT.VideoResize((128, 171)),
+        VT.VideoRandomCrop((112, 112)),
         VT.VideoRandomHorizontalFlip(),
         VT.VideoNormalize(**VT.imagenet_stats),
-        VT.VideoRandomErase(scale=(0.02, 0.15))
+        # VT.VideoRandomErase(scale=(0.02, 0.15))
     ])
 
     valid_tfms = T.Compose([
         VT.VideoToTensor(),
-        VT.VideoResize((224, 224)),
+        VT.VideoResize((128, 171)),
+        VT.VideoCenterCrop((112, 112)),
         VT.VideoNormalize(**VT.imagenet_stats),
     ])
 
