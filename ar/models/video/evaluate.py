@@ -47,12 +47,16 @@ def video_level_eval(dataset: str, data_dir: str, annots_dir: str,
                                       transform=tfms)
     elif dataset == 'kinetics400':
         ds = ar.data.VideoLevelKinetics(data_dir, 'test', transform=tfms)
-    
-    # model: Optional[ar.checkpoint.SerializableModule] = None
+    else:
+        raise ValueError('Unexpected dataset type')
+
+    model: Optional[ar.checkpoint.SerializableModule] = None
     if model_arch == 'LRCN':
         model = ar.video.LRCN.from_pretrained(checkpoint)
         model.to(device)
-    
+    else:
+        raise ValueError('Unexpected model architecture')
+
     clips_sampler = ar.video.lrcn_sampling
     metrics = [ar.metrics.accuracy, 
                ar.metrics.top_3_accuracy, 
@@ -71,7 +75,7 @@ def video_level_eval(dataset: str, data_dir: str, annots_dir: str,
             final_preds.append(predictions.cpu())
     
     final_preds_t = torch.stack(final_preds)
-    final_metrics = {m.__name__: m(final_preds_t, torch.as_tensor(ds.labels)) 
+    final_metrics = {m.__name__: m(final_preds_t, torch.as_tensor(ds.labels))
                      for m in metrics}
     final_metrics = ', '.join(f'{k}: {v:.4f}' for k, v in final_metrics.items())
     print(final_metrics) 
