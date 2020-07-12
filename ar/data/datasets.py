@@ -155,7 +155,8 @@ class UCF101(ClipLevelDataset):
         
         # Get the video labels in str format
         self.labels = [o.parent.stem for o in self.videos_path]
-
+        self.videos_path = list(map(str, self.videos_path))
+        
         # Unique elements in the whole labels collection are the classes
         self._classes = sorted(list(set(self.labels)))
         self.class_to_idx = {c: i for i, c in enumerate(self.classes)}
@@ -196,7 +197,7 @@ class VideoLevelDataset(data.Dataset, abc.ABC):
                  frame_rate: int = None,
                  transform: Transform = None) -> None:
         
-        self.video_paths = video_paths
+        self.video_paths = [str(o) for o in video_paths]
         self.labels = labels
         self.classes = sorted(list(set(labels)))
         self.class_2_idx = {c: i for i, c in enumerate(self.classes)}
