@@ -289,4 +289,4 @@ def ucf_select_fold(base_path: Path,
 
     video_files = f.read_text().split('\n')
     video_files = [o.strip().split()[0] for o in video_files if o]
-    return [base_path / o for o in video_files]
+    return list(set([base_path / o for o in video_files]))

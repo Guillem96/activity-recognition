@@ -9,7 +9,7 @@ import ar
 import ar.transforms as VT
 from ar.utils.checkpoint import SerializableModule
 
-device = torch.device('cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 @click.command()
@@ -43,9 +43,9 @@ def main(video: str,
     video_t, *_ = io.read_video(video)
 
     # Sample non overlapping clips
-    clips= ar.video.uniform_sampling(video=video_t, 
-                                     clips_len=clips_len, 
-                                     n_clips=n_clips)
+    clips = ar.video.uniform_sampling(video=video_t, 
+                                      clips_len=clips_len, 
+                                      n_clips=n_clips)
     input_clips = torch.stack([tfms(o) for o in clips])
 
     # Load the model

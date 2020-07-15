@@ -365,6 +365,9 @@ def main(ctx: click.Context, **kwargs: Any) -> None:
               type=int, default=512, 
               help='Hidden size of the LSTM layer added on top of the feature '
                    'extractors')
+@click.option('--fusion-mode', 
+              type=click.Choice(['sum', 'attn', 'avg', 'last']), default='sum', 
+              help='How to aggregate the timestep level logits')
 @click.option('--bidirectional/--no-bidirectional', 
               default=True, help='Wether to use a bidirectional LSTM or an '
                                  ' autoregressive')
