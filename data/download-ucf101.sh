@@ -12,7 +12,7 @@ curl -O ${ANNOTATION_URL}
 
 # Unzip the annotations
 echo -ne "Moving annotations under the annots directory..."
-unzip UCF101TrainTestSplits-RecognitionTask.zip
+unzip -q UCF101TrainTestSplits-RecognitionTask.zip
 mv ucfTrainTestlist annots
 rm UCF101TrainTestSplits-RecognitionTask.zip
 echo "done"
@@ -22,6 +22,7 @@ echo -ne "Unzipping the videos and structuring them like image net dataset..."
 mv UCF101.rar videos/UCF101.rar
 cd videos
 unrar e UCF101.rar
+rm UCF101.rar
 cd ..
 
 ls -1 videos/*.avi | xargs -n 1 basename | while read x; do 
@@ -33,6 +34,5 @@ done
 
 echo "done"
 
-# rm UCF101.rar
 
 cd ..
