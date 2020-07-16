@@ -40,7 +40,7 @@ def SCI_fusion(probabilities: torch.Tensor,
         p = probabilities
     
     N = p.size(-1)
-    maxes = p.max(-1, keepdim=True).values
+    _, maxes = p.max(-1, keepdim=True)
 
     # SCIs: (M, C)
     SCIs = (N * maxes - 1) / (N - 1)
@@ -51,5 +51,5 @@ def SCI_fusion(probabilities: torch.Tensor,
     pi = pi / SCIs.sum(1)
 
     # (N_CLASSES,)
-    return pi.max(0).values
+    return pi.max(0)[1]
 

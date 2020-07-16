@@ -98,10 +98,10 @@ def image_feature_extractor(fe: str,
 
 class InceptionInpTransform(nn.Module):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(InceptionInpTransform, self).__init__()
     
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         x_ch0 = torch.unsqueeze(x[:, 0], 1) * (0.229 / 0.5) + (0.485 - 0.5) / 0.5
         x_ch1 = torch.unsqueeze(x[:, 1], 1) * (0.224 / 0.5) + (0.456 - 0.5) / 0.5
         x_ch2 = torch.unsqueeze(x[:, 2], 1) * (0.225 / 0.5) + (0.406 - 0.5) / 0.5

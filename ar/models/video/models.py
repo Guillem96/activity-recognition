@@ -166,7 +166,7 @@ class LRCN(ar.checkpoint.SerializableModule):
             'bidirectional': self.bidirectional,
             'rnn_units': self.rnn_units,
             'freeze_feature_extractor': False,
-            'fusion_mode': fusion_mode
+            'fusion_mode': self.fusion_mode
         }
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

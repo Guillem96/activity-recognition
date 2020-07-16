@@ -147,15 +147,14 @@ class UCF101(ClipLevelDataset):
             'split argument must be either "train" or "test"'
 
         self.annotation_path = Path(annotation_path)
-        self.videos_path = ucf_select_fold(self.split_root, 
-                                           self.annotation_path, 
-                                           self.split, fold)
-        self.videos_path = [o for o in self.videos_path 
-                            if o.suffix[1:] in extensions]
+        videos_path = ucf_select_fold(self.split_root, 
+                                      self.annotation_path, 
+                                      self.split, fold)
+        videos_path = [o for o in videos_path if o.suffix[1:] in extensions]
         
         # Get the video labels in str format
-        self.labels = [o.parent.stem for o in self.videos_path]
-        self.videos_path = list(map(str, self.videos_path))
+        self.labels = [o.parent.stem for o in videos_path]
+        self.videos_path = list(map(str, videos_path))
         
         # Unique elements in the whole labels collection are the classes
         self._classes = sorted(list(set(self.labels)))

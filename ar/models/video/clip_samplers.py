@@ -119,7 +119,6 @@ def FstCN_sampling(video: torch.Tensor,
     crop_fn = T.Compose([
         VT.VideoToTensor(),
         VT.VideoRandomCrop(crops_size),
-        VT.VideoRandomHorizontalFlip(p=1.)
     ])
 
     clips = uniform_sampling(video=video, 
@@ -129,6 +128,9 @@ def FstCN_sampling(video: torch.Tensor,
     
     results = []
     for clip in clips:
-        results.extend([crop_fn(video_p).permute(1, 2, 3, 0)])
-    
+        cropped_clips = [crop_fn(video).permute(1, 2, 3, 0) 
+                         for i in range(n_crops)]
+        flipped_clips = [o.flip(dim=-2) for o in cropped_clips]
+        results.append(cropped_clips + flipped_clips)
+
     return results
