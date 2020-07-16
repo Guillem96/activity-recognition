@@ -45,7 +45,6 @@ def SCI_fusion(probabilities: torch.Tensor,
     # SCIs: (M, C)
     SCIs = (N * maxes - 1) / (N - 1)
 
-    print(SCIs.size())
     # pi: (M, N_CLASSES)
     pi = (SCIs * p).sum(1) 
     pi = pi / SCIs.sum(1)

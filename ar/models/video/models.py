@@ -258,6 +258,7 @@ class LRCNWithAudio(ar.checkpoint.SerializableModule):
         x = torch.cat([video_features, audio_features], dim=1)
         return self.linear(x).log_softmax(-1)
 
+################################################################################
 
 class TemporalConv(nn.Module):
 
@@ -354,7 +355,7 @@ class FstCN(ar.checkpoint.SerializableModule):
 
         # Simplified version of Vdiff clip, where dt = 1
         # Vdiff_features: (BATCH, CHANNELS, FRAMES - 1, H, W) 
-        Vdiff = clips[:, :, :-1] - clips[:, :, :-1]
+        Vdiff = clips[:, :, :-1] - clips[:, :, 1:]
 
         # For spatial clips, when training we sample a single random,
         # when testing we sample the middle frame
@@ -402,8 +403,11 @@ class FstCN(ar.checkpoint.SerializableModule):
         features = torch.cat([xtra_features, tcl_features], dim=1)
         return self.classifier(features).log_softmax(-1)
 
+################################################################################
 
 def _video_for_frame_level_fw(video: torch.Tensor) -> torch.Tensor:
+    """Reshapes a video tensor so it can be feed at frame level to a spatial 
+    CNN"""
     b, c, f, h, w = video.size()
     video = video.permute(0, 2, 1, 3, 4)
     video = video.contiguous().view(b * f, c, h, w)
@@ -412,6 +416,10 @@ def _video_for_frame_level_fw(video: torch.Tensor) -> torch.Tensor:
 
 def _frame_level_forward(video: torch.Tensor, 
                          module: nn.Module) -> torch.Tensor:
+    """Given a video and a module, time distributes the module over
+       the temporal axis. Feeds frames individually to a spatial CNN
+       taking advantage of batch processing.
+    """
     # x: (BATCH, CHANNELS, FRAMES, H, W)
     b, _, f, *_ = video.size()
     
