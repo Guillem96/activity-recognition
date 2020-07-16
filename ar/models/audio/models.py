@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torchaudio.transforms as AT
 
 import ar
 
@@ -30,6 +29,7 @@ class MelFrequencyFeatureExtractor(nn.Module):
                  out_features: int,
                  mel_features: int = 16,
                  audio_sample_rate: int = 16000) -> None:
+        import torchaudio.transforms as AT
 
         super(MelFrequencyFeatureExtractor, self).__init__()
 

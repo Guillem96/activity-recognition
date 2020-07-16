@@ -361,6 +361,9 @@ class FstCN(ar.checkpoint.SerializableModule):
         if self.training:
             sampled_frames_idx = torch.randint(high=f, size=(b,))
             sampled_clips = clips[torch.arange(b), :, sampled_frames_idx]
+        else:
+            middle_idx = f // 2
+            sampled_clips = clips[torch.arange(b), :, middle_idx]
 
         # single_clip_features: (BATCH, FEATURES, H', W')
         single_clip_features = self.scl(sampled_clips)
@@ -380,7 +383,6 @@ class FstCN(ar.checkpoint.SerializableModule):
         xtra_features = self.xtra_linear(xtra_features)
 
         # Temporal Branch
-
         # tcl_features: (BATCH, FRAMES - 1, FEATURES, H' x W')
         tcl_features = _frame_level_forward(
             Vdiff_features.permute(0, 2, 1, 3, 4), self.tcl_conv)

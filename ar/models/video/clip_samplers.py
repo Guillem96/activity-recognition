@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import torch
 
@@ -81,3 +81,54 @@ def lrcn_sampling(video: torch.Tensor,
         start_idx, n_video_frames,  stride + clips_len)[:n_clips]
     
     return [video[i: i + clips_len] for i in clips_start_idx.tolist()]
+
+
+def FstCN_sampling(video: torch.Tensor, 
+                   clips_len: int, 
+                   n_clips: int = 16,
+                   n_crops: int = 9,
+                   crops_size: Tuple[int, int] = (224, 224),
+                   overlap: bool = False) -> List[List[torch.Tensor]]:
+    """
+    Uniformly sampling `n_clips` from a given video, and for each clip, we
+    randomly sample `n_crops` different crops.
+
+    Parameters
+    ----------
+    video: torch.Tensor
+        Tensor of shape [T, H, W, C]
+    clips_len: int
+        Length of the sampled clips in frames
+    n_clips: int, default 16
+        Number of clips to sample
+    n_crops: int, default 0
+        Number of crops to extract for each video clip
+    crops_size: Tuple[int, int], default (224, 224)
+        Size of the generated crops
+    overlap: bool, default True
+        When sampling clips, can clips be overlapping
+    
+    Returns
+    -------
+    List[List[torch.Tensor]]
+        Each list item contains a list of clips cropped at different points
+    """
+    import torchvision.transforms as T
+    import ar.transforms as VT
+
+    crop_fn = T.Compose([
+        VT.VideoToTensor(),
+        VT.VideoRandomCrop(crops_size),
+        VT.VideoRandomHorizontalFlip(p=1.)
+    ])
+
+    clips = uniform_sampling(video=video, 
+                             clips_len=clips_len, 
+                             n_clips=n_clips,
+                             overlap=overlap)
+    
+    results = []
+    for clip in clips:
+        results.extend([crop_fn(video_p).permute(1, 2, 3, 0)])
+    
+    return results
