@@ -4,7 +4,8 @@ import torch
 
 
 def uniform_sampling(video: torch.Tensor, 
-                     clips_len: int, 
+                     clips_len: int,
+                     frames_stride: int = 1, 
                      n_clips: int = 10,
                      overlap: bool = True) -> List[torch.Tensor]:
     """
@@ -17,6 +18,8 @@ def uniform_sampling(video: torch.Tensor,
         Tensor of shape [T, H, W, C] or [T, C, H, W]
     clips_len: int
         Length of the sampled clips in frames
+    frames_stride: int, default 1
+        Separation between clips within a clip.
     n_clips: int, default 3
         Number of clips to sample
     overlap: bool, default True
@@ -29,14 +32,17 @@ def uniform_sampling(video: torch.Tensor,
     """
     n_frames = video.size(0)
     if overlap:
-        indices = torch.randint(high=n_frames - clips_len, size=(n_clips,))
+        indices = torch.randint(high=n_frames - (clips_len * frames_stride), 
+                                size=(n_clips,))
         indices = indices.tolist()
     else:
-        possible_indices = torch.arange(0, n_frames, clips_len)[:-1]
+        possible_indices = torch.arange(
+            0, n_frames, clips_len * frames_stride)[:-1]
         choices = torch.randint(high=possible_indices.size(0), size=(n_clips,))
         indices = possible_indices[choices].tolist()
     
-    clips = [video[i: i + clips_len] for i in indices]
+    clips = [video[i: i + (clips_len * frames_stride)][::frames_stride] 
+             for i in indices]
     return clips
 
 
@@ -113,8 +119,8 @@ def FstCN_sampling(video: torch.Tensor,
     List[List[torch.Tensor]]
         Each list item contains a list of clips cropped at different points
     """
-    import torchvision.transforms as T
     import ar.transforms as VT
+    import torchvision.transforms as T
 
     crop_fn = T.Compose([
         VT.VideoToTensor(),
@@ -125,7 +131,7 @@ def FstCN_sampling(video: torch.Tensor,
                              clips_len=clips_len, 
                              n_clips=n_clips,
                              overlap=overlap)
-    
+
     results = []
     for clip in clips:
         cropped_clips = [crop_fn(video).permute(1, 2, 3, 0) 
