@@ -73,7 +73,17 @@ $ python -m ar.models.video.train \
      LRCN <model-args>
 ```
 
-#### DIY
+### FstCN
+
+Model described at [Human Action Recognition using Factorized Spatio-Temporal 
+Convolution Networks](https://arxiv.org/pdf/1510.00562.pdf).
+
+![](images/ar-fstcn.png)
+
+
+## Use implemented models
+
+All the models implemented inside the `ar.video` module, are ready to use. Therefore, you can train or even finetune them using your own dataset.
 
 ```python
 import ar
