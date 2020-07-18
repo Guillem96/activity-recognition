@@ -2,7 +2,8 @@ import torch
 
 def SCI_weights(probabilities: torch.Tensor,
                 log_probs: bool = False,
-                from_logits: bool = False) -> torch.Tensor:
+                from_logits: bool = False,
+                keepdims: bool = False) -> torch.Tensor:
     """
     Computes the importance of a probability distribution. As lower the 
     entropy is, the larger the importance is
@@ -35,10 +36,10 @@ def SCI_weights(probabilities: torch.Tensor,
     else:
         p = probabilities
     
-    N = p.size(-1)
-    _, maxes = p.max(-1)
+    N = float(p.size(-1))
+    maxes, _ = p.max(-1, keepdims=keepdims)
 
-    return (N * maxes - 1) / (N - 1)
+    return (N * maxes - 1).div(N - 1)
 
 
 def SCI_fusion(probabilities: torch.Tensor, 
@@ -61,7 +62,9 @@ def SCI_fusion(probabilities: torch.Tensor,
         Are the given probabilites log probs?
     from_logits: bool, default False
         Does the given probabilites are logits?
-    
+    keepdims: bool, default False
+        Keep the probabilities dimensions. Is set to false the resulting tensor
+        will 'lose' the last dimension.
     Returns
     -------
     torch.Tensor
@@ -79,16 +82,13 @@ def SCI_fusion(probabilities: torch.Tensor,
     else:
         p = probabilities
     
-    N = p.size(-1)
-    _, maxes = p.max(-1, keepdim=True)
-
     # SCIs: (M, C)
-    SCIs = (N * maxes - 1) / (N - 1)
+    SCIs = SCI_weights(p, from_logits=False, log_probs=False, keepdims=True)
 
     # pi: (M, N_CLASSES)
     pi = (SCIs * p).sum(1) 
     pi = pi / SCIs.sum(1)
 
     # (N_CLASSES,)
-    return pi.max(0)[1]
+    return pi.max(0)[0]
 

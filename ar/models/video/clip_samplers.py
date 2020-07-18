@@ -93,6 +93,7 @@ def FstCN_sampling(video: torch.Tensor,
                    clips_len: int, 
                    n_clips: int = 16,
                    n_crops: int = 9,
+                   frames_stride: int = 1,
                    crops_size: Tuple[int, int] = (224, 224),
                    overlap: bool = False) -> List[List[torch.Tensor]]:
     """
@@ -109,6 +110,8 @@ def FstCN_sampling(video: torch.Tensor,
         Number of clips to sample
     n_crops: int, default 0
         Number of crops to extract for each video clip
+    frames_stride: int, default 1
+        Distance between frames within a clip
     crops_size: Tuple[int, int], default (224, 224)
         Size of the generated crops
     overlap: bool, default True
@@ -122,21 +125,25 @@ def FstCN_sampling(video: torch.Tensor,
     import ar.transforms as VT
     import torchvision.transforms as T
 
+    def to_video(o): return o.permute(1, 2, 3, 0).mul(255).byte()
+
     crop_fn = T.Compose([
         VT.VideoToTensor(),
         VT.VideoRandomCrop(crops_size),
+        to_video
     ])
 
     clips = uniform_sampling(video=video, 
-                             clips_len=clips_len, 
+                             clips_len=clips_len,
+                             frames_stride=frames_stride,
                              n_clips=n_clips,
                              overlap=overlap)
 
     results = []
     for clip in clips:
-        cropped_clips = [crop_fn(video).permute(1, 2, 3, 0) 
-                         for i in range(n_crops)]
-        flipped_clips = [o.flip(dim=-2) for o in cropped_clips]
+        cropped_clips = [crop_fn(clip) for i in range(n_crops)]
+    
+        flipped_clips = [o.flip(dims=[-2]) for o in cropped_clips]
         results.append(cropped_clips + flipped_clips)
 
     return results
