@@ -7,8 +7,8 @@ mkdir -p ucf-101/videos
 cd ucf-101
 
 echo "Downloading the data..."
-curl -O ${DATASET_URL}
-curl -O ${ANNOTATION_URL}
+curl -O -k ${DATASET_URL}
+curl -O -k ${ANNOTATION_URL}
 
 # Unzip the annotations
 echo -ne "Moving annotations under the annots directory..."
