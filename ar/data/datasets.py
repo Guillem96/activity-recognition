@@ -1,4 +1,5 @@
 import abc
+import warnings
 from pathlib import Path
 from typing import Tuple, Collection, Union, Sequence
 
@@ -200,6 +201,7 @@ class VideoLevelDataset(data.Dataset, abc.ABC):
         self.labels = labels
         self.classes = sorted(list(set(labels)))
         self.class_2_idx = {c: i for i, c in enumerate(self.classes)}
+        self.labels_ids = [self.class_2_idx[o] for o in self.labels]
         
         self.frame_rate = frame_rate
         self.transform = transform
@@ -224,9 +226,18 @@ class VideoLevelDataset(data.Dataset, abc.ABC):
     
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, int]:
         video, audio, info = torchvision.io.read_video(
-            self.video_paths[idx])
+            self.video_paths[idx], pts_unit='sec')
         
-        video = self.resample_video(video, info['video_fps'])
+        if video.nelement() == 0:
+            warnings.warn(f'Error loading video {self.video_paths[idx]}')
+            return video, audio, info
+
+        if 'video_fps' not in info:
+            # raise ValueError(f'Error fetching metadata from'
+            #                  f' {self.video_paths[idx]} video')
+            pass
+        else:
+            video = self.resample_video(video, info['video_fps'])
 
         if self.transform is not None:
             video = self.transform(video)
@@ -247,7 +258,7 @@ class VideoLevelUCF101(VideoLevelDataset):
         assert split in {'train', 'test'}, \
             'split argument must be either "train" or "test"'
 
-        video_paths = ucf_select_fold(Path(root) / split, 
+        video_paths = ucf_select_fold(Path(root), 
                                       Path(annotation_path),
                                       split, fold)
         labels = [o.parent.stem for o in video_paths]
