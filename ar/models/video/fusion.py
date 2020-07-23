@@ -3,7 +3,7 @@ import torch
 def SCI_weights(probabilities: torch.Tensor,
                 log_probs: bool = False,
                 from_logits: bool = False,
-                keepdims: bool = False) -> torch.Tensor:
+                keepdim: bool = False) -> torch.Tensor:
     """
     Computes the importance of a probability distribution. As lower the 
     entropy is, the larger the importance is
@@ -37,7 +37,7 @@ def SCI_weights(probabilities: torch.Tensor,
         p = probabilities
     
     N = float(p.size(-1))
-    maxes, _ = p.max(-1, keepdims=keepdims)
+    maxes, _ = p.max(dim=-1, keepdim=keepdim)
 
     return (N * maxes - 1).div(N - 1)
 
@@ -83,7 +83,7 @@ def SCI_fusion(probabilities: torch.Tensor,
         p = probabilities
     
     # SCIs: (M, C)
-    SCIs = SCI_weights(p, from_logits=False, log_probs=False, keepdims=True)
+    SCIs = SCI_weights(p, from_logits=False, log_probs=False, keepdim=True)
 
     # pi: (M, N_CLASSES)
     pi = (SCIs * p).sum(1) 

@@ -1,5 +1,5 @@
 import click
-from typing import Optional
+from typing import Optional, Sequence, Mapping
 import tqdm.auto as tqdm
 
 import torch
@@ -12,6 +12,42 @@ _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 _AVAILABLE_MODELS = {'LRCN', 'FstCN'}
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
+def video_level_evaluation(ds: ar.data.VideoLevelDataset,
+                           model: torch.nn.Module,
+                           metrics: Sequence[ar.typing.MetricFn],
+                           clips_tfms: ar.typing.Transform = VT.Identity,
+                           sampling_strategy: str = 'uniform',
+                           n_clips: int = 10,
+                           video_fmt: str = 'THWC') -> Mapping[str, float]:
+
+    if sampling_strategy == 'uniform':
+        clips_sampler = ar.video.uniform_sampling
+    else:
+        raise ValueError(f'Invlaid `sampling_strategy` {sampling_strategy}')
+    
+    final_preds = []
+    labels = []
+
+    for i in tqdm.trange(len(ds)):
+        video, audio, label = ds[i]
+        if video.nelement() == 0:
+            continue
+
+        clips = clips_sampler(video, 16, n_clips=n_clips, video_fmt=video_fmt)
+        clips = torch.stack([clips_tfms(o) for o in clips]).to(device)
+
+        with torch.no_grad():
+            predictions = model(clips)
+            predictions = predictions.mean(0)
+        
+        final_preds.append(predictions.cpu())
+        labels.append(label)
+    
+    final_preds_t = torch.stack(final_preds)
+    labels_t = torch.as_tensor(labels)
+    return {m.__name__: m(final_preds_t, labels_t).item() for m in metrics}
 
 
 @click.command()
@@ -27,13 +63,13 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 @click.option('--model-arch', type=click.Choice(list(_AVAILABLE_MODELS)),
               required=True)
 @click.option('--checkpoint', type=str, required=True)
-def video_level_eval(dataset: str, data_dir: str, annots_dir: str,
+def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
                      model_arch: str, checkpoint: str) -> None:
     
     if dataset == 'UCF-101' and annots_dir is None:
         raise ValueError('"annots_dir" cannot be None when selecting '
                          'UCF-101 dataset')
-    
+
     tfms = T.Compose([
         VT.VideoToTensor(),
         VT.VideoResize((256, 256)),
@@ -44,10 +80,9 @@ def video_level_eval(dataset: str, data_dir: str, annots_dir: str,
     print('Creating dataset... ', end='')
     ds: Optional[ar.data.datasets.VideoLevelDataset] = None
     if dataset == 'UCF-101':
-        ds = ar.data.VideoLevelUCF101(data_dir, annots_dir, 'test', 
-                                      transform=tfms)
+        ds = ar.data.VideoLevelUCF101(data_dir, annots_dir, 'test')
     elif dataset == 'kinetics400':
-        ds = ar.data.VideoLevelKinetics(data_dir, 'test', transform=tfms)
+        ds = ar.data.VideoLevelKinetics(data_dir, 'test')
     else:
         raise ValueError('Unexpected dataset type')
     print('done')
@@ -66,36 +101,21 @@ def video_level_eval(dataset: str, data_dir: str, annots_dir: str,
         raise ValueError('Unexpected model architecture')
     print('done')
 
-    clips_sampler = ar.video.lrcn_sampling
     metrics = [ar.metrics.accuracy, 
                ar.metrics.top_3_accuracy, 
                ar.metrics.top_5_accuracy]
 
-    final_preds = []
-    labels = []
-
-    for i in tqdm.trange(len(ds)):
-        video, audio, label = ds[i]
-        if video.nelement() == 0:
-            continue
-
-        label = torch.as_tensor(label).to(device).view(-1, 1)
-        clips = torch.stack(clips_sampler(video.permute(1, 0, 2, 3), 16))
-        clips = clips.permute(0, 2, 1, 3, 4).to(device)
-
-        with torch.no_grad():
-            predictions = model(clips)
-            predictions = predictions.mean(0)
-            final_preds.append(predictions.cpu())
-            labels.append(label.view(1).item())
+    final_metrics = video_level_evaluation(
+        ds=ds,
+        model=model,
+        metrics=metrics,
+        clips_tfms=tfms,
+        sampling_strategy='uniform',
+        video_fmt='THWC')
     
-    final_preds_t = torch.stack(final_preds)
-    labels_t = torch.as_tensor(labels)
-    final_metrics = {m.__name__: m(final_preds_t, labels_t).item()
-                     for m in metrics}
     final_metrics = ', '.join(f'{k}: {v:.4f}' for k, v in final_metrics.items())
     print(final_metrics) 
 
 
 if __name__ == "__main__":
-    video_level_eval()
+    cli_video_level_eval()
