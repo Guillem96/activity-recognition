@@ -168,9 +168,7 @@ def train(model: ar.checkpoint.SerializableModule,
     metrics = [ar.metrics.accuracy, 
                ar.metrics.top_3_accuracy, 
                ar.metrics.top_5_accuracy]
-    
-    # TODO: Enable mixed precision when pytorch 1.6.0
-    
+        
     for epoch in range(starting_epoch, kwargs['epochs']):
         ar.engine.train_one_epoch(
             dl=train_dl,
@@ -180,7 +178,7 @@ def train(model: ar.checkpoint.SerializableModule,
             loss_fn=criterion_fn,
             metrics=metrics,
             grad_accum_steps=kwargs['grad_accum_steps'],
-            #   mixed_precision=kwargs['fp16'],
+            mixed_precision=kwargs['fp16'],
             epoch=epoch,
             summary_writer=summary_writer,
             device=device)
@@ -192,7 +190,7 @@ def train(model: ar.checkpoint.SerializableModule,
             loss_fn=criterion_fn,
             epoch=epoch,
             summary_writer=summary_writer,
-            #    mixed_precision=kwargs['fp16'],
+            mixed_precision=kwargs['fp16'],
             device=device)
         
         # Save the model jointly with the optimizer

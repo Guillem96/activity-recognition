@@ -3,8 +3,7 @@ from typing import Collection, Optional, Mapping
 import torch
 import torch.nn as nn
 
-# TODO: Enable mixed precision when pytorch 1.6.0
-# import torch.cuda.amp as amp 
+import torch.cuda.amp as amp 
 
 import numpy as np
 
@@ -31,7 +30,7 @@ def train_one_epoch(
         grad_accum_steps: int = 1,
         scheduler: Scheduler = None,
         summary_writer: TensorBoard = None,
-        # mixed_precision: bool = False,
+        mixed_precision: bool = False,
         device: torch.device = torch.device('cpu')) -> None:
     
 
@@ -46,39 +45,37 @@ def train_one_epoch(
     model.train()
     optimizer.zero_grad()
 
-    # scaler: Optional[amp.GradScaler] = None
-    # if mixed_precision:
-    #     scaler = amp.GradScaler()
+    scaler: Optional[amp.GradScaler] = None
+    if mixed_precision:
+        scaler = amp.GradScaler()
 
     for i, (x, y) in enumerate(dl):
         x = x.to(device)
         y = y.to(device)
 
-        # with amp.autocast(enabled=mixed_precision):
-        predictions = model(x)
-        
-        loss = loss_fn(predictions, y)
+        with amp.autocast(enabled=mixed_precision):
+            predictions = model(x)
+            loss = loss_fn(predictions, y)
     
-        # if scaler is not None:
-        #     loss = scaler.scale(loss)
+        if scaler is not None:
+            scaler.scale(loss / grad_accum_steps).backward()
+        else:
+            (loss / grad_accum_steps).backward()
             
-        (loss / grad_accum_steps).backward()
-
         if (i + 1) % grad_accum_steps == 0:
+            if scaler is not None:
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                optimizer.step()
             
-            # if scaler is not None:
-            #     scaler.step(optimizer)
-            #     scaler.update()
-            # else:
-            
-            optimizer.step()
             optimizer.zero_grad()
-        
+
         if scheduler is not None:
             scheduler.step()
         
         current_metrics = {m.__name__: 
-                           m(predictions, y).item() for m in metrics}
+                           m(predictions.float(), y).item() for m in metrics}
         logger(loss=loss.item(), lr=get_lr(optimizer), **current_metrics)
         
         # Write logs to tensorboard
@@ -102,7 +99,12 @@ def train_one_epoch(
         summary_writer.add_scalars('epoch_train_metrics', log_values, 
                                    global_step=epoch)
 
-    optimizer.step()
+    if scaler is not None:
+        scaler.step(optimizer)
+        scaler.update()
+    else:
+        optimizer.step()
+    
     optimizer.zero_grad()
 
 
@@ -111,8 +113,8 @@ def evaluate(dl: torch.utils.data.DataLoader,
              model: nn.Module,
              loss_fn: LossFn,
              metrics: Collection[MetricFn],
-            #  mixed_precision: bool = False,
              epoch: int,
+             mixed_precision: bool = False,
              summary_writer: TensorBoard = None,
              device: torch.device = torch.device('cpu')) -> Mapping[str, float]:
     
@@ -128,11 +130,12 @@ def evaluate(dl: torch.utils.data.DataLoader,
         x = x.to(device)
         y = y.to(device)
 
-        # with amp.autocast(enabled=mixed_precision):
-        predictions = model(x)
-        loss = loss_fn(predictions, y)
+        with amp.autocast(enabled=mixed_precision):
+            predictions = model(x)
+            loss = loss_fn(predictions, y)
 
-        updates_values = {m.__name__: m(predictions, y).item() for m in metrics}
+        updates_values = {m.__name__: m(predictions.float(), y).item() 
+                          for m in metrics}
         updates_values['loss'] = loss.item()
         logger(**updates_values)
 
