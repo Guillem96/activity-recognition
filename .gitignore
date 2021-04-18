@@ -27,3 +27,6 @@ geckodriver.log
 
 # TensorBoard
 logs/
+
+# Environment
+.env

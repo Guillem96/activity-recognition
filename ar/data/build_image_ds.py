@@ -15,14 +15,14 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
 
-def _build_folder_structure(out_path: Path, 
+def _build_folder_structure(out_path: Path,
                             actions: Collection[str]) -> Mapping[str, Path]:
     action_2_path = dict()
     for a in actions:
         action_path = out_path / a
         action_path.mkdir(exist_ok=True, parents=True)
         action_2_path[a] = action_path
-    
+
     return action_2_path
 
 
@@ -48,11 +48,10 @@ def _get_urls(driver: webdriver.Firefox, query: str) -> Sequence[str]:
             if to_scroll <= 0:
                 print('No more images for', query)
                 break
-            
+
             # Scroll the currently displayed images slowly so JS load them
             for step in reversed(range(1, scroll_steps + 1)):
-                driver.execute_script(
-                    f"window.scrollBy(0, {to_scroll})")
+                driver.execute_script(f"window.scrollBy(0, {to_scroll})")
                 time.sleep(1)
 
         time.sleep(1)
@@ -66,7 +65,7 @@ def _get_urls(driver: webdriver.Firefox, query: str) -> Sequence[str]:
 
 
 def _download_single(i: int, url: str, out_dir: Path) -> None:
-    
+
     if url.startswith('data'):
         url = re.sub('^data:image/.+;base64,', '', url)
         image_data = base64.b64decode(url)
@@ -77,19 +76,18 @@ def _download_single(i: int, url: str, out_dir: Path) -> None:
     img.save(str(out_dir / f'{i}.jpg'), 'JPEG')
 
 
-def _download_urls(urls: Collection[str], 
-                   out_dir: Union[str, Path],
+def _download_urls(urls: Collection[str], out_dir: Union[str, Path],
                    n_workers: int) -> None:
-    
+
     out_dir = Path(out_dir)
     pool = mp.Pool(n_workers)
-    
+
     try:
         futures = []
         for i, url in enumerate(urls):
             r = pool.apply_async(_download_single, args=(i, url, out_dir))
             futures.append(r)
-        
+
         for f in futures:
             f.get()
     except KeyboardInterrupt:
@@ -98,38 +96,39 @@ def _download_urls(urls: Collection[str],
         pool.close()
         pool.join()
 
-    
-def _download_images(query: str, 
-                     query_2_path: Mapping[str, Path], 
-                     image_per_query: int,
-                     n_workers: int) -> None: 
-    
+
+def _download_images(query: str, query_2_path: Mapping[str, Path],
+                     image_per_query: int, n_workers: int) -> None:
+
     print(f'Fetching images urls from google images for query "{query}"...')
     opt = Options()
     opt.add_argument('--headless')
     driver = webdriver.Firefox(options=opt)
-    
+
     urls = _get_urls(driver, query)[:image_per_query]
     print(f'Found {len(urls)} images for "{query}"')
 
     driver.close()
     _download_urls(urls, str(query_2_path[query]), n_workers)
-    
-    
+
+
 @click.command()
-@click.option('--actions', type=click.Path(exists=True, dir_okay=False),
+@click.option('--actions',
+              type=click.Path(exists=True, dir_okay=False),
               required=True,
               help='File containing search queries (actions to download). '
-                   'Each line will correspond to a search query or action')
-@click.option('--out-path', type=click.Path(file_okay=False), required=True,
+              'Each line will correspond to a search query or action')
+@click.option('--out-path',
+              type=click.Path(file_okay=False),
+              required=True,
               help='Output path where images are going to be stored. '
-                   'The images will be saved using the ImageNet format')
+              'The images will be saved using the ImageNet format')
 @click.option('--images-per-action', type=int, default=100)
-@click.option('--num-workers', type=int, default=4, 
+@click.option('--num-workers',
+              type=int,
+              default=4,
               help='Number of threads used to download the images')
-def main(actions: str, 
-         out_path: str, 
-         images_per_action: int, 
+def main(actions: str, out_path: str, images_per_action: int,
          num_workers: int) -> None:
 
     class_names = Path(actions).read_text().split('\n')

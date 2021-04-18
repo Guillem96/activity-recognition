@@ -37,7 +37,7 @@ def process_video(video: torch.Tensor,
         inp = video[i: i + batch_size]
         preds = image_classifier(inp.to(device))
         predictions.append(preds.cpu())
-    
+
     return torch.cat(predictions, dim=0)
 
 
@@ -118,10 +118,10 @@ def main(video_path: Union[str, Path],
 
     video_t = tfms(video_t)
     video_t = video_t.permute(1, 0, 2, 3)
-    
+
     print(f'Processing video...')
     res = find_video_clips(video_t, model, topk=n_clips)
-    
+
     for frame_idx, label in zip(*res):
         label_name = classes[int(label.item())].replace(' ', '_')
 
@@ -131,12 +131,12 @@ def main(video_path: Union[str, Path],
         clip_end = min(video_duration, video_second + clip_len / 2.)
         print(f'Clip with label {label_name} starts at {clip_start:.2f} '
               f'and ends at {clip_end:.2f}')
-        
+
         # Get clip frames ranges and save the extracted clip
         original_frame = frame_idx * skip_frames
         start_frame = int(max(0, frame_idx - clip_duration_frames / 2))
         end_frame = int(min(video.size(0), frame_idx + clip_duration_frames / 2))
-        
+
         clip_fname = out_dir / f'{start_frame}_{end_frame}_{label_name}.mp4'
         print(f'Saving video at {str(clip_fname)}')
         torchvision.io.write_video(str(clip_fname), 
