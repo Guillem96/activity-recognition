@@ -8,7 +8,7 @@ def main() -> None:
     pass
 
 
-main.add_command(download.main, name='download_kinetics')
+main.add_command(download.main, name='download-kinetics')
 
 
 if __name__ == "__main__":

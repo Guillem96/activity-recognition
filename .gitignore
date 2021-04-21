@@ -30,3 +30,6 @@ logs/
 
 # Environment
 .env
+
+# File to keep download errors
+.failed.json*

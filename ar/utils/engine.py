@@ -3,13 +3,13 @@ from typing import Collection, Optional, Mapping
 import torch
 import torch.nn as nn
 
-import torch.cuda.amp as amp 
+import torch.cuda.amp as amp
 
 import numpy as np
 
 from .nn import get_lr
 from .logger import LogValue, ValuesLogger
-from ar.typing import (Optimizer, LossFn, MetricFn, TensorBoard, Scheduler, 
+from ar.typing import (Optimizer, LossFn, MetricFn, TensorBoard, Scheduler,
                        TensorBoard)
 
 
@@ -21,26 +21,25 @@ def seed(seed: int = 0) -> None:
 
 
 def train_one_epoch(
-        dl: torch.utils.data.DataLoader,
-        model: nn.Module,
-        optimizer: Optimizer,
-        loss_fn: LossFn,
-        epoch: int,
-        metrics: Collection[MetricFn] = (),
-        grad_accum_steps: int = 1,
-        scheduler: Scheduler = None,
-        summary_writer: TensorBoard = None,
-        mixed_precision: bool = False,
-        device: torch.device = torch.device('cpu')) -> None:
-    
+    dl: torch.utils.data.DataLoader,
+    model: nn.Module,
+    optimizer: Optimizer,
+    loss_fn: LossFn,
+    epoch: int,
+    metrics: Collection[MetricFn] = (),
+    grad_accum_steps: int = 1,
+    scheduler: Scheduler = None,
+    summary_writer: TensorBoard = None,
+    mixed_precision: bool = False,
+    device: torch.device = torch.device('cpu')
+) -> None:
 
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
-    logger = ValuesLogger(
-        LogValue('loss', window_size=len(dl)),
-        LogValue('lr', 1),
-        *metrics_log,
-        total_steps=len(dl),
-        header=f'Epoch[{epoch}]')
+    logger = ValuesLogger(LogValue('loss', window_size=len(dl)),
+                          LogValue('lr', 1),
+                          *metrics_log,
+                          total_steps=len(dl),
+                          header=f'Epoch[{epoch}]')
 
     model.train()
     optimizer.zero_grad()
@@ -56,47 +55,54 @@ def train_one_epoch(
         with amp.autocast(enabled=mixed_precision):
             predictions = model(x)
             loss = loss_fn(predictions, y)
-    
+
         if scaler is not None:
             scaler.scale(loss / grad_accum_steps).backward()
         else:
             (loss / grad_accum_steps).backward()
-            
+
         if (i + 1) % grad_accum_steps == 0:
             if scaler is not None:
                 scaler.step(optimizer)
                 scaler.update()
             else:
                 optimizer.step()
-            
+
             optimizer.zero_grad()
 
         if scheduler is not None:
             scheduler.step()
-        
-        current_metrics = {m.__name__: 
-                           m(predictions.float(), y).item() for m in metrics}
+
+        current_metrics = {
+            m.__name__: m(predictions.float(), y).item()
+            for m in metrics
+        }
         logger(loss=loss.item(), lr=get_lr(optimizer), **current_metrics)
-        
+
         # Write logs to tensorboard
         step = epoch * len(dl) + i
 
         if summary_writer is not None:
-            summary_writer.add_scalar('learning_rate', get_lr(optimizer), 
+            summary_writer.add_scalar('learning_rate',
+                                      get_lr(optimizer),
                                       global_step=step)
-            summary_writer.add_scalar('train_loss', loss.item(), 
+            summary_writer.add_scalar('train_loss',
+                                      loss.item(),
                                       global_step=step)
-            summary_writer.add_scalars('train_metrics', current_metrics,
+            summary_writer.add_scalars('train_metrics',
+                                       current_metrics,
                                        global_step=step)
 
     if summary_writer is not None:
         log_values = logger.as_dict()
         del log_values['lr']
-        
-        summary_writer.add_scalar('epoch_train_loss', log_values.pop('loss'), 
+
+        summary_writer.add_scalar('epoch_train_loss',
+                                  log_values.pop('loss'),
                                   global_step=epoch)
-        
-        summary_writer.add_scalars('epoch_train_metrics', log_values, 
+
+        summary_writer.add_scalars('epoch_train_metrics',
+                                   log_values,
                                    global_step=epoch)
 
     if scaler is not None:
@@ -104,27 +110,28 @@ def train_one_epoch(
         scaler.update()
     else:
         optimizer.step()
-    
+
     optimizer.zero_grad()
 
 
 @torch.no_grad()
-def evaluate(dl: torch.utils.data.DataLoader,
-             model: nn.Module,
-             loss_fn: LossFn,
-             metrics: Collection[MetricFn],
-             epoch: int,
-             mixed_precision: bool = False,
-             summary_writer: TensorBoard = None,
-             device: torch.device = torch.device('cpu')) -> Mapping[str, float]:
-    
+def evaluate(
+    dl: torch.utils.data.DataLoader,
+    model: nn.Module,
+    loss_fn: LossFn,
+    metrics: Collection[MetricFn],
+    epoch: int,
+    mixed_precision: bool = False,
+    summary_writer: TensorBoard = None,
+    device: torch.device = torch.device('cpu')
+) -> Mapping[str, float]:
+
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
-    logger = ValuesLogger(
-        *metrics_log,
-        LogValue('loss', len(dl)),
-        total_steps=len(dl),
-        header='Validation')
-    
+    logger = ValuesLogger(*metrics_log,
+                          LogValue('loss', len(dl)),
+                          total_steps=len(dl),
+                          header='Validation')
+
     model.eval()
     for x, y in dl:
         x = x.to(device)
@@ -134,16 +141,20 @@ def evaluate(dl: torch.utils.data.DataLoader,
             predictions = model(x)
             loss = loss_fn(predictions, y)
 
-        updates_values = {m.__name__: m(predictions.float(), y).item() 
-                          for m in metrics}
+        updates_values = {
+            m.__name__: m(predictions.float(), y).item()
+            for m in metrics
+        }
         updates_values['loss'] = loss.item()
         logger(**updates_values)
 
     if summary_writer is not None:
         log_values = logger.as_dict()
-        summary_writer.add_scalar('validation_loss', log_values.pop('loss'),
+        summary_writer.add_scalar('validation_loss',
+                                  log_values.pop('loss'),
                                   global_step=epoch)
-        summary_writer.add_scalars('validation_metrics', log_values,
+        summary_writer.add_scalars('validation_metrics',
+                                   log_values,
                                    global_step=epoch)
 
     return logger.as_dict()
