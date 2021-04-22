@@ -13,28 +13,25 @@ class SerializableModule(nn.Module, abc.ABC):
     """
     Abstract torch nn.Module along with serialize utils.
     """
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(SerializableModule, self).__init__()
-    
+
     @abc.abstractmethod
     def config(self) -> dict:
         raise NotImplemented
 
     def save(self, path: str, **kwargs: Any) -> None:
-        checkpoint = dict(config=self.config(), 
-                          model=self.state_dict(), 
+        checkpoint = dict(config=self.config(),
+                          model=self.state_dict(),
                           **kwargs)
         torch.save(checkpoint, path)
 
     @classmethod
-    def load(cls: Type[T], 
-             path: str, 
-             map_location: torch.device,
+    def load(cls: Type[T], path: str, map_location: torch.device,
              **kwargs: Any) -> Tuple[T, dict]:
 
         checkpoint = torch.load(path, map_location=map_location)
-        config = dict(checkpoint.pop('config'),**kwargs)
+        config = dict(checkpoint.pop('config'), **kwargs)
 
         instance = cls(**config)
         instance.to(map_location)
@@ -43,7 +40,7 @@ class SerializableModule(nn.Module, abc.ABC):
         return instance, checkpoint
 
     @classmethod
-    def from_pretrained(cls: Type[T], 
+    def from_pretrained(cls: Type[T],
                         name_or_path: Union[str, Path],
                         map_location: torch.device = torch.device('cpu'),
                         dst_file: Optional[Union[str, Path]] = None) -> T:
@@ -53,7 +50,8 @@ class SerializableModule(nn.Module, abc.ABC):
 
         names_url = {
             'lrcn-ucf-101': f'{base_url}/lrcn-attn.pt',
-            'sf-densenet-kinetics-400': f'{base_url}/kinetics_image_densenet121.pt',
+            'sf-densenet-kinetics-400':
+            f'{base_url}/kinetics_image_densenet121.pt',
             'sf-resnet-kinetics-400': f'{base_url}/kinetics_image_resnet18.pt'
         }
 
@@ -66,7 +64,7 @@ class SerializableModule(nn.Module, abc.ABC):
             if dst_file is None:
                 dst_file = Path.home() / '.ar' / (name + '.pt')
                 dst_file.parent.mkdir(exist_ok=True)
-            
+
             if not Path(dst_file).exists():
                 res = requests.get(names_url[name])
                 with open(str(dst_file), 'wb') as f:
@@ -79,5 +77,5 @@ class SerializableModule(nn.Module, abc.ABC):
                              f'You can reference a model using a path or an '
                              f'available name. The available model names are: '
                              f'{available_names}')
-        
+
         return model

@@ -1,15 +1,20 @@
+import gc
 from pathlib import Path
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 import click
+import tqdm.auto as tqdm
 
 import torch
 import torchvision
-import ar.transforms as T 
+
+import ar.transforms as T
+from ar.typing import Transform
 from ar.models.image.classifier import ImageClassifier
 
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# TODO: Implement with videoreader api torchvision.io
 
 
 @torch.no_grad()
@@ -34,17 +39,16 @@ def process_video(video: torch.Tensor,
     batch_size = 64
     predictions = []
     for i in range(0, video.shape[0], batch_size):
-        inp = video[i: i + batch_size]
+        inp = video[i:i + batch_size]
         preds = image_classifier(inp.to(device))
         predictions.append(preds.cpu())
 
     return torch.cat(predictions, dim=0)
 
 
-def find_video_clips(
-        video: torch.Tensor, 
-        image_classifier: torch.nn.Module,
-        topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
+def find_video_clips(video: torch.Tensor,
+                     image_classifier: torch.nn.Module,
+                     topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Find frames with topk probabilities to contain a class.
 
@@ -60,34 +64,67 @@ def find_video_clips(
     return topk_indices, labels[topk_indices]
 
 
+def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
+                       n_clips: int, tfms: Transform, model: torch.nn.Module,
+                       classes: List[str], out_dir: Path):
+
+    video, _, info = torchvision.io.read_video(str(video_path))
+    video_t = video[::skip_frames]
+
+    # Clip duration extra variables
+    clip_duration_frames = info['video_fps'] * clip_len
+
+    video_t = tfms(video_t)
+    video_t = video_t.permute(1, 0, 2, 3)
+
+    res = find_video_clips(video_t, model, topk=n_clips)
+
+    for frame_idx, label in zip(*res):
+        label_name = classes[int(label.item())].replace(' ', '_')
+        interpolated_fi = frame_idx * skip_frames
+
+        # Get clip frames ranges and save the extracted clip
+        start_frame = int(max(0, interpolated_fi - clip_duration_frames / 2))
+        end_frame = int(
+            min(video.size(0), interpolated_fi + clip_duration_frames / 2))
+
+        clip_out_dir = out_dir / label_name
+        clip_out_dir.mkdir(exist_ok=True)
+        clip_fname = clip_out_dir / f'{start_frame}_{end_frame}.mp4'
+
+        torchvision.io.write_video(str(clip_fname),
+                                   video[start_frame:end_frame],
+                                   int(info['video_fps']))
+
+
 @click.command()
-
-@click.option('--video-path', type=click.Path(dir_okay=False, exists=True),
-              required=True, help='Video to extract the clips from')
+@click.option('--video-path',
+              type=click.Path(exists=True),
+              required=True,
+              help='Video to extract the clips from')
 @click.option('--skip-frames', type=int, default=2)
-@click.option('--image-classifier-checkpoint', 
+@click.option('--image-classifier-checkpoint',
               type=click.Path(dir_okay=False, exists=True),
-              required=True, help='Path to the pretrained model')
-@click.option('--class-names', 
+              required=True,
+              help='Path to the pretrained model')
+@click.option('--class-names',
               type=click.Path(dir_okay=False, exists=True),
-              required=True, help='Path to the class names file')
-@click.option('--out-dir', required=True, 
-              type=click.Path(file_okay=False))
-@click.option('--n-clips', type=int, default=2, 
+              required=True,
+              help='Path to the class names file')
+@click.option('--out-dir', required=True, type=click.Path(file_okay=False))
+@click.option('--n-clips',
+              type=int,
+              default=2,
               help='Number of clips generated')
-@click.option('--clip-len', type=int, default=5,
+@click.option('--clip-len',
+              type=int,
+              default=5,
               help='Length of the extracted clips in seconds')
-def main(video_path: Union[str, Path], 
-         skip_frames: int, 
-         image_classifier_checkpoint: str, 
-         class_names: Union[str, Path],
-         out_dir: Union[str, Path],
-         n_clips: int,
-         clip_len: int) -> None:
+def main(video_path: Union[str, Path], skip_frames: int,
+         image_classifier_checkpoint: str, class_names: Union[str, Path],
+         out_dir: Union[str, Path], n_clips: int, clip_len: int) -> None:
 
-    def frame_to_second(frame_idx: int, video_info: dict) -> float:
-        real_frame = frame_idx * skip_frames
-        return real_frame / video_info['video_fps']
+    video_path = Path(video_path)
 
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True, parents=True)
@@ -100,15 +137,6 @@ def main(video_path: Union[str, Path],
     model.eval()
     model.to(device)
 
-    print(f'Loading video {video_path}...')
-    video, _, info = torchvision.io.read_video(video_path)
-    video_duration = video.size(0) / info['video_fps']
-    frames_seconds_after_skip = info['video_fps'] / skip_frames
-    video_t = video[::skip_frames]
-
-    # Clip duration extra variables
-    clip_duration_frames = info['video_fps'] * clip_len
-    
     # Resize and normalize the video
     tfms = torchvision.transforms.Compose([
         T.VideoToTensor(),
@@ -116,32 +144,27 @@ def main(video_path: Union[str, Path],
         T.VideoNormalize(**T.imagenet_stats)
     ])
 
-    video_t = tfms(video_t)
-    video_t = video_t.permute(1, 0, 2, 3)
-
-    print(f'Processing video...')
-    res = find_video_clips(video_t, model, topk=n_clips)
-
-    for frame_idx, label in zip(*res):
-        label_name = classes[int(label.item())].replace(' ', '_')
-
-        # Getting video seconds of the clip just for logging purposes
-        video_second = frame_to_second(int(frame_idx.item()), info)
-        clip_start = max(0, video_second - clip_len / 2.)
-        clip_end = min(video_duration, video_second + clip_len / 2.)
-        print(f'Clip with label {label_name} starts at {clip_start:.2f} '
-              f'and ends at {clip_end:.2f}')
-
-        # Get clip frames ranges and save the extracted clip
-        original_frame = frame_idx * skip_frames
-        start_frame = int(max(0, frame_idx - clip_duration_frames / 2))
-        end_frame = int(min(video.size(0), frame_idx + clip_duration_frames / 2))
-
-        clip_fname = out_dir / f'{start_frame}_{end_frame}_{label_name}.mp4'
-        print(f'Saving video at {str(clip_fname)}')
-        torchvision.io.write_video(str(clip_fname), 
-                                   video[start_frame: end_frame],
-                                   int(info['video_fps']))
+    if video_path.is_file():
+        _process_videofile(video_path,
+                           skip_frames=skip_frames,
+                           clip_len=clip_len,
+                           n_clips=n_clips,
+                           tfms=tfms,
+                           model=model,
+                           out_dir=out_dir,
+                           classes=classes)
+    else:
+        videos = list(video_path.rglob("*.mp4"))
+        for v_fname in tqdm.tqdm(videos, desc='Generating clips'):
+            _process_videofile(v_fname,
+                               skip_frames=skip_frames,
+                               clip_len=clip_len,
+                               n_clips=n_clips,
+                               tfms=tfms,
+                               model=model,
+                               out_dir=out_dir,
+                               classes=classes)
+            gc.collect()
 
 
 if __name__ == "__main__":

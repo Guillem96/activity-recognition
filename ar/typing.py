@@ -8,7 +8,7 @@ from torch.utils.tensorboard import SummaryWriter
 from PIL import Image
 
 
-Transform = Callable[[Union[torch.Tensor, 'Image']], torch.Tensor]
+Transform = Callable[[Union[torch.Tensor, Image.Image]], torch.Tensor]
 
 LossFn = Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
 MetricFn = Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
