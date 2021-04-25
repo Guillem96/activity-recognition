@@ -1,6 +1,7 @@
 import gc
+import itertools
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import click
 import tqdm.auto as tqdm
@@ -14,7 +15,55 @@ from ar.models.image.classifier import ImageClassifier
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
 # TODO: Implement with videoreader api torchvision.io
+class _VideoFramesIterator(object):
+    def __init__(self,
+                 video_path: Path,
+                 batch_size: int,
+                 skip_frames: int = 1,
+                 transforms: Optional[Transform] = None) -> None:
+        print(str(video_path))
+        self.video_reader = torchvision.io.VideoReader(str(video_path))
+        self.current_frame = 0
+        self.skip_frames = skip_frames
+        self.batch_size = batch_size
+        self.tranforms = transforms or (lambda x: x)
+
+        self._is_it_end = False
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> torch.Tensor:
+        if self._is_it_end:
+            raise StopIteration
+
+        frames = []
+        frames_idx = []
+        start = self.current_frame
+        end = start + self.batch_size * self.skip_frames
+
+        for _ in range(start, end):
+            try:
+                frame = next(self.video_reader)
+            except StopIteration:
+                print('End of iteration')
+                self._is_it_end = True
+                break
+
+            if self.current_frame % self.skip_frames == 0:
+                frames.append(frame['data'])
+                frames_idx.append(self.current_frame)
+
+            self.current_frame += 1
+
+        # (FRAMES, CHANNELS, HEIGHT, WIDTH) to (FRAMES, HEIGHT, WIDTH, CHANNELS)
+        video_clip = torch.stack(frames).permute(0, 2, 3, 1)
+        video_clip = self.tranforms(video_clip)
+        frames_idx = torch.as_tensor(frames_idx, dtype=torch.long)
+
+        return frames_idx, video_clip
 
 
 @torch.no_grad()
@@ -68,6 +117,16 @@ def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
                        n_clips: int, tfms: Transform, model: torch.nn.Module,
                        classes: List[str], out_dir: Path):
 
+    # video_it = _VideoFramesIterator(video_path,
+    #                                 batch_size=8,
+    #                                 transforms=tfms,
+    #                                 skip_frames=skip_frames)
+    # for frames_idx, video_clip in video_it:
+    #     # frames_idx, video_clip = next(video_it)
+    #     print(frames_idx)
+    #     print(video_clip.size())
+    # import sys
+    # sys.exit(0)
     video, _, info = torchvision.io.read_video(str(video_path))
     video_t = video[::skip_frames]
 

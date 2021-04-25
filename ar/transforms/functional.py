@@ -119,6 +119,17 @@ def video_pad(vid: torch.Tensor,
 
 
 def video_to_tensor(vid: torch.Tensor) -> torch.Tensor:
+    """Converts a stack of frames to a video tensor tensor.
+
+    Parameters
+    ----------
+    vid: torch.Tensor of shape (FRAMES, HEIGHT, WIDTH, CHANNELS)
+        Given stack of frames
+
+    Returns
+    -------
+    torch.Tensor of shape (CHANNELS, FRAMES, HEIGHT, WIDTH)
+    """
     return vid.permute(3, 0, 1, 2).to(torch.float32) / 255.
 
 
