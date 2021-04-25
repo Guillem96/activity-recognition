@@ -8,13 +8,13 @@ from . import functional as F
 Transform = Callable[[torch.Tensor], torch.Tensor]
 
 
-class VideoRandomCrop(object):
-
+class VideoRandomCrop(torch.nn.Module):
     def __init__(self, size: Tuple[int, int]) -> None:
+        super(VideoRandomCrop, self).__init__()
         self.size = size
 
     @staticmethod
-    def get_params(vid: torch.Tensor, 
+    def get_params(vid: torch.Tensor,
                    output_size: Tuple[int, int]) -> Tuple[int, int, int, int]:
         """Get parameters for ``crop`` for a random crop.
         """
@@ -26,19 +26,18 @@ class VideoRandomCrop(object):
         j = random.randint(0, w - tw)
         return i, j, th, tw
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         i, j, h, w = self.get_params(vid, self.size)
         return F.video_crop(vid, i, j, h, w)
 
 
-class VideoRandomErase(object):
-
-    def __init__(self, 
-                 p: float = 0.5, 
-                 scale: Tuple[float, float] = (0.02, 0.33), 
-                 ratio: Tuple[float, float] = (0.3, 3.3), 
+class VideoRandomErase(torch.nn.Module):
+    def __init__(self,
+                 p: float = 0.5,
+                 scale: Tuple[float, float] = (0.02, 0.33),
+                 ratio: Tuple[float, float] = (0.3, 3.3),
                  value: float = 0.) -> None:
-
+        super(VideoRandomErase, self).__init__()
         if (scale[0] > scale[1]) or (ratio[0] > ratio[1]):
             raise ValueError('range should be of kind (min, max)')
         if scale[0] < 0 or scale[1] > 1:
@@ -53,11 +52,12 @@ class VideoRandomErase(object):
         self.value = value
 
     @staticmethod
-    def get_params(video: torch.Tensor, 
-                   scale: Tuple[float, float], 
-                   ratio: Tuple[float, float], 
-                   value: float = 0.) -> Tuple[int, int, int, int, 
-                                               Union[float, torch.Tensor]]:
+    def get_params(
+        video: torch.Tensor,
+        scale: Tuple[float, float],
+        ratio: Tuple[float, float],
+        value: float = 0.
+    ) -> Tuple[int, int, int, int, Union[float, torch.Tensor]]:
         """Get parameters for ``video_erase`` for a random erasing.
 
         Args:
@@ -89,8 +89,8 @@ class VideoRandomErase(object):
 
         # Return original image
         return 0, 0, h, w, video
-    
-    def __call__(self, video: torch.Tensor) -> torch.Tensor:
+
+    def forward(self, video: torch.Tensor) -> torch.Tensor:
         """
         Parameters
         ----------
@@ -102,9 +102,9 @@ class VideoRandomErase(object):
         torch.Tensor
         """
         if random.random() < self.p:
-            x, y, h, w, v = self.get_params(video, 
-                                            scale=self.scale, 
-                                            ratio=self.ratio, 
+            x, y, h, w, v = self.get_params(video,
+                                            scale=self.scale,
+                                            ratio=self.ratio,
                                             value=self.value)
 
             return F.video_erase(video, x, y, h, w, v)
@@ -112,66 +112,71 @@ class VideoRandomErase(object):
         return video
 
 
-class VideoCenterCrop(object):
-
+class VideoCenterCrop(torch.nn.Module):
     def __init__(self, size: Tuple[int, int]):
+        super(VideoCenterCrop, self).__init__()
         self.size = size
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         return F.video_center_crop(vid, self.size)
 
 
-class VideoResize(object):
-
+class VideoResize(torch.nn.Module):
     def __init__(self, size: Tuple[int, int]):
+        super(VideoResize, self).__init__()
         self.size = size
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         return F.video_resize(vid, self.size)
 
 
-class VideoToTensor(object):
+class VideoToTensor(torch.nn.Module):
+    def __init__(self):
+        super(VideoToTensor, self).__init__()
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         return F.video_to_tensor(vid)
 
 
-class VideoNormalize(object):
-    def __init__(self, 
-                 mean: Tuple[float, float, float], 
+class VideoNormalize(torch.nn.Module):
+    def __init__(self, mean: Tuple[float, float, float],
                  std: Tuple[float, float, float]):
+        super(VideoNormalize, self).__init__()
         self.mean = mean
         self.std = std
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         return F.video_normalize(vid, self.mean, self.std)
 
 
-class VideoRandomHorizontalFlip(object):
+class VideoRandomHorizontalFlip(torch.nn.Module):
     def __init__(self, p: float = 0.5):
+        super(VideoRandomHorizontalFlip, self).__init__()
         self.p = p
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         if random.random() < self.p:
             return F.video_hflip(vid)
         return vid
 
 
-class VideoPad(object):
+class VideoPad(torch.nn.Module):
     def __init__(self, padding: List[int], fill: int = 0):
+        super(VideoPad, self).__init__()
         self.padding = padding
         self.fill = fill
 
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         return F.video_pad(vid, self.padding, self.fill)
 
 
-class OneOf(object):
-    
-    def __init__(self, transforms: Sequence[Transform]):
+class OneOf(torch.nn.Module):
+    def __init__(self, transforms: Sequence[Transform]) -> None:
+        super(OneOf, self).__init__()
+
         self.transforms = transforms
-    
-    def __call__(self, vid: torch.Tensor) -> torch.Tensor:
+
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
         tfm_fn: Transform = random.choice(self.transforms)
         return tfm_fn(vid)
 

@@ -2,8 +2,9 @@ from typing import List, Tuple
 
 import torch
 
-def _align_video(video: torch.Tensor, 
-                 src_fmt: str, dst_fmt: str) -> torch.Tensor:
+
+def _align_video(video: torch.Tensor, src_fmt: str,
+                 dst_fmt: str) -> torch.Tensor:
     """
     Examples
     --------
@@ -28,7 +29,7 @@ def _align_video(video: torch.Tensor,
     src_W_idx = src_fmt.index('W')
     src_T_idx = src_fmt.index('T')
     src_C_idx = src_fmt.index('C')
-    
+
     dst_H_idx = dst_fmt.index('H')
     dst_W_idx = dst_fmt.index('W')
     dst_T_idx = dst_fmt.index('T')
@@ -43,9 +44,9 @@ def _align_video(video: torch.Tensor,
     return video.permute(*permutation)
 
 
-def uniform_sampling(video: torch.Tensor, 
+def uniform_sampling(video: torch.Tensor,
                      clips_len: int,
-                     frames_stride: int = 1, 
+                     frames_stride: int = 1,
                      n_clips: int = 10,
                      overlap: bool = True,
                      video_fmt: str = 'THWC') -> List[torch.Tensor]:
@@ -82,24 +83,27 @@ def uniform_sampling(video: torch.Tensor,
 
     n_frames = video.size(0)
     if overlap:
-        indices = torch.randint(high=n_frames - (clips_len * frames_stride), 
-                                size=(n_clips,))
+        indices = torch.randint(high=n_frames - (clips_len * frames_stride),
+                                size=(n_clips, ))
         indices = indices.tolist()
     else:
-        possible_indices = torch.arange(
-            0, n_frames, clips_len * frames_stride)[:-1]
-        choices = torch.randint(high=possible_indices.size(0), size=(n_clips,))
+        possible_indices = torch.arange(0, n_frames,
+                                        clips_len * frames_stride)[:-1]
+        choices = torch.randint(high=possible_indices.size(0),
+                                size=(n_clips, ))
         indices = possible_indices[choices].tolist()
-    
-    clips = [video[i: i + (clips_len * frames_stride)][::frames_stride] 
-             for i in indices]
+
+    clips = [
+        video[i:i + (clips_len * frames_stride)][::frames_stride]
+        for i in indices
+    ]
     clips = [_align_video(o, dst_fmt, video_fmt) for o in clips]
 
     return clips
 
 
-def lrcn_sampling(video: torch.Tensor, 
-                  clips_len: int, 
+def lrcn_sampling(video: torch.Tensor,
+                  clips_len: int,
                   n_clips: int = 16,
                   stride: int = 8,
                   video_fmt: str = 'THWC') -> List[torch.Tensor]:
@@ -142,19 +146,22 @@ def lrcn_sampling(video: torch.Tensor,
     if n_clips > max_clips:
         n_clips = max_clips
 
-    start_idx = torch.randint(0, 
-        high=(n_video_frames - (clips_len + stride) * n_clips) + 1,
-        size=(1,)).item()
-    
-    clips_start_idx = torch.arange(
-        start_idx, n_video_frames,  stride + clips_len)[:n_clips]
-    
-    return [_align_video(video[i: i + clips_len], dst_fmt, video_fmt) 
-            for i in clips_start_idx.tolist()]
+    start_idx = torch.randint(0,
+                              high=(n_video_frames -
+                                    (clips_len + stride) * n_clips) + 1,
+                              size=(1, )).item()
+
+    clips_start_idx = torch.arange(start_idx, n_video_frames,
+                                   stride + clips_len)[:n_clips]
+
+    return [
+        _align_video(video[i:i + clips_len], dst_fmt, video_fmt)
+        for i in clips_start_idx.tolist()
+    ]
 
 
-def FstCN_sampling(video: torch.Tensor, 
-                   clips_len: int, 
+def FstCN_sampling(video: torch.Tensor,
+                   clips_len: int,
                    n_clips: int = 16,
                    n_crops: int = 9,
                    frames_stride: int = 1,
@@ -195,20 +202,18 @@ def FstCN_sampling(video: torch.Tensor,
     import ar.transforms as VT
     import torchvision.transforms as T
 
-    def to_video(o: torch.Tensor) -> torch.Tensor: 
+    def to_video(o: torch.Tensor) -> torch.Tensor:
         return _align_video(o, 'CTHW', video_fmt).mul(255).byte()
 
     dst_fmt = 'THWC'
     video = _align_video(video, video_fmt, dst_fmt)
     W_idx = video_fmt.index('W')
 
-    crop_fn = T.Compose([
-        VT.VideoToTensor(),
-        VT.VideoRandomCrop(crops_size),
-        to_video
-    ])
+    crop_fn = T.Compose(
+        [VT.VideoToTensor(),
+         VT.VideoRandomCrop(crops_size), to_video])
 
-    clips = uniform_sampling(video=video, 
+    clips = uniform_sampling(video=video,
                              clips_len=clips_len,
                              frames_stride=frames_stride,
                              n_clips=n_clips,

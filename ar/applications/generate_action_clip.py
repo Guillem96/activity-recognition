@@ -11,26 +11,40 @@ import torchvision
 
 import ar.transforms as T
 from ar.typing import Transform
-from ar.models.image.classifier import ImageClassifier
+from ar.models.image import ImageClassifier
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-# TODO: Implement with videoreader api torchvision.io
 class _VideoFramesIterator(object):
     def __init__(self,
                  video_path: Path,
                  batch_size: int,
                  skip_frames: int = 1,
                  transforms: Optional[Transform] = None) -> None:
-        print(str(video_path))
         self.video_reader = torchvision.io.VideoReader(str(video_path))
         self.current_frame = 0
         self.skip_frames = skip_frames
         self.batch_size = batch_size
         self.tranforms = transforms or (lambda x: x)
-
         self._is_it_end = False
+        self.metadata = self.video_reader.get_metadata()
+
+    @property
+    def video_fps(self) -> float:
+        return self.metadata['video']['fps'][0]
+
+    @property
+    def video_duration(self) -> float:
+        return self.metadata['video']['duration'][0]
+
+    def take(self, from_sec: int, to_sec: int) -> torch.Tensor:
+        video_it = self.video_reader.seek(from_sec)
+        frames = [
+            f['data']
+            for f in itertools.takewhile(lambda x: x['pts'] < to_sec, video_it)
+        ]
+        return torch.stack(frames).permute(0, 2, 3, 1)
 
     def __iter__(self):
         return self
@@ -48,7 +62,6 @@ class _VideoFramesIterator(object):
             try:
                 frame = next(self.video_reader)
             except StopIteration:
-                print('End of iteration')
                 self._is_it_end = True
                 break
 
@@ -67,16 +80,16 @@ class _VideoFramesIterator(object):
 
 
 @torch.no_grad()
-def process_video(video: torch.Tensor,
-                  image_classifier: torch.nn.Module) -> torch.Tensor:
+def _process_video(video: _VideoFramesIterator,
+                   image_classifier: torch.nn.Module) -> torch.Tensor:
     """
     Maps the image classifier for each video frame and return the classifier
     outputs
 
     Parameters
     ----------
-    video: torch.Tensor of shape [FRAMES, 3, HEIGHT, WIDTH]
-        Video to process
+    video: _VideoFramesIterator
+        Video iterator
     image_classifier: torch.nn.Module
         Model trained for image classification
     
@@ -85,19 +98,17 @@ def process_video(video: torch.Tensor,
     torch.Tensor
         Model outputs for each frame
     """
-    batch_size = 64
     predictions = []
-    for i in range(0, video.shape[0], batch_size):
-        inp = video[i:i + batch_size]
-        preds = image_classifier(inp.to(device))
+    for _, video_clip in video:
+        preds = image_classifier(video_clip.to(device))
         predictions.append(preds.cpu())
 
     return torch.cat(predictions, dim=0)
 
 
-def find_video_clips(video: torch.Tensor,
-                     image_classifier: torch.nn.Module,
-                     topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
+def _find_video_clips(video: torch.Tensor,
+                      image_classifier: torch.nn.Module,
+                      topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Find frames with topk probabilities to contain a class.
 
@@ -107,53 +118,41 @@ def find_video_clips(video: torch.Tensor,
         Return the frame indices with largest probabilites and the labels of the 
         respective frames
     """
-    outputs = process_video(video, image_classifier)
+    outputs = _process_video(video, image_classifier)
     max_probs, labels = outputs.max(dim=-1)
     _, topk_indices = max_probs.topk(topk)
     return topk_indices, labels[topk_indices]
 
 
 def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
-                       n_clips: int, tfms: Transform, model: torch.nn.Module,
-                       classes: List[str], out_dir: Path):
+                       batch_size: int, n_clips: int, tfms: Transform,
+                       model: torch.nn.Module, classes: List[str],
+                       out_dir: Path):
 
-    # video_it = _VideoFramesIterator(video_path,
-    #                                 batch_size=8,
-    #                                 transforms=tfms,
-    #                                 skip_frames=skip_frames)
-    # for frames_idx, video_clip in video_it:
-    #     # frames_idx, video_clip = next(video_it)
-    #     print(frames_idx)
-    #     print(video_clip.size())
-    # import sys
-    # sys.exit(0)
-    video, _, info = torchvision.io.read_video(str(video_path))
-    video_t = video[::skip_frames]
+    video_it = _VideoFramesIterator(video_path,
+                                    batch_size=batch_size,
+                                    transforms=tfms,
+                                    skip_frames=skip_frames)
 
-    # Clip duration extra variables
-    clip_duration_frames = info['video_fps'] * clip_len
-
-    video_t = tfms(video_t)
-    video_t = video_t.permute(1, 0, 2, 3)
-
-    res = find_video_clips(video_t, model, topk=n_clips)
+    res = _find_video_clips(video_it, model, topk=n_clips)
 
     for frame_idx, label in zip(*res):
         label_name = classes[int(label.item())].replace(' ', '_')
         interpolated_fi = frame_idx * skip_frames
+        mid_point_seconds = interpolated_fi / video_it.video_fps
 
         # Get clip frames ranges and save the extracted clip
-        start_frame = int(max(0, interpolated_fi - clip_duration_frames / 2))
-        end_frame = int(
-            min(video.size(0), interpolated_fi + clip_duration_frames / 2))
+        start_seconds = int(max(0, mid_point_seconds - clip_len / 2))
+        end_sec = int(
+            min(video_it.video_duration, mid_point_seconds + clip_len / 2))
 
         clip_out_dir = out_dir / label_name
         clip_out_dir.mkdir(exist_ok=True)
-        clip_fname = clip_out_dir / f'{start_frame}_{end_frame}.mp4'
+        clip_fname = clip_out_dir / f'{start_seconds}_{end_sec}.mp4'
 
-        torchvision.io.write_video(str(clip_fname),
-                                   video[start_frame:end_frame],
-                                   int(info['video_fps']))
+        clip_frames = video_it.take(start_seconds, end_sec)
+        torchvision.io.write_video(str(clip_fname), clip_frames,
+                                   int(video_it.video_fps))
 
 
 @click.command()
@@ -166,6 +165,13 @@ def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
               type=click.Path(dir_okay=False, exists=True),
               required=True,
               help='Path to the pretrained model')
+@click.option(
+    '--batch-size',
+    type=int,
+    default=64,
+    help=
+    'Group frames in samples of n examples to speed up the image classifier inference time'
+)
 @click.option('--class-names',
               type=click.Path(dir_okay=False, exists=True),
               required=True,
@@ -179,7 +185,7 @@ def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
               type=int,
               default=5,
               help='Length of the extracted clips in seconds')
-def main(video_path: Union[str, Path], skip_frames: int,
+def main(video_path: Union[str, Path], skip_frames: int, batch_size: int,
          image_classifier_checkpoint: str, class_names: Union[str, Path],
          out_dir: Union[str, Path], n_clips: int, clip_len: int) -> None:
 
@@ -206,6 +212,7 @@ def main(video_path: Union[str, Path], skip_frames: int,
     if video_path.is_file():
         _process_videofile(video_path,
                            skip_frames=skip_frames,
+                           batch_size=batch_size,
                            clip_len=clip_len,
                            n_clips=n_clips,
                            tfms=tfms,
@@ -217,6 +224,7 @@ def main(video_path: Union[str, Path], skip_frames: int,
         for v_fname in tqdm.tqdm(videos, desc='Generating clips'):
             _process_videofile(v_fname,
                                skip_frames=skip_frames,
+                               batch_size=batch_size,
                                clip_len=clip_len,
                                n_clips=n_clips,
                                tfms=tfms,

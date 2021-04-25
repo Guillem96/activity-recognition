@@ -12,7 +12,6 @@ from ar.transforms.functional import video_unnormalize
 
 
 class LogValue(object):
-
     """
     Utility class to simplify the logging of a value. Keep tracks of the 
     last `window_size` values and can perform aggregations such the mean
@@ -30,11 +29,11 @@ class LogValue(object):
         self.name = name
         self.window_size = window_size
         self.logs: Deque[Number] = deque(maxlen=window_size)
-    
+
     def __call__(self, new_value: Number) -> None:
         """Append a new value to the tracking list"""
         self.logs.append(new_value)
-    
+
     def __str__(self) -> str:
         return f'{self.name}: {self.mean.item():.6f}'
 
@@ -44,15 +43,15 @@ class LogValue(object):
 
     @property
     def mean(self) -> torch.Tensor:
-        if self.window_size == 1: 
+        if self.window_size == 1:
             return torch.tensor(self.logs[0]).float()
 
         logs = torch.as_tensor(self.logs).float()
         return torch.mean(logs)
-    
+
     @property
     def median(self) -> torch.Tensor:
-        if self.window_size == 1: 
+        if self.window_size == 1:
             return torch.tensor(self.logs[0]).float()
 
         logs = torch.as_tensor(self.logs).float()
@@ -75,9 +74,9 @@ class ValuesLogger(object):
     header: str, default ''
         Text to add befor the values logs
     """
-    def __init__(self, 
-                 *values: LogValue, 
-                 total_steps: int, 
+    def __init__(self,
+                 *values: LogValue,
+                 total_steps: int,
                  header: str = '') -> None:
         self.values = {v.name: v for v in values}
         self.t = tqdm.trange(total_steps, desc=header, leave=True)
@@ -121,7 +120,7 @@ def build_summary_writter(
     return torch.utils.tensorboard.SummaryWriter(log_dir, flush_secs=20)
 
 
-def log_random_videos(ds: ClipLevelDataset, 
+def log_random_videos(ds: ClipLevelDataset,
                       writer: TensorBoard,
                       samples: int = 4,
                       unnormalize_videos: bool = False,
@@ -149,35 +148,33 @@ def log_random_videos(ds: ClipLevelDataset,
     for c in 'THWC':
         if c not in video_format:
             raise ValueError(f'video_format does not contain {c}')
-    
+
     for c in video_format:
         if c not in 'THWC':
             raise ValueError(f'Invalid character {c} for video_format')
-    
+
     if writer is None:
         return
-        
-    indices = torch.randint(high=len(ds), size=(samples,)).tolist()
+
+    indices = torch.randint(high=len(ds), size=(samples, )).tolist()
     videos = []
     labels = []
     for i in indices:
         video, _, label, _ = ds[i]
         if unnormalize_videos:
-            video = video.permute(video_format.index('C'), 
+            video = video.permute(video_format.index('C'),
                                   video_format.index('T'),
                                   video_format.index('H'),
                                   video_format.index('W'))
             video = video_unnormalize(video, **imagenet_stats)
-            
-        video = video.permute(video_format.index('T'), 
-                              video_format.index('C'),
-                              video_format.index('H'),
-                              video_format.index('W'))
+
+        video = video.permute(video_format.index('T'), video_format.index('C'),
+                              video_format.index('H'), video_format.index('W'))
 
         label_name = ds.classes[int(label)]
         videos.append(video)
         labels.append(label_name)
-    
+
     videos = torch.stack(videos)
     tag = ' - '.join(labels)
 
