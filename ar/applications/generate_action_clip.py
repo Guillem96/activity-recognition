@@ -1,7 +1,6 @@
 import gc
-import itertools
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple, Union
 
 import click
 import tqdm.auto as tqdm
@@ -9,6 +8,7 @@ import tqdm.auto as tqdm
 import torch
 import torchvision
 
+import ar
 import ar.transforms as T
 from ar.typing import Transform
 from ar.models.image import ImageClassifier
@@ -16,71 +16,8 @@ from ar.models.image import ImageClassifier
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-class _VideoFramesIterator(object):
-    def __init__(self,
-                 video_path: Path,
-                 batch_size: int,
-                 skip_frames: int = 1,
-                 transforms: Optional[Transform] = None) -> None:
-        self.video_reader = torchvision.io.VideoReader(str(video_path))
-        self.current_frame = 0
-        self.skip_frames = skip_frames
-        self.batch_size = batch_size
-        self.tranforms = transforms or (lambda x: x)
-        self._is_it_end = False
-        self.metadata = self.video_reader.get_metadata()
-
-    @property
-    def video_fps(self) -> float:
-        return self.metadata['video']['fps'][0]
-
-    @property
-    def video_duration(self) -> float:
-        return self.metadata['video']['duration'][0]
-
-    def take(self, from_sec: int, to_sec: int) -> torch.Tensor:
-        video_it = self.video_reader.seek(from_sec)
-        frames = [
-            f['data']
-            for f in itertools.takewhile(lambda x: x['pts'] < to_sec, video_it)
-        ]
-        return torch.stack(frames).permute(0, 2, 3, 1)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self) -> torch.Tensor:
-        if self._is_it_end:
-            raise StopIteration
-
-        frames = []
-        frames_idx = []
-        start = self.current_frame
-        end = start + self.batch_size * self.skip_frames
-
-        for _ in range(start, end):
-            try:
-                frame = next(self.video_reader)
-            except StopIteration:
-                self._is_it_end = True
-                break
-
-            if self.current_frame % self.skip_frames == 0:
-                frames.append(frame['data'])
-                frames_idx.append(self.current_frame)
-
-            self.current_frame += 1
-
-        # (FRAMES, CHANNELS, HEIGHT, WIDTH) to (FRAMES, HEIGHT, WIDTH, CHANNELS)
-        video_clip = torch.stack(frames).permute(0, 2, 3, 1)
-        video_clip = self.tranforms(video_clip)
-        frames_idx = torch.as_tensor(frames_idx, dtype=torch.long)
-
-        return frames_idx, video_clip
-
-
 @torch.no_grad()
-def _process_video(video: _VideoFramesIterator,
+def _process_video(video: ar.io.VideoFramesIterator,
                    image_classifier: torch.nn.Module) -> torch.Tensor:
     """
     Maps the image classifier for each video frame and return the classifier
@@ -88,7 +25,7 @@ def _process_video(video: _VideoFramesIterator,
 
     Parameters
     ----------
-    video: _VideoFramesIterator
+    video: ar.io.VideoFramesIterator
         Video iterator
     image_classifier: torch.nn.Module
         Model trained for image classification
@@ -129,10 +66,10 @@ def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
                        model: torch.nn.Module, classes: List[str],
                        out_dir: Path):
 
-    video_it = _VideoFramesIterator(video_path,
-                                    batch_size=batch_size,
-                                    transforms=tfms,
-                                    skip_frames=skip_frames)
+    video_it = ar.io.VideoFramesIterator(video_path,
+                                         batch_size=batch_size,
+                                         transforms=tfms,
+                                         skip_frames=skip_frames)
 
     res = _find_video_clips(video_it, model, topk=n_clips)
 

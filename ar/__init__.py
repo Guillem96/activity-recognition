@@ -1,3 +1,4 @@
+from . import io
 from . import data
 from . import metrics
 from . import transforms

@@ -14,9 +14,6 @@ import ar.transforms as VT
 from ar.typing import Transform, Optimizer, Scheduler
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
-_AVAILABLE_MODELS = {
-    'LRCN',
-}
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
