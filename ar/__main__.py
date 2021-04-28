@@ -8,11 +8,6 @@ def main() -> None:
     pass
 
 
-@main.command()
-def applications():
-    pass
-
-
 main.add_command(download.main, name='download-kinetics')
 
 

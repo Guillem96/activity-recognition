@@ -31,9 +31,8 @@ YOUTUBE_API_VERSION = 'v3'
     required=True,
     help='Output to store the video candidate clips. Recommended .csv extension.'
 )
-def build_video_candidates(actions: str, yt_api_key: Optional[str],
-                           videos_per_action: int, output: Union[Path,
-                                                                 str]) -> None:
+def main(actions: str, yt_api_key: Optional[str], videos_per_action: int,
+         output: Union[Path, str]) -> None:
     if yt_api_key is None:
         raise ValueError(
             'yt-api-key not provided, use the --yt-api-key or the env '
@@ -75,5 +74,6 @@ def _get_video_ids(youtube: Resource, query: str,
         if o['id']['kind'] == 'youtube#video'
     ]
 
+
 if __name__ == '__main__':
-    build_video_candidates()
+    main()
