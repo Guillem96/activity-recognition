@@ -36,8 +36,8 @@ def _process_video(video: ar.io.VideoFramesIterator,
         Model outputs for each frame
     """
     predictions = []
-    for _, video_clip in video:
-        preds = image_classifier(video_clip.to(device))
+    for _, video_clip in tqdm.tqdm(video, leave=False):
+        preds = image_classifier(video_clip.permute(1, 0, 2, 3).to(device))
         predictions.append(preds.cpu())
 
     return torch.cat(predictions, dim=0)
@@ -114,6 +114,9 @@ def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
               required=True,
               help='Path to the class names file')
 @click.option('--out-dir', required=True, type=click.Path(file_okay=False))
+@click.option('--cache-file',
+              default='data/.clips-cache.txt',
+              type=click.Path(dir_okay=False))
 @click.option('--n-clips',
               type=int,
               default=2,
@@ -124,12 +127,15 @@ def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
               help='Length of the extracted clips in seconds')
 def main(video_path: Union[str, Path], skip_frames: int, batch_size: int,
          image_classifier_checkpoint: str, class_names: Union[str, Path],
-         out_dir: Union[str, Path], n_clips: int, clip_len: int) -> None:
+         out_dir: Union[str, Path], n_clips: int, clip_len: int,
+         cache_file: Union[str, Path]) -> None:
 
     video_path = Path(video_path)
 
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True, parents=True)
+
+    cache_file = Path(cache_file)
 
     classes = Path(class_names).read_text().split('\n')
 
@@ -157,7 +163,14 @@ def main(video_path: Union[str, Path], skip_frames: int, batch_size: int,
                            out_dir=out_dir,
                            classes=classes)
     else:
+        already_processed = (set(cache_file.read_text().splitlines())
+                             if cache_file.exists() else {})
+
         videos = list(video_path.rglob("*.mp4"))
+        videos = [o for o in videos if str(o) not in already_processed]
+
+        cache_f = cache_file.open('w')
+
         for v_fname in tqdm.tqdm(videos, desc='Generating clips'):
             _process_videofile(v_fname,
                                skip_frames=skip_frames,
@@ -168,7 +181,11 @@ def main(video_path: Union[str, Path], skip_frames: int, batch_size: int,
                                model=model,
                                out_dir=out_dir,
                                classes=classes)
+            cache_f.write(f'{v_fname}\n')
+            cache_f.flush()
             gc.collect()
+
+        cache_f.close()
 
 
 if __name__ == "__main__":

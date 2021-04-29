@@ -35,7 +35,7 @@ def _get_urls(driver: webdriver.Firefox, query: str) -> Sequence[str]:
     # again
     for _ in range(2):
         previous_sh = 0
-        scroll_steps = 7
+        scroll_steps = 10
 
         # When we reach to the bottom, we wait more images to load and scroll
         # again 4 times
@@ -50,7 +50,7 @@ def _get_urls(driver: webdriver.Firefox, query: str) -> Sequence[str]:
                 break
 
             # Scroll the currently displayed images slowly so JS load them
-            for step in reversed(range(1, scroll_steps + 1)):
+            for _ in range(scroll_steps):
                 driver.execute_script(f"window.scrollBy(0, {to_scroll})")
                 time.sleep(1)
 
