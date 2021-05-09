@@ -33,3 +33,6 @@ logs/
 
 # File to keep download errors
 .failed.json*
+
+# Scripts
+precommit.sh

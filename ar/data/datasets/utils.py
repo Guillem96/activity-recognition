@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Hashable
 from typing import Sequence
 from typing import Union
 
@@ -19,5 +20,5 @@ def ucf_select_fold(base_path: Union[Path, str], annotation_path: Union[Path,
 
 class IdentityMapping(dict):
 
-    def __missing__(self, key):
+    def __missing__(self, key: Hashable) -> Hashable:
         return key

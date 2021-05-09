@@ -108,8 +108,7 @@ class ValuesLogger(object):
         return {k: v.mean.item() for k, v in self.values.items()}
 
 
-def build_summary_writter(
-        log_dir: str) -> torch.utils.tensorboard.SummaryWriter:
+def build_summary_writter(log_dir: str) -> TensorBoard:
     """
     Builds a hierarchical log directory structure for ease of experiments 
     tracking

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Callable
 from typing import Optional
 from typing import Union
@@ -21,3 +22,5 @@ Scheduler = Union[torch.optim.lr_scheduler.OneCycleLR,  # type: ignore
                   torch.optim.lr_scheduler.StepLR]
 
 TensorBoard = Optional[SummaryWriter]
+
+PathLike = Union[Path, str]
