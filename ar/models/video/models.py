@@ -121,7 +121,7 @@ class _LRCNDecoder(nn.Module):
             return lstm_out
 
 
-class LRCN(ar.checkpoint.SerializableModule):
+class LRCN(ar.utils.checkpoint.SerializableModule):
     """
     Model described at Long-term Recurrent Convolutional Networks for Visual 
     Recognition and Description (https://arxiv.org/abs/1411.4389)
@@ -181,91 +181,6 @@ class LRCN(ar.checkpoint.SerializableModule):
         return self.linear(x).log_softmax(-1)
 
 
-class LRCNWithAudio(ar.checkpoint.SerializableModule):
-    """
-    Model described at Long-term Recurrent Convolutional Networks for Visual 
-    Recognition and Description (https://arxiv.org/abs/1411.4389)
-    """
-
-    def __init__(
-            self,
-            feature_extractor: str,
-            n_classes: int,
-            rnn_units: int = 512,
-            bidirectional: bool = True,
-            pretrained: bool = True,
-            freeze_feature_extractor: bool = False,
-
-            # Audio parameters
-            audio_sample_rate: int = 16000,
-            audio_features: int = 512,
-            n_mel_features: int = 40) -> None:
-        super(LRCNWithAudio, self).__init__()
-
-        # Frames feature extractor params
-        self.feature_extractor = feature_extractor
-        self.n_classes = n_classes
-        self.pretrained = pretrained
-
-        # Temporal aware units params
-        self.bidirectional = bidirectional
-        self.rnn_units = rnn_units
-
-        # Audio features
-        self.audio_features = audio_features
-        self.audio_sample_rate = audio_sample_rate
-        self.n_mel_features = n_mel_features
-
-        # Declare feature extractor for video
-        self.encoder = _LRCNEncoder(
-            feature_extractor=self.feature_extractor,
-            out_features=2048,
-            pretrained=pretrained,
-            freeze_feature_extractor=freeze_feature_extractor)
-
-        self.decoder = _LRCNDecoder(input_features=2048,
-                                    rnn_units=self.rnn_units,
-                                    bidirectional=self.bidirectional,
-                                    fusion_mode='sum')
-
-        self.audio_fe = ar.audio.MelFrequencyFeatureExtractor(
-            feature_extractor=feature_extractor,
-            out_features=audio_features,
-            mel_features=n_mel_features,
-            audio_sample_rate=audio_sample_rate)
-
-        video_output_size = self.rnn_units * (2 if self.bidirectional else 1)
-        self.linear = MLP(
-            features=[video_output_size + audio_features, 512, self.n_classes],
-            batch_norm=False,
-            dropout=.5)
-
-    def config(self) -> dict:
-        return {
-            'feature_extractor': self.feature_extractor,
-            'n_classes': self.n_classes,
-            'pretrained': False,
-            'bidirectional': self.bidirectional,
-            'rnn_units': self.rnn_units,
-            'freeze_feature_extractor': False,
-            'audio_features': self.audio_features,
-            'audio_sample_rate': self.audio_sample_rate,
-            'n_mel_features': self.n_mel_features
-        }
-
-    def forward(self, x: Tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:
-        # Extract video features
-        video_features = self.encoder(x[0])
-        video_features = self.decoder(video_features)
-
-        # Extract audio features
-        audio_features = self.audio_fe(x[1])
-
-        # Concatenate and merge features
-        x = torch.cat([video_features, audio_features], dim=1)
-        return self.linear(x).log_softmax(-1)
-
-
 ################################################################################
 
 
@@ -290,11 +205,35 @@ class TemporalConv(nn.Module):
         return torch.cat([x1, x2], dim=1)
 
 
-class FstCN(ar.checkpoint.SerializableModule):
+class FstCN(ar.utils.checkpoint.SerializableModule):
+    """Implements the model defined at Human Action Recognition using 
+    Factorized Spatio-Temporal Convolutional Networks 
+    (https://arxiv.org/pdf/1510.00562.pdf)
 
+    Parameters
+    ----------
+    feature_extractor: str
+        Feature extractor that will be used as a backbone
+    n_classes: int
+        Output classes
+    st: int
+        Stride to sample frames from the input clip
+    dt: int
+        Offset to compute the V^{diff}
+    scl_features: int, defaults 64
+        Features for the spatial branch
+    tcl_features: int, defaults 64
+        Features for the temporal branch
+    pretrained: bool, defaults True
+        Initialize the backbone from a torch checkpoint?
+    freeze_feature_extractor: bool, False
+        Whether or not to freeze the backbone.
+    """
     def __init__(self,
                  feature_extractor: str,
                  n_classes: int,
+                 st: int = 5,
+                 dt: int = 9,
                  scl_features: int = 64,
                  tcl_features: int = 64,
                  pretrained: bool = True,
@@ -305,6 +244,10 @@ class FstCN(ar.checkpoint.SerializableModule):
         self.feature_extractor = feature_extractor
         self.n_classes = n_classes
         self.pretrained = pretrained
+
+        # Vdiff hyperparams
+        self.st = st
+        self.dt = dt
 
         # Spatial aware hyperparams
         self.scl_features = scl_features
@@ -329,8 +272,9 @@ class FstCN(ar.checkpoint.SerializableModule):
             nn.BatchNorm2d(self.tcl_features), nn.ReLU(inplace=True))
         self.P = nn.Parameter(torch.randn(self.tcl_features, self.tcl_features))
 
-        # TODO: Only works for 224 x 224 videos
-        self.tcl_temp_conv = TemporalConv(7 * 7, self.tcl_features)
+        # H x W of reduced Vdiff clips are 4 and 4 respectively for clips of
+        # 112x112
+        self.tcl_temp_conv = TemporalConv(4 * 4, self.tcl_features)
         self.tcl_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.tcl_linear = MLP([self.tcl_features, 2048, self.tcl_features])
 
@@ -351,30 +295,38 @@ class FstCN(ar.checkpoint.SerializableModule):
             'pretrained': False,
             'freeze_feature_extractor': False,
             'scl_features': self.tcl_features,
-            'tcl_features': self.tcl_features
+            'tcl_features': self.tcl_features,
+            'st': self.st,
+            'dt': self.dt,
         }
 
     def forward(self, clips: torch.Tensor) -> torch.Tensor:
         # clips: (BATCH, CHANNELS, FRAMES, H, W)
-        b, c, f, *_ = clips.size()
+        # Temporal stride clips
+        V =  clips[:, :, ::self.st, ...]
+        b, _, f, *_ = V.size()
+        clips_length = f - self.dt
 
-        # Simplified version of Vdiff clip, where dt = 1
-        # Vdiff_features: (BATCH, CHANNELS, FRAMES - 1, H, W)
-        Vdiff = clips[:, :, :-1] - clips[:, :, 1:]
+        v_idx = torch.arange(clips_length).to(V.device)
+        v_idx_offset = v_idx + self.dt
+
+        # Vdiff_features: (BATCH, CHANNELS, FRAMES, H, W)
+        Vdiff = V[:, :, v_idx] - V[:, :, v_idx_offset]
+        V = V[:, :, v_idx]
 
         # For spatial clips, when training we sample a single random,
         # when testing we sample the middle frame
         if self.training:
-            sampled_frames_idx = torch.randint(high=f, size=(b,))
-            sampled_clips = clips[torch.arange(b), :, sampled_frames_idx]
+            sampled_frames_idx = torch.randint(high=clips_length, size=(b,))
+            sampled_clips = V[torch.arange(b), :, sampled_frames_idx]
         else:
-            middle_idx = f // 2
-            sampled_clips = clips[torch.arange(b), :, middle_idx]
+            middle_idx = clips_length // 2
+            sampled_clips = V[torch.arange(b), :, middle_idx]
 
         # single_clip_features: (BATCH, FEATURES, H', W')
         single_clip_features = self.scl(sampled_clips)
 
-        # Vdiff_features: (BATCH, FRAMES - 1, FEATURES, H', W')
+        # Vdiff_features: (BATCH, FRAMES, FEATURES, H', W')
         Vdiff_features = _frame_level_forward(Vdiff, self.scl)
 
         # XTRA Brach
@@ -389,14 +341,15 @@ class FstCN(ar.checkpoint.SerializableModule):
         xtra_features = self.xtra_linear(xtra_features)
 
         # Temporal Branch
-        # tcl_features: (BATCH, FRAMES - 1, FEATURES, H' x W')
+        # tcl_features: (BATCH, FRAMES, FEATURES, H' x W')
         tcl_features = _frame_level_forward(
             Vdiff_features.permute(0, 2, 1, 3, 4), self.tcl_conv)
         tcl_channels = tcl_features.size(2)
-        tcl_features = tcl_features.view(b, f - 1, tcl_channels, -1)
+        tcl_features = tcl_features.view(b, clips_length, tcl_channels, -1)
 
         # tcl_features: (BATCH, H' x W', FRAMES, FEATURES')
         tcl_features = tcl_features.permute(0, 3, 1, 2) @ self.P
+        print(tcl_features.size())
 
         # tcl_features: (BATCH, TEMP_FEATURES, H', W')
         tcl_features = self.tcl_temp_conv(tcl_features)

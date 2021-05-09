@@ -228,33 +228,40 @@ def _load_model(out_units: int,
               default=False,
               help='Wether or not to fine tune the pretrained'
               ' feature extractor')
-@click.option('--rnn-units',
+@click.option('--st',
               type=int,
-              default=512,
-              help='Hidden size of the LSTM layer added on top of the feature '
-              'extractors')
-@click.option('--fusion-mode',
-              type=click.Choice(['sum', 'attn', 'avg', 'last']),
-              default='sum',
-              help='How to aggregate the timestep level logits')
-@click.option('--bidirectional/--no-bidirectional',
-              default=True,
-              help='Wether to use a bidirectional LSTM or an '
-              ' autoregressive')
+              default=5,
+              help='Stride to sample frames from video clips')
+@click.option('--dt',
+              type=int,
+              default=9,
+              help='Offset to create the Vdiff tensors')
+@click.option('--scl-features',
+              type=int,
+              default=64,
+              help='Features for the SCL branch')
+@click.option('--tcl-features',
+              type=int,
+              default=64,
+              help='Features for the TCL branch')
 def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
          validation_split: float, data_loader_workers: int,
          frames_per_clip: int, clips_stride: int, epochs: int, batch_size: int,
          optimizer: str, grad_accum_steps: int, learning_rate: float,
          scheduler: str, fp16: bool, logdir: Optional[PathLike],
          resume_checkpoint: PathLike, save_checkpoint: PathLike,
-         feature_extractor: str, freeze_fe: bool, rnn_units: int,
-         fusion_mode: str, bidirectional: bool) -> None:
+         feature_extractor: str, freeze_fe: bool, st: int, dt: int,
+         scl_features: int, tcl_features: int) -> None:
     ar.engine.seed()
 
     if logdir:
         summary_writer = ar.logger.build_summary_writter(logdir)
     else:
         summary_writer = None
+
+    # Make the frames per clips large enough to have enough frames to generate
+    # the strided clips and to compute the Vdiff
+    frames_per_clip = (frames_per_clip + dt) * st
 
     train_dl, valid_dl = data_preparation(dataset,
                                           data_dir=data_dir,
@@ -272,9 +279,10 @@ def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
                                     feature_extractor=feature_extractor,
                                     freeze_fe=freeze_fe,
                                     resume_checkpoint=resume_checkpoint,
-                                    rnn_units=rnn_units,
-                                    bidirectional=bidirectional,
-                                    fusion_mode=fusion_mode)
+                                    st=st,
+                                    dt=dt,
+                                    scl_features=scl_features,
+                                    tcl_features=tcl_features)
     model.to(device)
 
     torch_optimizer, torch_scheduler = load_optimizer(
@@ -307,7 +315,11 @@ def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
             'epochs': epochs,
             'batch_size': batch_size,
             'clips_stride': clips_stride,
-            'frames_per_clip': frames_per_clip
+            'frames_per_clip': frames_per_clip,
+            'st': st,
+            'dt': dt,
+            'tcl_features': tcl_features,
+            'scl_features': scl_features
         }
 
         summary_writer.add_hparams(hparams, eval_metrics)
