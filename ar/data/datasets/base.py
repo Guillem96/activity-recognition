@@ -18,6 +18,7 @@ _ClipDatasetSample = Tuple[torch.Tensor, torch.Tensor, int, dict]
 
 
 class ClipLevelDataset(data.Dataset, abc.ABC):
+
     def __init__(
         self,
         root: Union[Path, str],
@@ -27,8 +28,7 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         frame_rate: int = None,
         transform: Transform = None,
         num_workers: int = 4,
-        extensions: Collection[str] = ('mp4', 'avi')
-    ) -> None:
+        extensions: Collection[str] = ('mp4', 'avi')) -> None:
 
         self.root = Path(root)
         self.split = split
@@ -103,6 +103,7 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
 
 class VideoLevelDataset(data.Dataset, abc.ABC):
+
     def __init__(self,
                  video_paths: Sequence[Union[str, Path]],
                  labels: Sequence[str],

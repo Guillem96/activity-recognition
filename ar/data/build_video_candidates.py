@@ -62,8 +62,7 @@ def main(actions: str, yt_api_key: Optional[str], videos_per_action: int,
         out_f.write(csv_text)
 
 
-def _get_video_ids(youtube: Resource, query: str,
-                   max_videos: int) -> List[str]:
+def _get_video_ids(youtube: Resource, query: str, max_videos: int) -> List[str]:
     search_response = youtube.search().list(q=query,
                                             part='id,snippet',
                                             type='video',
@@ -73,7 +72,8 @@ def _get_video_ids(youtube: Resource, query: str,
     video_results = search_response.get('items', [])
 
     return [
-        o['id']['videoId'] for o in video_results
+        o['id']['videoId']
+        for o in video_results
         if o['id']['kind'] == 'youtube#video'
     ]
 

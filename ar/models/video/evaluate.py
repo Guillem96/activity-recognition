@@ -28,7 +28,7 @@ def video_level_evaluation(ds: ar.data.VideoLevelDataset,
         clips_sampler = ar.video.uniform_sampling
     else:
         raise ValueError(f'Invlaid `sampling_strategy` {sampling_strategy}')
-    
+
     final_preds = []
     labels = []
 
@@ -43,31 +43,36 @@ def video_level_evaluation(ds: ar.data.VideoLevelDataset,
         with torch.no_grad():
             predictions = model(clips)
             predictions = predictions.mean(0)
-        
+
         final_preds.append(predictions.cpu())
         labels.append(label)
-    
+
     final_preds_t = torch.stack(final_preds)
     labels_t = torch.as_tensor(labels)
     return {m.__name__: m(final_preds_t, labels_t).item() for m in metrics}
 
 
 @click.command()
-@click.option('--dataset', type=click.Choice(list(_AVAILABLE_DATASETS)),
+@click.option('--dataset',
+              type=click.Choice(list(_AVAILABLE_DATASETS)),
               required=True)
-@click.option('--data-dir', type=click.Path(exists=True, file_okay=False),
-              required=True, help='Dataset formated as imagenet directories')
-@click.option('--annots-dir', type=click.Path(exists=True, file_okay=False),
-              default=None, help='Dataset annotations. It is not needed for all'
-                                 ' datasets, for now it is only required with '
-                                 'UCF-101')
-
-@click.option('--model-arch', type=click.Choice(list(_AVAILABLE_MODELS)),
+@click.option('--data-dir',
+              type=click.Path(exists=True, file_okay=False),
+              required=True,
+              help='Dataset formated as imagenet directories')
+@click.option('--annots-dir',
+              type=click.Path(exists=True, file_okay=False),
+              default=None,
+              help='Dataset annotations. It is not needed for all'
+              ' datasets, for now it is only required with '
+              'UCF-101')
+@click.option('--model-arch',
+              type=click.Choice(list(_AVAILABLE_MODELS)),
               required=True)
 @click.option('--checkpoint', type=str, required=True)
 def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
-                     model_arch: str, checkpoint: str) -> None:
-    
+                         model_arch: str, checkpoint: str) -> None:
+
     if dataset == 'UCF-101' and annots_dir is None:
         raise ValueError('"annots_dir" cannot be None when selecting '
                          'UCF-101 dataset')
@@ -103,20 +108,20 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
         raise ValueError('Unexpected model architecture')
     print('done')
 
-    metrics = [ar.metrics.accuracy, 
-               ar.metrics.top_3_accuracy, 
-               ar.metrics.top_5_accuracy]
+    metrics = [
+        ar.metrics.accuracy, ar.metrics.top_3_accuracy,
+        ar.metrics.top_5_accuracy
+    ]
 
-    final_metrics = video_level_evaluation(
-        ds=ds,
-        model=model,
-        metrics=metrics,
-        clips_tfms=tfms,
-        sampling_strategy='uniform',
-        video_fmt='THWC')
-    
+    final_metrics = video_level_evaluation(ds=ds,
+                                           model=model,
+                                           metrics=metrics,
+                                           clips_tfms=tfms,
+                                           sampling_strategy='uniform',
+                                           video_fmt='THWC')
+
     final_metrics = ', '.join(f'{k}: {v:.4f}' for k, v in final_metrics.items())
-    print(final_metrics) 
+    print(final_metrics)
 
 
 if __name__ == "__main__":

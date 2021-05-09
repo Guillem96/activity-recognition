@@ -10,6 +10,5 @@ def main() -> None:
 
 main.add_command(download.main, name='download-kinetics')
 
-
 if __name__ == "__main__":
     main()

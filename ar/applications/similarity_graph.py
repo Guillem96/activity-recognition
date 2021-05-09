@@ -62,8 +62,8 @@ def _compute_feature_vector(video_it: ar.io.VideoFramesIterator,
     'Group frames in samples of n examples to speed up the image classifier inference time'
 )
 @click.option('--out', help='JSON file to serialize the graph', required=True)
-def main(video_path: Union[str, Path], feature_extractor: str,
-         skip_frames: int, batch_size: int, out: Union[str, Path]) -> None:
+def main(video_path: Union[str, Path], feature_extractor: str, skip_frames: int,
+         batch_size: int, out: Union[str, Path]) -> None:
 
     out = Path(out)
     out.parent.mkdir(exist_ok=True, parents=True)

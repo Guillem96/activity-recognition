@@ -29,21 +29,21 @@ def SCI_weights(probabilities: torch.Tensor,
     if log_probs and from_logits:
         raise ValueError('log_probs and from_logits cannot be set to true'
                          ' at de same time.')
-    
+
     if log_probs:
         p = probabilities.exp()
     elif from_logits:
         p = probabilities.softmax(-1)
     else:
         p = probabilities
-    
+
     N = float(p.size(-1))
     maxes, _ = p.max(dim=-1, keepdim=keepdim)
 
     return (N * maxes - 1).div(N - 1)
 
 
-def SCI_fusion(probabilities: torch.Tensor, 
+def SCI_fusion(probabilities: torch.Tensor,
                log_probs: bool = False,
                from_logits: bool = False) -> torch.Tensor:
     """
@@ -75,21 +75,20 @@ def SCI_fusion(probabilities: torch.Tensor,
     if log_probs and from_logits:
         raise ValueError('log_probs and from_logits cannot be set to true'
                          ' at de same time.')
-    
+
     if log_probs:
         p = probabilities.exp()
     elif from_logits:
         p = probabilities.softmax(-1)
     else:
         p = probabilities
-    
+
     # SCIs: (M, C)
     SCIs = SCI_weights(p, from_logits=False, log_probs=False, keepdim=True)
 
     # pi: (M, N_CLASSES)
-    pi = (SCIs * p).sum(1) 
+    pi = (SCIs * p).sum(1)
     pi = pi / SCIs.sum(1)
 
     # (N_CLASSES,)
     return pi.max(0)[0]
-

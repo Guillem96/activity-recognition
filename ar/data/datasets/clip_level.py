@@ -13,6 +13,7 @@ from ar.typing import Transform
 
 
 class Kinetics400(ClipLevelDataset):
+
     def __init__(
         self,
         root: Union[Path, str],
@@ -22,8 +23,7 @@ class Kinetics400(ClipLevelDataset):
         frame_rate: int = None,
         transform: Transform = None,
         num_workers: int = 4,
-        extensions: Collection[str] = ('mp4', 'avi')
-    ) -> None:
+        extensions: Collection[str] = ('mp4', 'avi')) -> None:
 
         super(Kinetics400,
               self).__init__(root, split, frames_per_clip, step_between_clips,
@@ -55,6 +55,7 @@ class Kinetics400(ClipLevelDataset):
 
 
 class UCF101(ClipLevelDataset):
+
     def __init__(
         self,
         root: Union[Path, str],
@@ -66,8 +67,7 @@ class UCF101(ClipLevelDataset):
         frame_rate: int = None,
         transform: Transform = None,
         num_workers: int = 4,
-        extensions: Collection[str] = ('mp4', 'avi')
-    ) -> None:
+        extensions: Collection[str] = ('mp4', 'avi')) -> None:
 
         super(UCF101,
               self).__init__(root, split, frames_per_clip, step_between_clips,

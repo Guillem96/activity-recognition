@@ -31,6 +31,7 @@ class LogValue(object):
         How many values should we keep track
     
     """
+
     def __init__(self, name: str, window_size: int):
         self.name = name
         self.window_size = window_size
@@ -80,6 +81,7 @@ class ValuesLogger(object):
     header: str, default ''
         Text to add befor the values logs
     """
+
     def __init__(self,
                  *values: LogValue,
                  total_steps: int,
@@ -162,7 +164,7 @@ def log_random_videos(ds: ClipLevelDataset,
     if writer is None:
         return
 
-    indices = torch.randint(high=len(ds), size=(samples, )).tolist()
+    indices = torch.randint(high=len(ds), size=(samples,)).tolist()
     videos = []
     labels = []
     for i in indices:

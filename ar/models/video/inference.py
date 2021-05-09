@@ -13,26 +13,37 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 @click.command()
-@click.option('--video', '-v', help='Path to the video', required=True,
+@click.option('--video',
+              '-v',
+              help='Path to the video',
+              required=True,
               type=click.Path(exists=True, dir_okay=False))
-@click.option('--checkpoint', '-c', help='Path to the model checkpoint', 
-              required=True, type=click.Path(exists=True, dir_okay=False))
-@click.option('--model', help='Model architecture', 
-              required=True, type=click.Choice(['LRCN']))
-@click.option('--class-names', help='Path to the class names file', 
-              default=None, type=click.Path(exists=True, dir_okay=False))
-@click.option('--clips-len', type=int, default=16, 
+@click.option('--checkpoint',
+              '-c',
+              help='Path to the model checkpoint',
+              required=True,
+              type=click.Path(exists=True, dir_okay=False))
+@click.option('--model',
+              help='Model architecture',
+              required=True,
+              type=click.Choice(['LRCN']))
+@click.option('--class-names',
+              help='Path to the class names file',
+              default=None,
+              type=click.Path(exists=True, dir_okay=False))
+@click.option('--clips-len',
+              type=int,
+              default=16,
               help='Clips length in frames')
-@click.option('--n-clips', '-n', type=int, default=3,
+@click.option('--n-clips',
+              '-n',
+              type=int,
+              default=3,
               help='Number of clips to sample and average '
-                   'the resulting probability distributions')
-def main(video: str, 
-         checkpoint: str, 
-         model: str, 
-         class_names: str,
-         clips_len: int, 
-         n_clips: int) -> None:
-    
+              'the resulting probability distributions')
+def main(video: str, checkpoint: str, model: str, class_names: str,
+         clips_len: int, n_clips: int) -> None:
+
     tfms = T.Compose([
         VT.VideoToTensor(),
         VT.VideoResize((224, 224)),
@@ -43,8 +54,8 @@ def main(video: str,
     video_t, *_ = io.read_video(video)
 
     # Sample non overlapping clips
-    clips = ar.video.uniform_sampling(video=video_t, 
-                                      clips_len=clips_len, 
+    clips = ar.video.uniform_sampling(video=video_t,
+                                      clips_len=clips_len,
                                       n_clips=n_clips)
     input_clips = torch.stack([tfms(o) for o in clips])
 
@@ -52,7 +63,7 @@ def main(video: str,
     video_classifier: Optional[SerializableModule] = None
 
     if model == 'LRCN':
-        video_classifier = ar.video.LRCN.from_pretrained(checkpoint, 
+        video_classifier = ar.video.LRCN.from_pretrained(checkpoint,
                                                          map_location=device)
     else:
         raise ValueError(f'Invalid model {model}')
@@ -71,7 +82,7 @@ def main(video: str,
             classes = list(f.readlines())
     else:
         classes = None
-    
+
     if classes is not None:
         print(f'Model predicted {classes[label.item()]} '
               f'with {score.item()} of confidence')

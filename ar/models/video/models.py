@@ -11,6 +11,7 @@ import ar
 
 
 class MLP(nn.Module):
+
     def __init__(self,
                  features: Sequence[int],
                  batch_norm: bool = True,
@@ -42,6 +43,7 @@ class MLP(nn.Module):
 
 
 class _LRCNEncoder(nn.Module):
+
     def __init__(self,
                  feature_extractor: str,
                  out_features: int,
@@ -70,6 +72,7 @@ class _LRCNEncoder(nn.Module):
 
 
 class _LRCNDecoder(nn.Module):
+
     def __init__(self,
                  input_features: int,
                  rnn_units: int,
@@ -123,6 +126,7 @@ class LRCN(ar.checkpoint.SerializableModule):
     Model described at Long-term Recurrent Convolutional Networks for Visual 
     Recognition and Description (https://arxiv.org/abs/1411.4389)
     """
+
     def __init__(self,
                  feature_extractor: str,
                  n_classes: int,
@@ -182,6 +186,7 @@ class LRCNWithAudio(ar.checkpoint.SerializableModule):
     Model described at Long-term Recurrent Convolutional Networks for Visual 
     Recognition and Description (https://arxiv.org/abs/1411.4389)
     """
+
     def __init__(
             self,
             feature_extractor: str,
@@ -265,6 +270,7 @@ class LRCNWithAudio(ar.checkpoint.SerializableModule):
 
 
 class TemporalConv(nn.Module):
+
     def __init__(self, clips_length: int, out_features: int) -> None:
         super(TemporalConv, self).__init__()
 
@@ -285,6 +291,7 @@ class TemporalConv(nn.Module):
 
 
 class FstCN(ar.checkpoint.SerializableModule):
+
     def __init__(self,
                  feature_extractor: str,
                  n_classes: int,
@@ -320,8 +327,7 @@ class FstCN(ar.checkpoint.SerializableModule):
         self.tcl_conv = nn.Sequential(
             nn.Conv2d(scl_out_features, self.tcl_features, 1, 1),
             nn.BatchNorm2d(self.tcl_features), nn.ReLU(inplace=True))
-        self.P = nn.Parameter(torch.randn(self.tcl_features,
-                                          self.tcl_features))
+        self.P = nn.Parameter(torch.randn(self.tcl_features, self.tcl_features))
 
         # TODO: Only works for 224 x 224 videos
         self.tcl_temp_conv = TemporalConv(7 * 7, self.tcl_features)
@@ -359,7 +365,7 @@ class FstCN(ar.checkpoint.SerializableModule):
         # For spatial clips, when training we sample a single random,
         # when testing we sample the middle frame
         if self.training:
-            sampled_frames_idx = torch.randint(high=f, size=(b, ))
+            sampled_frames_idx = torch.randint(high=f, size=(b,))
             sampled_clips = clips[torch.arange(b), :, sampled_frames_idx]
         else:
             middle_idx = f // 2

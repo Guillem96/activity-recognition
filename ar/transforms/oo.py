@@ -15,6 +15,7 @@ Transform = Callable[[torch.Tensor], torch.Tensor]
 
 
 class VideoRandomCrop(torch.nn.Module):
+
     def __init__(self, size: Tuple[int, int]) -> None:
         super(VideoRandomCrop, self).__init__()
         self.size = size
@@ -38,6 +39,7 @@ class VideoRandomCrop(torch.nn.Module):
 
 
 class VideoRandomErase(torch.nn.Module):
+
     def __init__(self,
                  p: float = 0.5,
                  scale: Tuple[float, float] = (0.02, 0.33),
@@ -119,6 +121,7 @@ class VideoRandomErase(torch.nn.Module):
 
 
 class VideoCenterCrop(torch.nn.Module):
+
     def __init__(self, size: Tuple[int, int]):
         super(VideoCenterCrop, self).__init__()
         self.size = size
@@ -128,6 +131,7 @@ class VideoCenterCrop(torch.nn.Module):
 
 
 class VideoResize(torch.nn.Module):
+
     def __init__(self, size: Tuple[int, int]):
         super(VideoResize, self).__init__()
         self.size = size
@@ -137,6 +141,7 @@ class VideoResize(torch.nn.Module):
 
 
 class VideoToTensor(torch.nn.Module):
+
     def __init__(self):
         super(VideoToTensor, self).__init__()
 
@@ -145,6 +150,7 @@ class VideoToTensor(torch.nn.Module):
 
 
 class VideoNormalize(torch.nn.Module):
+
     def __init__(self, mean: Tuple[float, float, float],
                  std: Tuple[float, float, float]):
         super(VideoNormalize, self).__init__()
@@ -156,6 +162,7 @@ class VideoNormalize(torch.nn.Module):
 
 
 class VideoRandomHorizontalFlip(torch.nn.Module):
+
     def __init__(self, p: float = 0.5):
         super(VideoRandomHorizontalFlip, self).__init__()
         self.p = p
@@ -167,6 +174,7 @@ class VideoRandomHorizontalFlip(torch.nn.Module):
 
 
 class VideoPad(torch.nn.Module):
+
     def __init__(self, padding: List[int], fill: int = 0):
         super(VideoPad, self).__init__()
         self.padding = padding
@@ -177,6 +185,7 @@ class VideoPad(torch.nn.Module):
 
 
 class OneOf(torch.nn.Module):
+
     def __init__(self, transforms: Sequence[Transform]) -> None:
         super(OneOf, self).__init__()
 

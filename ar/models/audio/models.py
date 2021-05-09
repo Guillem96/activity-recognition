@@ -24,7 +24,8 @@ class MelFrequencyFeatureExtractor(nn.Module):
     audio_sample_rate: int, default 16000
         Audio sample rate in samples per second
     """
-    def __init__(self, 
+
+    def __init__(self,
                  feature_extractor: str,
                  out_features: int,
                  mel_features: int = 16,
@@ -33,19 +34,21 @@ class MelFrequencyFeatureExtractor(nn.Module):
 
         super(MelFrequencyFeatureExtractor, self).__init__()
 
-        self.mfcc = AT.MFCC(audio_sample_rate, 
-                            mel_features, log_mels=True, 
-                            melkwargs=dict(n_fft=512, win_length=400, 
+        self.mfcc = AT.MFCC(audio_sample_rate,
+                            mel_features,
+                            log_mels=True,
+                            melkwargs=dict(n_fft=512,
+                                           win_length=400,
                                            hop_length=160))
-        
+
         self.channels_up = nn.Conv2d(1, 3, kernel_size=1, stride=1)
 
         # TODO: Should we provide the possibility of freezing this?
         self.features, in_next = ar.utils.nn.image_feature_extractor(
             feature_extractor, pretrained=True)
-        
+
         self.features_adjust = nn.Linear(in_next, out_features)
-    
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # mfcc: (BATCH, 1, HEIGHT, WIDTH)
         mfcc = self.mfcc(x)

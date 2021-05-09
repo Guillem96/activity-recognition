@@ -18,6 +18,7 @@ class SerializableModule(nn.Module, abc.ABC):
     """
     Abstract torch nn.Module along with serialize utils.
     """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(SerializableModule, self).__init__()
 
@@ -54,10 +55,12 @@ class SerializableModule(nn.Module, abc.ABC):
         base_url = f'https://storage.googleapis.com/{bucket}/ar'
 
         names_url = {
-            'lrcn-ucf-101': f'{base_url}/lrcn-attn.pt',
+            'lrcn-ucf-101':
+                f'{base_url}/lrcn-attn.pt',
             'sf-densenet-kinetics-400':
-            f'{base_url}/kinetics_image_densenet121.pt',
-            'sf-resnet-kinetics-400': f'{base_url}/kinetics_image_resnet18.pt'
+                f'{base_url}/kinetics_image_densenet121.pt',
+            'sf-resnet-kinetics-400':
+                f'{base_url}/kinetics_image_resnet18.pt'
         }
 
         path = Path(name_or_path)

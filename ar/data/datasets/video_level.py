@@ -9,6 +9,7 @@ from ar.typing import Transform
 
 
 class VideoLevelUCF101(VideoLevelDataset):
+
     def __init__(self,
                  root: Union[Path, str],
                  annotation_path: Union[Path, str],
@@ -27,6 +28,7 @@ class VideoLevelUCF101(VideoLevelDataset):
 
 
 class VideoLevelKinetics(VideoLevelDataset):
+
     def __init__(self,
                  root: Union[Path, str],
                  split: str,
@@ -48,4 +50,3 @@ class VideoLevelKinetics(VideoLevelDataset):
 
         super(VideoLevelKinetics, self).__init__(video_paths, labels,
                                                  frame_rate, transform)
-

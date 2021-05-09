@@ -7,6 +7,7 @@ from ar.utils.nn import image_feature_extractor
 
 
 class ImageClassifier(SerializableModule):
+
     def __init__(self,
                  feature_extractor: str,
                  n_classes: int,

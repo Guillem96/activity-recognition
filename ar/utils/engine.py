@@ -79,8 +79,7 @@ def train_one_epoch(
             scheduler.step()
 
         current_metrics = {
-            m.__name__: m(predictions.float(), y).item()
-            for m in metrics
+            m.__name__: m(predictions.float(), y).item() for m in metrics
         }
         logger(loss=loss.item(), lr=get_lr(optimizer), **current_metrics)
 
@@ -147,8 +146,7 @@ def evaluate(
             loss = loss_fn(predictions, y)
 
         updates_values = {
-            m.__name__: m(predictions.float(), y).item()
-            for m in metrics
+            m.__name__: m(predictions.float(), y).item() for m in metrics
         }
         updates_values['loss'] = loss.item()
         logger(**updates_values)

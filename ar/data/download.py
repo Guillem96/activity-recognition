@@ -224,7 +224,8 @@ def writer(q: multiprocessing.Queue, fail_file: Union[Path, str]) -> None:
                     f.flush()
 
         elif isinstance(recv, str):
-            if recv == 'done': return
+            if recv == 'done':
+                return
 
 
 @click.command()

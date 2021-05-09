@@ -12,6 +12,5 @@ def main() -> None:
 main.add_command(generate_action_clip.main, name='generate-clips')
 main.add_command(similarity_graph.main, name='build-similarity-graph')
 
-
 if __name__ == "__main__":
     main()

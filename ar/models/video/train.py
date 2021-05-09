@@ -49,7 +49,7 @@ def load_datasets(
                                        split='train',
                                        frames_per_clip=frames_per_clip,
                                        step_between_clips=steps_between_clips,
-                                       extensions=('.mp4', ),
+                                       extensions=('.mp4',),
                                        num_workers=workers,
                                        transform=train_transforms)
 
@@ -57,7 +57,7 @@ def load_datasets(
                                        split='validate',
                                        frames_per_clip=frames_per_clip,
                                        step_between_clips=steps_between_clips,
-                                       extensions=('.mp4', ),
+                                       extensions=('.mp4',),
                                        num_workers=workers,
                                        transform=valid_transforms)
 
@@ -328,12 +328,11 @@ def _load_model(model_name: str,
               'computation with mixed precision. The backward pass stays'
               'with fp32')
 # Logging options
-@click.option(
-    '--logdir',
-    type=str,
-    default=None,
-    help='Directory for tensorboard logs. If set to None no logs will'
-    ' be generated')
+@click.option('--logdir',
+              type=str,
+              default=None,
+              help='Directory for tensorboard logs. If set to None no logs will'
+              ' be generated')
 # Checkpointing options
 @click.option('--resume-checkpoint',
               type=click.Path(dir_okay=False),
@@ -401,16 +400,15 @@ def train_LRCN(ctx: click.Context, **kwargs: Any) -> None:
     n_classes = len(train_dl.dataset.classes)
 
     if kwargs['audio']:
-        model, checkpoint = _load_model(
-            'LRCNWithAudio',
-            n_classes,
-            kwargs['feature_extractor'],
-            kwargs['freeze_fe'],
-            kwargs['resume_checkpoint'],
-            rnn_units=kwargs['rnn_units'],
-            bidirectional=kwargs['bidirectional'],
-            audio_features=kwargs['audio_features'],
-            n_mel_features=kwargs['mel_features'])
+        model, checkpoint = _load_model('LRCNWithAudio',
+                                        n_classes,
+                                        kwargs['feature_extractor'],
+                                        kwargs['freeze_fe'],
+                                        kwargs['resume_checkpoint'],
+                                        rnn_units=kwargs['rnn_units'],
+                                        bidirectional=kwargs['bidirectional'],
+                                        audio_features=kwargs['audio_features'],
+                                        n_mel_features=kwargs['mel_features'])
     else:
         model, checkpoint = _load_model('LRCN',
                                         n_classes,

@@ -85,13 +85,12 @@ def uniform_sampling(video: torch.Tensor,
     n_frames = video.size(0)
     if overlap:
         indices = torch.randint(high=n_frames - (clips_len * frames_stride),
-                                size=(n_clips, ))
+                                size=(n_clips,))
         indices = indices.tolist()
     else:
         possible_indices = torch.arange(0, n_frames,
                                         clips_len * frames_stride)[:-1]
-        choices = torch.randint(high=possible_indices.size(0),
-                                size=(n_clips, ))
+        choices = torch.randint(high=possible_indices.size(0), size=(n_clips,))
         indices = possible_indices[choices].tolist()
 
     clips = [
@@ -150,7 +149,7 @@ def lrcn_sampling(video: torch.Tensor,
     start_idx = torch.randint(0,
                               high=(n_video_frames -
                                     (clips_len + stride) * n_clips) + 1,
-                              size=(1, )).item()
+                              size=(1,)).item()
 
     clips_start_idx = torch.arange(start_idx, n_video_frames,
                                    stride + clips_len)[:n_clips]

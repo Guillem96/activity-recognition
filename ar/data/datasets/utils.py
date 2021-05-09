@@ -4,8 +4,8 @@ from typing import Union
 
 
 def ucf_select_fold(base_path: Union[Path, str], annotation_path: Union[Path,
-                                                                         str],
-                     split: str, fold: int) -> Sequence[Path]:
+                                                                        str],
+                    split: str, fold: int) -> Sequence[Path]:
     base_path = Path(base_path)
     annotation_path = Path(annotation_path)
 
@@ -18,5 +18,6 @@ def ucf_select_fold(base_path: Union[Path, str], annotation_path: Union[Path,
 
 
 class IdentityMapping(dict):
+
     def __missing__(self, key):
         return key

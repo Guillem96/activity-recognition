@@ -10,6 +10,7 @@ from ar.typing import Transform
 
 
 class VideoFramesIterator(object):
+
     def __init__(self,
                  video_path: Path,
                  batch_size: int,
@@ -42,7 +43,8 @@ class VideoFramesIterator(object):
              do_transform: bool = False) -> torch.Tensor:
         video_it = self._video_reader.seek(from_sec)
         frames = [
-            f['data'] for i, f in enumerate(
+            f['data']
+            for i, f in enumerate(
                 itertools.takewhile(lambda x: x['pts'] < to_sec, video_it))
             if not do_skip_frames or (i % self.skip_frames == 0)
         ]
