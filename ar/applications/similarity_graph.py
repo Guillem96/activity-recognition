@@ -1,12 +1,14 @@
-from collections import OrderedDict
 import json
+from collections import OrderedDict
 from pathlib import Path
-from typing import List, Mapping, OrderedDict, Union
-import click
+from typing import List
+from typing import Mapping
+from typing import OrderedDict
+from typing import Union
 
+import click
 import torch
 import torch.nn.functional as F
-
 import tqdm.auto as tqdm
 
 import ar

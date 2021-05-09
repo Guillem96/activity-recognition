@@ -1,11 +1,14 @@
 import abc
-from pathlib import Path
-from typing import Tuple, Collection, Union, Sequence, Mapping
 import warnings
+from pathlib import Path
+from typing import Collection
+from typing import Mapping
+from typing import Sequence
+from typing import Tuple
+from typing import Union
 
 import torch
 import torch.utils.data as data
-
 import torchvision
 from torchvision.datasets.video_utils import VideoClips
 

@@ -1,17 +1,25 @@
-import click
-from typing import Any, Tuple, Optional, Union, Sequence, Type, Dict
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Sequence
+from typing import Tuple
+from typing import Type
+from typing import Union
 
+import click
 import torch
 import torch.optim as optim
 import torch.utils.data as data
-from torch.utils.tensorboard import SummaryWriter
-
 import torchvision.transforms as T
-from torchvision.datasets.samplers import UniformClipSampler, RandomClipSampler
+from torch.utils.tensorboard import SummaryWriter
+from torchvision.datasets.samplers import RandomClipSampler
+from torchvision.datasets.samplers import UniformClipSampler
 
 import ar
 import ar.transforms as VT
-from ar.typing import Transform, Optimizer, Scheduler
+from ar.typing import Optimizer
+from ar.typing import Scheduler
+from ar.typing import Transform
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 

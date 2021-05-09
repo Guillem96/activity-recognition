@@ -1,6 +1,6 @@
-import click
 from typing import Optional
 
+import click
 import torch
 import torchvision.io as io
 import torchvision.transforms as T

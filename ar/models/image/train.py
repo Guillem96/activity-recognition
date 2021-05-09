@@ -1,16 +1,18 @@
-import click
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
+from typing import Optional
 
+import click
 import torch
 import torch.optim as optim
-from torch.utils.data import DataLoader, Subset
-
 import torchvision
 import torchvision.transforms as T
+from torch.utils.data import DataLoader
+from torch.utils.data import Subset
 
 import ar
-from ar.typing import Optimizer, Scheduler
+from ar.typing import Optimizer
+from ar.typing import Scheduler
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

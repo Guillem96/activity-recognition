@@ -1,8 +1,14 @@
 import math
 import random
-from typing import Callable, Collection, Tuple, Sequence, List, Union
+from typing import Callable
+from typing import Collection
+from typing import List
+from typing import Sequence
+from typing import Tuple
+from typing import Union
 
 import torch
+
 from . import functional as F
 
 Transform = Callable[[torch.Tensor], torch.Tensor]

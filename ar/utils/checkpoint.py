@@ -1,8 +1,13 @@
 import abc
-import requests
 from pathlib import Path
-from typing import Any, Tuple, TypeVar, Type, Union, Optional
+from typing import Any
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import TypeVar
+from typing import Union
 
+import requests
 import torch
 import torch.nn as nn
 

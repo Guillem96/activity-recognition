@@ -4,6 +4,7 @@ from ar.data import build_image_ds
 from ar.data import build_video_candidates
 from ar.data import download
 
+
 @click.group()
 def main() -> None:
     pass

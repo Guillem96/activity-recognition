@@ -1,5 +1,6 @@
 import torch
 
+
 def SCI_weights(probabilities: torch.Tensor,
                 log_probs: bool = False,
                 from_logits: bool = False,

@@ -1,16 +1,17 @@
-import re
-import io
-import time
 import base64
-import requests
-from pathlib import Path
+import io
 import multiprocessing as mp
-from typing import Collection, Mapping, Union, Sequence
+import re
+import time
+from pathlib import Path
+from typing import Collection
+from typing import Mapping
+from typing import Sequence
+from typing import Union
 
 import click
-
+import requests
 from PIL import Image
-
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 

@@ -1,12 +1,15 @@
-from ar.data.build_image_ds import main
 import os
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List
+from typing import Optional
+from typing import Union
+
 import click
-
 import tqdm.auto as tqdm
+from googleapiclient.discovery import Resource
+from googleapiclient.discovery import build
 
-from googleapiclient.discovery import Resource, build
+from ar.data.build_image_ds import main
 
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'

@@ -1,17 +1,18 @@
 import gc
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List
+from typing import Tuple
+from typing import Union
 
 import click
-import tqdm.auto as tqdm
-
 import torch
 import torchvision
+import tqdm.auto as tqdm
 
 import ar
 import ar.transforms as T
-from ar.typing import Transform
 from ar.models.image import ImageClassifier
+from ar.typing import Transform
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

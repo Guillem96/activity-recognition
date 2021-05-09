@@ -1,4 +1,5 @@
-from typing import Tuple, Sequence
+from typing import Sequence
+from typing import Tuple
 
 import torch
 import torch.nn as nn

@@ -1,5 +1,5 @@
-import math
 import itertools
+import math
 from pathlib import Path
 from typing import Optional
 

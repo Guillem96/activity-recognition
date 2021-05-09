@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from typing import List
+from typing import Tuple
 
 import torch
 
@@ -199,8 +200,9 @@ def FstCN_sampling(video: torch.Tensor,
     List[List[torch.Tensor]]
         Each list item contains a list of clips cropped at different points
     """
-    import ar.transforms as VT
     import torchvision.transforms as T
+
+    import ar.transforms as VT
 
     def to_video(o: torch.Tensor) -> torch.Tensor:
         return _align_video(o, 'CTHW', video_fmt).mul(255).byte()

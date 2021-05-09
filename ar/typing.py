@@ -1,11 +1,12 @@
-from typing import Callable, Union, Optional
+from typing import Callable
+from typing import Optional
+from typing import Union
 
 import torch
-from torch.utils.data import Dataset, Subset
-from torch.utils.tensorboard import SummaryWriter
-
 from PIL import Image
-
+from torch.utils.data import Dataset
+from torch.utils.data import Subset
+from torch.utils.tensorboard import SummaryWriter
 
 Transform = Callable[[Union[torch.Tensor, Image.Image]], torch.Tensor]
 

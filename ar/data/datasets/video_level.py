@@ -1,11 +1,11 @@
-from ar.data.datasets.base import VideoLevelDataset
 from pathlib import Path
 from typing import Union
 
 from torchvision.datasets.folder import make_dataset
 
-from ar.typing import Transform
+from ar.data.datasets.base import VideoLevelDataset
 from ar.data.datasets.utils import ucf_select_fold
+from ar.typing import Transform
 
 
 class VideoLevelUCF101(VideoLevelDataset):

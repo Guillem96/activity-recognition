@@ -1,17 +1,21 @@
-import uuid
 import json
-import shutil
-import urllib
-import subprocess
 import multiprocessing
-from pathlib import Path
-from filelock import FileLock
+import shutil
+import subprocess
+import urllib
+import uuid
 from functools import partial
-from typing import Optional, Union, Mapping, Any, Tuple
+from pathlib import Path
+from typing import Any
+from typing import Mapping
+from typing import Optional
+from typing import Tuple
+from typing import Union
 
 import click
-import tqdm
 import pandas as pd
+import tqdm
+from filelock import FileLock
 from pytube import YouTube
 
 

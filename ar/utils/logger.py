@@ -1,14 +1,20 @@
-from datetime import datetime
 from collections import deque
-from typing import Union, Deque, Tuple, Any, Mapping, Dict
+from datetime import datetime
+from typing import Any
+from typing import Deque
+from typing import Dict
+from typing import Mapping
+from typing import Tuple
+from typing import Union
 
 import torch
 import tqdm.auto as tqdm
 
-from ar.typing import Number, TensorBoard
 from ar.data import ClipLevelDataset
 from ar.transforms import imagenet_stats
 from ar.transforms.functional import video_unnormalize
+from ar.typing import Number
+from ar.typing import TensorBoard
 
 
 class LogValue(object):

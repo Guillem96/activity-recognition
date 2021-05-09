@@ -1,16 +1,21 @@
-from typing import Collection, Optional, Mapping
-
-import torch
-import torch.nn as nn
-
-import torch.cuda.amp as amp
+from typing import Collection
+from typing import Mapping
+from typing import Optional
 
 import numpy as np
+import torch
+import torch.cuda.amp as amp
+import torch.nn as nn
 
+from ar.typing import LossFn
+from ar.typing import MetricFn
+from ar.typing import Optimizer
+from ar.typing import Scheduler
+from ar.typing import TensorBoard
+
+from .logger import LogValue
+from .logger import ValuesLogger
 from .nn import get_lr
-from .logger import LogValue, ValuesLogger
-from ar.typing import (Optimizer, LossFn, MetricFn, TensorBoard, Scheduler,
-                       TensorBoard)
 
 
 def seed(seed: int = 0) -> None:

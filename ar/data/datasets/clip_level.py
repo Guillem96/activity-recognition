@@ -1,12 +1,15 @@
-from ar.data.datasets.utils import IdentityMapping, ucf_select_fold
-from typing import Collection, Sequence, Union
 from pathlib import Path
+from typing import Collection
+from typing import Sequence
+from typing import Union
 
 from torchvision.datasets.folder import make_dataset
 from torchvision.datasets.video_utils import VideoClips
 
-from ar.typing import Transform
 from ar.data.datasets.base import ClipLevelDataset
+from ar.data.datasets.utils import IdentityMapping
+from ar.data.datasets.utils import ucf_select_fold
+from ar.typing import Transform
 
 
 class Kinetics400(ClipLevelDataset):

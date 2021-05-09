@@ -1,9 +1,11 @@
-import click
-from typing import Optional, Sequence, Mapping
-import tqdm.auto as tqdm
+from typing import Mapping
+from typing import Optional
+from typing import Sequence
 
+import click
 import torch
 import torchvision.transforms as T
+import tqdm.auto as tqdm
 
 import ar
 import ar.transforms as VT

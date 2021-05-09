@@ -3,7 +3,9 @@ Code adapted from
 https://github.com/pytorch/vision/blob/master/references/video_classification
 """
 
-from typing import Tuple, Union, List
+from typing import List
+from typing import Tuple
+from typing import Union
 
 import torch
 
