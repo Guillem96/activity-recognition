@@ -1,7 +1,7 @@
 import abc
 import warnings
 from pathlib import Path
-from typing import Tuple, Collection, Union, Sequence
+from typing import Tuple, Collection, Union, Sequence, Mapping
 
 import torch
 import torch.utils.data as data
@@ -12,18 +12,21 @@ from torchvision.datasets.video_utils import VideoClips
 
 from ar.typing import Transform
 
+_ClipDatasetSample = Tuple[torch.Tensor, torch.Tensor, int, dict]
+
 
 class ClipLevelDataset(data.Dataset, abc.ABC):
-
-    def __init__(self, 
-                 root: Union[Path, str], 
-                 split: str,
-                 frames_per_clip: int,
-                 step_between_clips: int = 1,
-                 frame_rate: int = None,
-                 transform: Transform = None,
-                 num_workers: int = 4,
-                 extensions: Collection[str] = ('mp4', 'avi')) -> None:
+    def __init__(
+        self,
+        root: Union[Path, str],
+        split: str,
+        frames_per_clip: int,
+        step_between_clips: int = 1,
+        frame_rate: int = None,
+        transform: Transform = None,
+        num_workers: int = 4,
+        extensions: Collection[str] = ('mp4', 'avi')
+    ) -> None:
 
         self.root = Path(root)
         self.split = split
@@ -34,91 +37,62 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         self._num_workers = num_workers
         self._extensions = extensions
 
-    def _build_video_clips(self, 
-                           paths: Collection[Union[str, Path]]) -> VideoClips:
-        return VideoClips(
-            paths,
-            self.frames_per_clip,
-            self.step_between_clips,
-            self.frame_rate,
-            None,
-            num_workers=self._num_workers,
-            _video_width=0,
-            _video_height=0,
-            _video_min_dimension=0,
-            _audio_samples=0,
-            _audio_channels=0)
+        self._classes = None
+        self._class_2_idx = None
+
+    def _build_video_clips(self) -> VideoClips:
+        return VideoClips(list(map(str, self.paths)),
+                          self.frames_per_clip,
+                          self.step_between_clips,
+                          self.frame_rate,
+                          None,
+                          num_workers=self._num_workers,
+                          _video_width=0,
+                          _video_height=0,
+                          _video_min_dimension=0,
+                          _audio_samples=0,
+                          _audio_channels=0)
 
     @abc.abstractproperty
     def split_root(self) -> Path:
         raise NotImplementedError()
-    
+
+    @abc.abstractproperty
+    def paths(self) -> Sequence[Path]:
+        raise NotImplementedError()
+
+    @abc.abstractproperty
+    def labels(self) -> Sequence[str]:
+        raise NotImplementedError()
+
+    @property
+    def classes(self) -> Sequence[str]:
+        if self._classes:
+            return self._classes
+        self._classes = sorted(list(set(self.labels)))
+        return self._classes
+
+    @property
+    def class_2_idx(self) -> Mapping[str, int]:
+        if self._class_2_idx:
+            return self._class_2_idx
+        self._class_2_idx = dict(enumerate(self.classes))
+        return self._class_2_idx
+
     @property
     def metadata(self) -> dict:
         return self.video_clips.metadata
-    
+
     @abc.abstractproperty
     def video_clips(self) -> VideoClips:
-        raise NotImplementedError()
-    
-    @abc.abstractproperty
-    def classes(self) -> Sequence[str]:
         raise NotImplementedError()
 
     def __len__(self) -> int:
         return self.video_clips.num_clips()
-    
-    @abc.abstractmethod
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, 
-                                             torch.Tensor,
-                                             int, dict]:
-        raise NotImplementedError()
 
-
-class Kinetics400(ClipLevelDataset):
-
-    def __init__(self, 
-                 root: Union[Path, str], 
-                 split: str,
-                 frames_per_clip: int,
-                 step_between_clips: int = 1,
-                 frame_rate: int = None,
-                 transform: Transform = None,
-                 num_workers: int = 4,
-                 extensions: Collection[str] = ('mp4', 'avi')) -> None:
-
-        super(Kinetics400, self).__init__(
-            root, split, frames_per_clip, step_between_clips, frame_rate,
-            transform, num_workers, extensions)
-
-        self._classes = sorted([o.stem for o in self.split_root.iterdir()])
-        self.class_to_idx = {c: i for i, c in enumerate(self.classes)}
-
-        self.samples = make_dataset(str(self.split_root), 
-                                    self.class_to_idx, 
-                                    extensions, 
-                                    is_valid_file=None)
-        self.videos_path = [x[0] for x in self.samples]
-
-        self._video_clips = self._build_video_clips(self.videos_path)
-
-    @property
-    def video_clips(self) -> VideoClips:
-        return self._video_clips
-
-    @property
-    def classes(self) -> Sequence[str]:
-        return self._classes
-
-    @property
-    def split_root(self) -> Path:
-        return self.root / self.split
-
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, 
-                                             torch.Tensor,
-                                             int, dict]:
+    def __getitem__(self, idx: int) -> _ClipDatasetSample:
         video, audio, info, video_idx = self.video_clips.get_clip(idx)
-        label = self.samples[video_idx][1]
+        label = self.class_2_idx[self.labels[video_idx]]
 
         if self.transform is not None:
             video = self.transform(video)
@@ -126,44 +100,82 @@ class Kinetics400(ClipLevelDataset):
         return video, audio, label, info
 
 
+class Kinetics400(ClipLevelDataset):
+    def __init__(
+        self,
+        root: Union[Path, str],
+        split: str,
+        frames_per_clip: int,
+        step_between_clips: int = 1,
+        frame_rate: int = None,
+        transform: Transform = None,
+        num_workers: int = 4,
+        extensions: Collection[str] = ('mp4', 'avi')
+    ) -> None:
+
+        super(Kinetics400,
+              self).__init__(root, split, frames_per_clip, step_between_clips,
+                             frame_rate, transform, num_workers, extensions)
+
+        self.samples = make_dataset(str(self.split_root),
+                                    _IdentityMapping(),
+                                    extensions,
+                                    is_valid_file=None)
+        self._videos_path = [x[0] for x in self.samples]
+        self._labels = [x[1] for x in self.samples]
+        self._video_clips = self._build_video_clips()
+
+    @property
+    def paths(self) -> Sequence[Path]:
+        return self._videos_path
+
+    @property
+    def labels(self) -> Sequence[str]:
+        return self._labels
+
+    @property
+    def video_clips(self) -> VideoClips:
+        return self._video_clips
+
+    @property
+    def split_root(self) -> Path:
+        return self.root / self.split
+
+
 class UCF101(ClipLevelDataset):
+    def __init__(
+        self,
+        root: Union[Path, str],
+        annotation_path: Union[Path, str],
+        split: str,
+        frames_per_clip: int,
+        fold: int = 1,
+        step_between_clips: int = 1,
+        frame_rate: int = None,
+        transform: Transform = None,
+        num_workers: int = 4,
+        extensions: Collection[str] = ('mp4', 'avi')
+    ) -> None:
 
-    def __init__(self, 
-                 root: Union[Path, str],
-                 annotation_path: Union[Path, str],
-                 split: str,
-                 frames_per_clip: int,
-                 fold: int = 1,
-                 step_between_clips: int = 1,
-                 frame_rate: int = None,
-                 transform: Transform = None,
-                 num_workers: int = 4,
-                 extensions: Collection[str] = ('mp4', 'avi')) -> None:
-
-        super(UCF101, self).__init__(
-            root, split, frames_per_clip, step_between_clips, frame_rate,
-            transform, num_workers, extensions)
+        super(UCF101,
+              self).__init__(root, split, frames_per_clip, step_between_clips,
+                             frame_rate, transform, num_workers, extensions)
 
         assert self.split in {'train', 'test'}, \
             'split argument must be either "train" or "test"'
 
         self.annotation_path = Path(annotation_path)
-        videos_path = ucf_select_fold(self.split_root, 
-                                      self.annotation_path, 
-                                      self.split, fold)
-        videos_path = [o for o in videos_path if o.suffix[1:] in extensions]
-        
+        videos_path = _ucf_select_fold(self.split_root, self.annotation_path,
+                                       self.split, fold)
+        self._videos_path = [
+            o for o in videos_path if o.suffix[1:] in extensions
+        ]
+
         # Get the video labels in str format
-        self.labels = [o.parent.stem for o in videos_path]
-        self.videos_path = list(map(str, videos_path))
-        
+        self._labels = [o.parent.name for o in videos_path]
+
         # Unique elements in the whole labels collection are the classes
-        self._classes = sorted(list(set(self.labels)))
-        self.class_to_idx = {c: i for i, c in enumerate(self.classes)}
-
-        self._video_clips = self._build_video_clips(self.videos_path)
-
-        self.transform = transform
+        self._video_clips = self._build_video_clips()
 
     @property
     def video_clips(self) -> VideoClips:
@@ -177,9 +189,8 @@ class UCF101(ClipLevelDataset):
     def split_root(self) -> Path:
         return self.root
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, 
-                                             torch.Tensor,
-                                             int, dict]:
+    def __getitem__(self,
+                    idx: int) -> Tuple[torch.Tensor, torch.Tensor, int, dict]:
         video, audio, info, video_idx = self.video_clips.get_clip(idx)
         label = self.class_to_idx[self.labels[video_idx]]
 
@@ -190,25 +201,24 @@ class UCF101(ClipLevelDataset):
 
 
 class VideoLevelDataset(data.Dataset, abc.ABC):
-
-    def __init__(self, 
+    def __init__(self,
                  video_paths: Sequence[Union[str, Path]],
                  labels: Sequence[str],
                  frame_rate: int = None,
                  transform: Transform = None) -> None:
-        
+
         self.video_paths = [str(o) for o in video_paths]
         self.labels = labels
         self.classes = sorted(list(set(labels)))
         self.class_2_idx = {c: i for i, c in enumerate(self.classes)}
         self.labels_ids = [self.class_2_idx[o] for o in self.labels]
-        
+
         self.frame_rate = frame_rate
         self.transform = transform
 
-    def resample_video(self, video: torch.Tensor, 
+    def resample_video(self, video: torch.Tensor,
                        original_fps: int) -> torch.Tensor:
-        
+
         if self.frame_rate is None:
             return video
 
@@ -223,11 +233,11 @@ class VideoLevelDataset(data.Dataset, abc.ABC):
 
     def __len__(self) -> int:
         return len(self.video_paths)
-    
+
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, int]:
-        video, audio, info = torchvision.io.read_video(
-            self.video_paths[idx], pts_unit='sec')
-        
+        video, audio, info = torchvision.io.read_video(self.video_paths[idx],
+                                                       pts_unit='sec')
+
         if video.nelement() == 0:
             warnings.warn(f'Error loading video {self.video_paths[idx]}')
             return video, audio, info
@@ -241,62 +251,66 @@ class VideoLevelDataset(data.Dataset, abc.ABC):
 
         if self.transform is not None:
             video = self.transform(video)
-        
+
         return video, audio, self.class_2_idx[self.labels[idx]]
 
 
 class VideoLevelUCF101(VideoLevelDataset):
-
-    def __init__(self, 
+    def __init__(self,
                  root: Union[Path, str],
                  annotation_path: Union[Path, str],
                  split: str,
                  fold: int = 1,
                  frame_rate: int = None,
                  transform: Transform = None):
-        
+
         assert split in {'train', 'test'}, \
             'split argument must be either "train" or "test"'
 
-        video_paths = ucf_select_fold(Path(root), 
-                                      Path(annotation_path),
-                                      split, fold)
+        video_paths = _ucf_select_fold(root, annotation_path, split, fold)
         labels = [o.parent.stem for o in video_paths]
-        super(VideoLevelUCF101, self).__init__(
-            video_paths, labels, frame_rate, transform)
+        super(VideoLevelUCF101, self).__init__(video_paths, labels, frame_rate,
+                                               transform)
 
 
 class VideoLevelKinetics(VideoLevelDataset):
-
-    def __init__(self, 
+    def __init__(self,
                  root: Union[Path, str],
                  split: str,
                  frame_rate: int = None,
                  transform: Transform = None):
-        
+
         assert split in {'train', 'test', 'valid'}, \
             'split argument must be either "train", "valid" or "test"'
-        
+
         path = Path(root, split)
         classes = sorted([o.stem for o in path.iterdir()])
         class_to_idx = {c: i for i, c in enumerate(classes)}
-        samples = make_dataset(str(path), class_to_idx, 
-                               ('mp4', 'avi'), is_valid_file=None)
+        samples = make_dataset(str(path),
+                               class_to_idx, ('mp4', 'avi'),
+                               is_valid_file=None)
 
         video_paths = [o[0] for o in samples]
         labels = [classes[i[1]] for i in samples]
 
-        super(VideoLevelKinetics, self).__init__(
-            video_paths, labels, frame_rate, transform)
+        super(VideoLevelKinetics, self).__init__(video_paths, labels,
+                                                 frame_rate, transform)
 
 
-def ucf_select_fold(base_path: Path,
-                    annotation_path: Path,
-                    split: str,
-                    fold: int) -> Sequence[Path]:
+def _ucf_select_fold(base_path: Union[Path, str], annotation_path: Union[Path,
+                                                                         str],
+                     split: str, fold: int) -> Sequence[Path]:
+    base_path = Path(base_path)
+    annotation_path = Path(annotation_path)
+
     name = f'{split}list{fold:02d}.txt'
     f = annotation_path / name
 
     video_files = f.read_text().split('\n')
     video_files = [o.strip().split()[0] for o in video_files if o]
     return list(set([base_path / o for o in video_files]))
+
+
+class _IdentityMapping(dict):
+    def __missing__(self, key):
+        return key
