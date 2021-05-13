@@ -7,13 +7,12 @@ import click
 import torch
 import torch.utils.data as data
 import torchvision.transforms as T
-from torchvision.datasets.samplers import RandomClipSampler
-from torchvision.datasets.samplers import UniformClipSampler
 
 import ar
 import ar.transforms as VT
-from ar.models.video.models import LRCN
+from ar.models.video.models import FstCN
 from ar.models.video.train_utils import default_collate_fn
+from ar.models.video.train_utils import dl_samplers
 from ar.models.video.train_utils import load_datasets
 from ar.models.video.train_utils import load_optimizer
 from ar.typing import PathLike
@@ -45,8 +44,8 @@ def data_preparation(
         VT.VideoResize((128, 171)),
         VT.VideoRandomCrop((112, 112)),
         VT.VideoRandomHorizontalFlip(),
-        VT.VideoNormalize(**VT.imagenet_stats),
         # VT.VideoRandomErase(scale=(0.02, 0.15))
+        VT.VideoNormalize(**VT.imagenet_stats),
     ])
 
     valid_tfms = T.Compose([
@@ -71,11 +70,7 @@ def data_preparation(
                                 unnormalize_videos=True,
                                 video_format='CTHW')
 
-    if hasattr(train_ds, 'video_clips'):
-        train_sampler = RandomClipSampler(train_ds.video_clips, 10)
-        valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
-    else:
-        raise ValueError('Video dataset must have the video_clips attribute')
+    train_sampler, valid_sampler = dl_samplers(train_ds, valid_ds)
 
     train_dl = data.DataLoader(train_ds,
                                batch_size=batch_size,
@@ -158,14 +153,15 @@ def _load_model(out_units: int,
 
     if resume_checkpoint is None:
         checkpoint: dict = dict()
-        model = LRCN(feature_extractor,
-                     out_units,
-                     freeze_feature_extractor=freeze_fe,
-                     **kwargs)
+        model = FstCN(feature_extractor=feature_extractor,
+                      n_classes=out_units,
+                      freeze_feature_extractor=freeze_fe,
+                      **kwargs)
+
     else:
-        model, checkpoint = LRCN.load(resume_checkpoint,
-                                      map_location=device,
-                                      freeze_feature_extractor=freeze_fe)
+        model, checkpoint = FstCN.load(resume_checkpoint,
+                                       map_location=device,
+                                       freeze_feature_extractor=freeze_fe)
 
     return model, checkpoint
 

@@ -5,8 +5,11 @@ from typing import Tuple
 
 import torch
 import torch.optim as optim
+from torchvision.datasets.samplers import RandomClipSampler
+from torchvision.datasets.samplers import UniformClipSampler
 
 import ar
+from ar.data.datasets.base import ClipLevelDataset
 
 
 def load_datasets(
@@ -119,3 +122,13 @@ def default_collate_fn(
         batch: Sequence[Any]) -> Tuple[torch.Tensor, torch.Tensor]:
     video, _, label, _ = zip(*batch)
     return torch.stack(video), torch.as_tensor(label)
+
+
+def dl_samplers(train_ds: ClipLevelDataset, valid_ds: ClipLevelDataset) -> Tuple[RandomClipSampler, UniformClipSampler]:
+    if all(hasattr(o, 'video_clips') for o in [train_ds, valid_ds]):
+        train_sampler = RandomClipSampler(train_ds.video_clips, 10)
+        valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
+    else:
+        raise ValueError('Video dataset must have the video_clips attribute')
+    
+    return train_sampler, valid_sampler

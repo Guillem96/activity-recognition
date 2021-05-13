@@ -229,6 +229,7 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
     freeze_feature_extractor: bool, False
         Whether or not to freeze the backbone.
     """
+
     def __init__(self,
                  feature_extractor: str,
                  n_classes: int,
@@ -303,7 +304,7 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
     def forward(self, clips: torch.Tensor) -> torch.Tensor:
         # clips: (BATCH, CHANNELS, FRAMES, H, W)
         # Temporal stride clips
-        V =  clips[:, :, ::self.st, ...]
+        V = clips[:, :, ::self.st, ...]
         b, _, f, *_ = V.size()
         clips_length = f - self.dt
 

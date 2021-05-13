@@ -14,6 +14,7 @@ import ar
 import ar.transforms as VT
 from ar.models.video.models import LRCN
 from ar.models.video.train_utils import default_collate_fn
+from ar.models.video.train_utils import dl_samplers
 from ar.models.video.train_utils import load_datasets
 from ar.models.video.train_utils import load_optimizer
 from ar.typing import PathLike
@@ -71,11 +72,7 @@ def data_preparation(
                                 unnormalize_videos=True,
                                 video_format='CTHW')
 
-    if hasattr(train_ds, 'video_clips'):
-        train_sampler = RandomClipSampler(train_ds.video_clips, 10)
-        valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
-    else:
-        raise ValueError('Video dataset must have the video_clips attribute')
+    train_sampler, valid_sampler = dl_samplers(train_ds, valid_ds)
 
     train_dl = data.DataLoader(train_ds,
                                batch_size=batch_size,
