@@ -7,8 +7,19 @@ import torchvision.models as zoo
 from ar.typing import Optimizer
 
 _FEATURE_EXTRACTORS = {
-    'resnet18', 'resnet50', 'resnet101', 'densenet121', 'densenet169',
-    'densenet201', 'densenet161', 'mobilenet_v2', 'inception_v3'
+    'resnet18',
+    'resnet50',
+    'resnet101',
+    'densenet121',
+    'densenet169',
+    'densenet201',
+    'densenet161',
+    'mobilenet_v2',
+    'inception_v3',
+}
+
+_VIDEO_FEATURE_EXTRACTORS = {
+    'r2plus1d_18',
 }
 
 
@@ -37,6 +48,31 @@ def get_lr(optimizer: Optimizer, reduce: str = 'first') -> float:
     else:
         n = len(optimizer.param_groups)
         return sum(o['lr'] for o in optimizer.param_groups) / float(n)
+
+
+def video_feature_extractor(fe: str,
+                            pretrained: bool = True) -> Tuple[nn.Module, int]:
+    """Given a architecture name builds the nn.Module outputing the features.
+
+    Parameters
+    ----------
+    fe : str
+        Name of the video CNN architecture
+    pretrained : bool, default True
+        If the the feature extractor has to be pretrained or not
+
+    Returns
+    -------
+    Tuple[nn.Module, int]
+    """
+    assert fe in _VIDEO_FEATURE_EXTRACTORS
+
+    if fe == 'r2plus1d_18':
+        r2plus1d_18 = zoo.video.r2plus1d_18(pretrained=pretrained)
+        module = nn.Sequential(r2plus1d_18.stem, r2plus1d_18.layer1,
+                               r2plus1d_18.layer2, r2plus1d_18.layer3,
+                               r2plus1d_18.layer4, r2plus1d_18.avgpool)
+        return module, r2plus1d_18.fc.in_features
 
 
 def image_feature_extractor(fe: str,

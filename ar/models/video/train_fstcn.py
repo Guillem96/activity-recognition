@@ -1,148 +1,20 @@
 from typing import Any
-from typing import Dict
 from typing import Optional
 from typing import Tuple
 
 import click
 import torch
-import torch.utils.data as data
-import torchvision.transforms as T
 
 import ar
-import ar.transforms as VT
 from ar.models.video.models import FstCN
-from ar.models.video.train_utils import default_collate_fn
-from ar.models.video.train_utils import dl_samplers
-from ar.models.video.train_utils import load_datasets
+from ar.models.video.train_utils import data_preparation
 from ar.models.video.train_utils import load_optimizer
+from ar.models.video.train_utils import train
 from ar.typing import PathLike
-from ar.typing import Scheduler
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-
-def data_preparation(
-        dataset: str,
-        *,
-        data_dir: PathLike,
-        frames_per_clip: int,
-        writer: ar.typing.TensorBoard,
-        batch_size: int,
-        annotations_path: Optional[PathLike] = None,
-        steps_between_clips: int = 1,
-        workers: int = 1,
-        validation_size: float = .1) -> Tuple[data.DataLoader, data.DataLoader]:
-    """
-    Loads the datasets with corresponding transformations and creates two data
-    loaders, one for train and validation
-    """
-
-    train_tfms = T.Compose([
-        VT.VideoToTensor(),
-        VT.VideoResize((128, 171)),
-        VT.VideoRandomCrop((112, 112)),
-        VT.VideoRandomHorizontalFlip(),
-        # VT.VideoRandomErase(scale=(0.02, 0.15))
-        VT.VideoNormalize(**VT.imagenet_stats),
-    ])
-
-    valid_tfms = T.Compose([
-        VT.VideoToTensor(),
-        VT.VideoResize((128, 171)),
-        VT.VideoCenterCrop((112, 112)),
-        VT.VideoNormalize(**VT.imagenet_stats),
-    ])
-
-    train_ds, valid_ds = load_datasets(dataset_type=dataset,
-                                       root=data_dir,
-                                       annotations_path=annotations_path,
-                                       frames_per_clip=frames_per_clip,
-                                       steps_between_clips=steps_between_clips,
-                                       workers=workers,
-                                       validation_size=validation_size,
-                                       train_transforms=train_tfms,
-                                       valid_transforms=valid_tfms)
-
-    ar.logger.log_random_videos(train_ds,
-                                writer=writer,
-                                unnormalize_videos=True,
-                                video_format='CTHW')
-
-    train_sampler, valid_sampler = dl_samplers(train_ds, valid_ds)
-
-    train_dl = data.DataLoader(train_ds,
-                               batch_size=batch_size,
-                               num_workers=workers,
-                               sampler=train_sampler,
-                               collate_fn=default_collate_fn,
-                               pin_memory=True)
-
-    valid_dl = data.DataLoader(valid_ds,
-                               batch_size=batch_size,
-                               num_workers=workers,
-                               sampler=valid_sampler,
-                               collate_fn=default_collate_fn,
-                               pin_memory=True)
-
-    return train_dl, valid_dl
-
-
-def train(model: ar.checkpoint.SerializableModule,
-          optimizer: torch.optim.Optimizer,
-          train_dl: data.DataLoader,
-          valid_dl: data.DataLoader,
-          *,
-          epochs: int,
-          grad_accum_steps: int,
-          train_from: dict,
-          fp16: bool,
-          save_checkpoint: PathLike,
-          summary_writer: Optional[ar.typing.TensorBoard],
-          scheduler: Optional[Scheduler] = None) -> Dict[str, float]:
-    """
-    Trains the models along specified epochs with the given train and validation
-    dataloader.
-    """
-    criterion_fn = torch.nn.NLLLoss()
-    starting_epoch = train_from.get('epoch', -1) + 1
-
-    metrics = [
-        ar.metrics.accuracy, ar.metrics.top_3_accuracy,
-        ar.metrics.top_5_accuracy
-    ]
-
-    for epoch in range(starting_epoch, epochs):
-        ar.engine.train_one_epoch(dl=train_dl,
-                                  model=model,
-                                  optimizer=optimizer,
-                                  scheduler=scheduler,
-                                  loss_fn=criterion_fn,
-                                  metrics=metrics,
-                                  grad_accum_steps=grad_accum_steps,
-                                  mixed_precision=fp16,
-                                  epoch=epoch,
-                                  summary_writer=summary_writer,
-                                  device=device)
-
-        eval_metrics = ar.engine.evaluate(dl=valid_dl,
-                                          model=model,
-                                          metrics=metrics,
-                                          loss_fn=criterion_fn,
-                                          epoch=epoch,
-                                          summary_writer=summary_writer,
-                                          mixed_precision=fp16,
-                                          device=device)
-
-        # Save the model jointly with the optimizer
-        model.save(
-            save_checkpoint,
-            epoch=epoch,
-            optimizer=optimizer.state_dict(),
-            scheduler=scheduler.state_dict() if scheduler is not None else {})
-
-    return eval_metrics
 
 
 def _load_model(out_units: int,
@@ -300,7 +172,8 @@ def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
                          fp16=fp16,
                          summary_writer=summary_writer,
                          train_from=checkpoint,
-                         save_checkpoint=save_checkpoint)
+                         save_checkpoint=save_checkpoint,
+                         device=device)
 
     if summary_writer is not None:
         hparams = {

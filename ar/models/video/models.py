@@ -366,6 +366,38 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
 ################################################################################
 
 
+class R2plus1_18(ar.utils.checkpoint.SerializableModule):
+
+    def __init__(self,
+                 n_classes: int,
+                 pretrained: bool = True,
+                 freeze_feature_extractor: bool = False) -> None:
+        super().__init__()
+
+        self.n_classes = n_classes
+        self.pretrained = pretrained
+        self.freeze_feature_extractor = freeze_feature_extractor
+
+        fe, in_features = ar.nn.video_feature_extractor('r2plus1d_18')
+        for p in fe.parameters():
+            p.requires_grad = not freeze_feature_extractor
+
+        self.module = nn.Sequential(fe, nn.Linear(in_features, n_classes))
+
+    def config(self) -> dict:
+        return {
+            'freeze_feature_extractor': self.freeze_feature_extractor,
+            'n_classes': self.n_classes,
+            'pretrained': False,
+        }
+
+    def forward(self, video: torch.Tensor) -> torch.Tensor:
+        return self.module(video).log_softmax(-1)
+
+
+################################################################################
+
+
 def _video_for_frame_level_fw(video: torch.Tensor) -> torch.Tensor:
     """Reshapes a video tensor so it can be feed at frame level to a spatial 
     CNN"""

@@ -6,7 +6,7 @@ import click
 import torch
 
 import ar
-from ar.models.video.models import LRCN
+from ar.models.video.models import R2plus1_18
 from ar.models.video.train_utils import data_preparation
 from ar.models.video.train_utils import load_optimizer
 from ar.models.video.train_utils import train
@@ -18,21 +18,19 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def _load_model(out_units: int,
-                feature_extractor: str,
                 freeze_fe: bool,
                 resume_checkpoint: Optional[PathLike] = None,
                 **kwargs: Any) -> Tuple[ar.checkpoint.SerializableModule, dict]:
 
     if resume_checkpoint is None:
         checkpoint: dict = dict()
-        model = LRCN(feature_extractor,
-                     out_units,
-                     freeze_feature_extractor=freeze_fe,
-                     **kwargs)
+        model = R2plus1_18(out_units,
+                           freeze_feature_extractor=freeze_fe,
+                           **kwargs)
     else:
-        model, checkpoint = LRCN.load(resume_checkpoint,
-                                      map_location=device,
-                                      freeze_feature_extractor=freeze_fe)
+        model, checkpoint = R2plus1_18.load(resume_checkpoint,
+                                            map_location=device,
+                                            freeze_feature_extractor=freeze_fe)
 
     return model, checkpoint
 
@@ -88,34 +86,17 @@ def _load_model(out_units: int,
               type=click.Path(dir_okay=False),
               default='models/model.pt',
               help='File to save the checkpoint')
-@click.option('--feature-extractor',
-              type=click.Choice(list(ar.nn._FEATURE_EXTRACTORS)),
-              default='resnet18')
 @click.option('--freeze-fe/--no-freeze-fe',
               default=False,
               help='Wether or not to fine tune the pretrained'
               ' feature extractor')
-@click.option('--rnn-units',
-              type=int,
-              default=512,
-              help='Hidden size of the LSTM layer added on top of the feature '
-              'extractors')
-@click.option('--fusion-mode',
-              type=click.Choice(['sum', 'attn', 'avg', 'last']),
-              default='sum',
-              help='How to aggregate the timestep level logits')
-@click.option('--bidirectional/--no-bidirectional',
-              default=True,
-              help='Wether to use a bidirectional LSTM or an '
-              ' autoregressive')
 def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
          validation_split: float, data_loader_workers: int,
          frames_per_clip: int, clips_stride: int, epochs: int, batch_size: int,
          optimizer: str, grad_accum_steps: int, learning_rate: float,
          scheduler: str, fp16: bool, logdir: Optional[PathLike],
          resume_checkpoint: PathLike, save_checkpoint: PathLike,
-         feature_extractor: str, freeze_fe: bool, rnn_units: int,
-         fusion_mode: str, bidirectional: bool) -> None:
+         freeze_fe: bool) -> None:
     ar.engine.seed()
 
     if logdir:
@@ -136,12 +117,8 @@ def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
     n_classes = len(train_dl.dataset.classes)
 
     model, checkpoint = _load_model(n_classes,
-                                    feature_extractor=feature_extractor,
                                     freeze_fe=freeze_fe,
-                                    resume_checkpoint=resume_checkpoint,
-                                    rnn_units=rnn_units,
-                                    bidirectional=bidirectional,
-                                    fusion_mode=fusion_mode)
+                                    resume_checkpoint=resume_checkpoint)
     model.to(device)
 
     torch_optimizer, torch_scheduler = load_optimizer(

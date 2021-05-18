@@ -1,15 +1,21 @@
 from typing import Any
+from typing import Dict
 from typing import Optional
 from typing import Sequence
 from typing import Tuple
 
 import torch
 import torch.optim as optim
+import torch.utils.data as data
+import torchvision.transforms as T
 from torchvision.datasets.samplers import RandomClipSampler
 from torchvision.datasets.samplers import UniformClipSampler
 
 import ar
+import ar.transforms as VT
 from ar.data.datasets.base import ClipLevelDataset
+from ar.typing import PathLike
+from ar.typing import Scheduler
 
 
 def load_datasets(
@@ -124,11 +130,148 @@ def default_collate_fn(
     return torch.stack(video), torch.as_tensor(label)
 
 
-def dl_samplers(train_ds: ClipLevelDataset, valid_ds: ClipLevelDataset) -> Tuple[RandomClipSampler, UniformClipSampler]:
+def dl_samplers(
+        train_ds: ClipLevelDataset, valid_ds: ClipLevelDataset
+) -> Tuple[RandomClipSampler, UniformClipSampler]:
     if all(hasattr(o, 'video_clips') for o in [train_ds, valid_ds]):
         train_sampler = RandomClipSampler(train_ds.video_clips, 10)
         valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
     else:
         raise ValueError('Video dataset must have the video_clips attribute')
-    
+
     return train_sampler, valid_sampler
+
+
+def data_preparation(
+        dataset: str,
+        *,
+        data_dir: PathLike,
+        frames_per_clip: int,
+        batch_size: int,
+        video_size: Optional[Tuple[int, int]] = None,
+        size_before_crop: Optional[Tuple[int, int]] = None,
+        annotations_path: Optional[PathLike] = None,
+        writer: Optional[ar.typing.TensorBoard] = None,
+        steps_between_clips: int = 1,
+        workers: int = 1,
+        validation_size: float = .1) -> Tuple[data.DataLoader, data.DataLoader]:
+    """
+    Loads the datasets with corresponding transformations and creates two data
+    loaders, one for train and validation
+    """
+
+    size_before_crop = size_before_crop or (128, 171)
+    video_size = video_size or (112, 112)
+
+    if any(size_before_crop[i] < video_size[i] for i in range(2)):
+        raise ValueError(f'size_before_crop must {size_before_crop} '
+                         f'be larger than the video_size {video_size}')
+
+    train_tfms = T.Compose([
+        VT.VideoToTensor(),
+        VT.VideoResize(size_before_crop),
+        VT.VideoRandomCrop(video_size),
+        VT.VideoRandomHorizontalFlip(),
+        # VT.VideoRandomErase(scale=(0.02, 0.15))
+        VT.VideoNormalize(**VT.imagenet_stats),
+    ])
+
+    valid_tfms = T.Compose([
+        VT.VideoToTensor(),
+        VT.VideoResize(size_before_crop),
+        VT.VideoCenterCrop(video_size),
+        VT.VideoNormalize(**VT.imagenet_stats),
+    ])
+
+    train_ds, valid_ds = load_datasets(dataset_type=dataset,
+                                       root=data_dir,
+                                       annotations_path=annotations_path,
+                                       frames_per_clip=frames_per_clip,
+                                       steps_between_clips=steps_between_clips,
+                                       workers=workers,
+                                       validation_size=validation_size,
+                                       train_transforms=train_tfms,
+                                       valid_transforms=valid_tfms)
+
+    if writer:
+        ar.logger.log_random_videos(train_ds,
+                                    writer=writer,
+                                    unnormalize_videos=True,
+                                    video_format='CTHW')
+
+    train_sampler, valid_sampler = dl_samplers(train_ds, valid_ds)
+
+    train_dl = data.DataLoader(train_ds,
+                               batch_size=batch_size,
+                               num_workers=workers,
+                               sampler=train_sampler,
+                               collate_fn=default_collate_fn,
+                               pin_memory=True)
+
+    valid_dl = data.DataLoader(valid_ds,
+                               batch_size=batch_size,
+                               num_workers=workers,
+                               sampler=valid_sampler,
+                               collate_fn=default_collate_fn,
+                               pin_memory=True)
+
+    return train_dl, valid_dl
+
+
+def train(
+    model: ar.checkpoint.SerializableModule,
+    optimizer: torch.optim.Optimizer,
+    train_dl: data.DataLoader,
+    valid_dl: data.DataLoader,
+    *,
+    epochs: int,
+    grad_accum_steps: int,
+    train_from: dict,
+    fp16: bool,
+    save_checkpoint: PathLike,
+    summary_writer: Optional[ar.typing.TensorBoard],
+    scheduler: Optional[Scheduler] = None,
+    device: torch.device = torch.device('cpu')
+) -> Dict[str, float]:
+    """
+    Trains the models along specified epochs with the given train and validation
+    dataloader.
+    """
+    criterion_fn = torch.nn.NLLLoss()
+    starting_epoch = train_from.get('epoch', -1) + 1
+
+    metrics = [
+        ar.metrics.accuracy, ar.metrics.top_3_accuracy,
+        ar.metrics.top_5_accuracy
+    ]
+
+    for epoch in range(starting_epoch, epochs):
+        ar.engine.train_one_epoch(dl=train_dl,
+                                  model=model,
+                                  optimizer=optimizer,
+                                  scheduler=scheduler,
+                                  loss_fn=criterion_fn,
+                                  metrics=metrics,
+                                  grad_accum_steps=grad_accum_steps,
+                                  mixed_precision=fp16,
+                                  epoch=epoch,
+                                  summary_writer=summary_writer,
+                                  device=device)
+
+        eval_metrics = ar.engine.evaluate(dl=valid_dl,
+                                          model=model,
+                                          metrics=metrics,
+                                          loss_fn=criterion_fn,
+                                          epoch=epoch,
+                                          summary_writer=summary_writer,
+                                          mixed_precision=fp16,
+                                          device=device)
+
+        # Save the model jointly with the optimizer
+        model.save(
+            save_checkpoint,
+            epoch=epoch,
+            optimizer=optimizer.state_dict(),
+            scheduler=scheduler.state_dict() if scheduler is not None else {})
+
+    return eval_metrics
