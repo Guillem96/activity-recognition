@@ -352,7 +352,6 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
 
         # tcl_features: (BATCH, H' x W', FRAMES, FEATURES')
         tcl_features = tcl_features.permute(0, 3, 1, 2) @ self.P
-        print(tcl_features.size())
 
         # tcl_features: (BATCH, TEMP_FEATURES, H', W')
         tcl_features = self.tcl_temp_conv(tcl_features)
@@ -399,9 +398,10 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
 
 ################################################################################
 
+_BOTTLENECK_EXPANSION = 4
+
 
 class _Bottleneck(nn.Module):
-    expansion = 4
 
     def __init__(self,
                  inplanes: int,
@@ -430,9 +430,10 @@ class _Bottleneck(nn.Module):
         # 1x1x1
         self.conv3 = nn.Sequential(
             nn.Conv3d(planes,
-                      planes * self.expansion,
+                      planes * _BOTTLENECK_EXPANSION,
                       kernel_size=1,
-                      bias=False), nn.BatchNorm3d(planes * self.expansion))
+                      bias=False),
+            nn.BatchNorm3d(planes * _BOTTLENECK_EXPANSION))
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
@@ -457,83 +458,6 @@ class _NoDegenTempBottleNeck(_Bottleneck):
         super().__init__(*args, **kwargs, non_temp_degen=True)
 
 
-class _PathWay(nn.Module):
-
-    def __init__(self,
-                 blocks_classes: Sequence[Type[nn.Module]],
-                 strides: Sequence[int] = (1, 2, 2, 2),
-                 beta: float = 1 / 8):
-        super().__init__()
-
-        if len(blocks_classes) != 4:
-            raise ValueError(
-                "PathWay has 4 layers. "
-                f"You provided {len(blocks_classes)} block classes")
-
-        # Features of each layer
-        self.inplanes = int(64 * beta)
-        features = [int(o * beta) for o in [64, 128, 256, 256]]
-
-        self.stem = nn.Sequential(
-            nn.Conv3d(3,
-                      int(64 * beta),
-                      kernel_size=(1, 7, 7),
-                      stride=(1, 2, 2),
-                      padding=(0, 3, 3)),
-            nn.MaxPool3d(kernel_size=(1, 3, 3),
-                         stride=(1, 2, 2),
-                         padding=(0, 1, 1)))
-
-        self.layers = nn.ModuleList([
-            self._make_layer(block_cls=blocks_classes[i],
-                             conv_cls=resnet3d.Conv3DNoTemporal,
-                             features=features[i],
-                             blocks=2,
-                             stride=strides[i]) for i in range(4)
-        ])
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.stem(x)
-        laterals = [x]
-
-        for i in range(len(self.layers)):
-            x = self.layers[i](x)
-            print(f'res{i + 2}', x.size())
-            print('------------------------')
-            laterals.append(x)
-
-        return x, laterals[:-1]
-
-    def _make_layer(self,
-                    block_cls: Type[nn.Module],
-                    conv_cls: Type[nn.Module],
-                    features: int,
-                    blocks: int,
-                    stride: int = 1) -> nn.Module:
-        downsample = None
-
-        if stride != 1 or self.inplanes != features * block_cls.expansion:
-            ds_stride = conv_cls.get_downsample_stride(stride)
-            downsample = nn.Sequential(
-                nn.Conv3d(self.inplanes,
-                          features * block_cls.expansion,
-                          kernel_size=1,
-                          stride=ds_stride,
-                          bias=False),
-                nn.BatchNorm3d(features * block_cls.expansion))
-
-        layers = [
-            block_cls(self.inplanes, features, conv_cls, stride, downsample)
-        ]
-
-        self.inplanes = features * block_cls.expansion
-        layers += [
-            block_cls(self.inplanes, features, conv_cls)
-            for _ in range(1, blocks)
-        ]
-        return nn.Sequential(*layers)
-
-
 class _TimeToChannelFusion(nn.Module):
 
     def __init__(self, alpha: float, beta: float) -> None:
@@ -548,7 +472,7 @@ class _TimeToChannelFusion(nn.Module):
         b, c, t, h, w = slow_x.size()
 
         # fast_x: (BATCH, βαC, T, H, W)
-        fast_x = fast_x.view(b, self.alpha * self.beta * c, t, h, w)
+        fast_x = fast_x.view(b, int(self.alpha * self.beta * c), t, h, w)
 
         return slow_x + fast_x
 
@@ -562,18 +486,23 @@ class _TimeStridedSampleFuse(nn.Module):
     def forward(self, slow_x: torch.Tensor,
                 fast_x: torch.Tensor) -> torch.Tensor:
         fast_selected_frames = fast_x[:, :, ::self.alpha]
-        return slow_x + fast_selected_frames
+        return torch.cat([slow_x, fast_selected_frames], dim=1)
 
 
 class _TimeStridedConvFuse(nn.Module):
 
-    def __init__(self, fast_features: int, alpha: float, beta: float) -> None:
+    def __init__(self, slow_features: int, alpha: float, beta: float) -> None:
         super().__init__()
+        fast_features = int(slow_features * beta)
+
+        # Differs from paper description.
+        # Time strided conv to downsample 32 frames from fast pathway to
+        # 4 frames of slow path
         self.conv = nn.Sequential(
             nn.Conv3d(fast_features,
-                      beta * fast_features,
+                      fast_features * 2,
                       kernel_size=(5, 1, 1),
-                      stride=alpha), nn.BatchNorm3d(beta * fast_features),
+                      stride=(alpha, 1, 1)), nn.BatchNorm3d(fast_features * 2),
             nn.ReLU(inplace=True))
 
     def forward(self, slow_x: torch.Tensor,
@@ -581,7 +510,7 @@ class _TimeStridedConvFuse(nn.Module):
         # slow_x: (BATCH, C, T, H, W)
         # fast_x: (BATCH, βC, αT, H, W)
         fast_x = self.conv(fast_x)
-        return slow_x + fast_x
+        return torch.cat([slow_x, fast_x], dim=1)
 
 
 class _FusionFastSlow(nn.Module):
@@ -601,20 +530,196 @@ class _FusionFastSlow(nn.Module):
                              'Choose one of ["time-to-channel", '
                              '"time-strided-sample", "time-strided-conv"]')
 
-    def forward(self, 
-                slow_x: torch.Tensor,
+    def forward(self, slow_x: torch.Tensor,
                 fast_x: torch.Tensor) -> torch.Tensor:
         return self.fuser(slow_x, fast_x)
 
 
-class SlowFast(ar.utils.checkpoint.SerializableModule):
+class _PathWay(nn.Module):
 
     def __init__(self,
+                 blocks_classes: Sequence[Type[nn.Module]],
                  alpha: float = 8,
                  beta: float = 1 / 8,
+                 strides: Sequence[int] = (1, 2, 2, 2),
+                 is_slow: bool = False,
+                 fusion_mode: Optional[str] = None) -> None:
+
+        super().__init__()
+
+        if len(blocks_classes) != 4:
+            raise ValueError(
+                "PathWay has 4 layers. "
+                f"You provided {len(blocks_classes)} block classes")
+
+        if is_slow and not fusion_mode:
+            raise ValueError('You have to provide a fusion_mode if '
+                             'is_slow=True')
+        elif not is_slow and fusion_mode:
+            raise ValueError('is_slow=False (Fastpathway) is not compatible '
+                             'with fusion_mode.')
+
+        self.alpha = alpha
+        self.beta = beta
+        self.fusion_mode = fusion_mode
+        self.is_slow = is_slow
+
+        # Features of each layer
+        # If we are in a fast pathway we downscale the features by beta
+        features_scale = 1 if is_slow else beta
+        features = [int(o * features_scale) for o in [64, 128, 256, 256]]
+        self._output_features = features[-1] * _BOTTLENECK_EXPANSION
+
+        # Fusion features
+        self.inplanes = int(64 * features_scale)
+
+        if fusion_mode:
+            # Compute the features for residual connections
+            # Note that for the first residual connection we do not have to
+            # take into account the bottleneck expansion.
+            fusion_features = [
+                int(_BOTTLENECK_EXPANSION * f) for f in features[:-1]
+            ]
+            fusion_features = [self.inplanes] + fusion_features
+
+            self.fusers = nn.ModuleList([
+                _FusionFastSlow(fusion_mode, f, alpha, beta)
+                for f in fusion_features
+            ])
+        else:
+            # No track fusion features in fast path
+            fusion_features = [None] * len(features)
+
+        self.stem = nn.Sequential(
+            nn.Conv3d(in_channels=3,
+                      out_channels=int(64 * features_scale),
+                      kernel_size=(1, 7, 7),
+                      stride=(1, 2, 2),
+                      padding=(0, 3, 3)),
+            nn.MaxPool3d(kernel_size=(1, 3, 3),
+                         stride=(1, 2, 2),
+                         padding=(0, 1, 1)))
+
+        # Residual layers
+        # If the fusion mode concatenates instead of sum, the in_features
+        # for the subsequent layers change
+        layers_extra_inp_feat = [
+            self._compute_extra_input(ff) for ff in fusion_features
+        ]
+        self.layers = nn.ModuleList([
+            self._make_layer(
+                block_cls=blocks_classes[i],
+                features=features[i],
+                blocks=2,
+                stride=strides[i],
+                extra_inp_features=layers_extra_inp_feat[i],
+            ) for i in range(4)
+        ])
+
+    def _compute_extra_input(self, fusion_features: int) -> int:
+        if self.is_slow and self.fusion_mode == 'time-strided-sample':
+            return int(self.beta * fusion_features)
+        elif self.is_slow and self.fusion_mode == 'time-strided-conv':
+            return int(self.beta * 2 * fusion_features)
+        else:
+            return 0
+
+    @property
+    def output_features(self) -> int:
+        return self._output_features
+
+    def forward(
+            self,
+            x: torch.Tensor,
+            residuals: Optional[Sequence[torch.Tensor]] = None) -> torch.Tensor:
+
+        x = self.stem(x)
+        laterals = [x]
+
+        if residuals:
+            x = self.fusers[0](x, residuals[0])
+
+        for i in range(len(self.layers)):
+            x = self.layers[i](x)
+            if residuals and (i + 1) < len(residuals):
+                x = self.fusers[i + 1](x, residuals[i + 1])
+            laterals.append(x)
+
+        return x, laterals[:-1]
+
+    def _make_layer(self,
+                    block_cls: Type[nn.Module],
+                    features: int,
+                    blocks: int,
+                    stride: int = 1,
+                    extra_inp_features: int = 0) -> nn.Module:
+        downsample = None
+
+        if stride != 1 or self.inplanes != features * _BOTTLENECK_EXPANSION:
+            ds_stride = resnet3d.Conv3DNoTemporal.get_downsample_stride(stride)
+            downsample = nn.Sequential(
+                nn.Conv3d(self.inplanes + extra_inp_features,
+                          features * _BOTTLENECK_EXPANSION,
+                          kernel_size=1,
+                          stride=ds_stride,
+                          bias=False),
+                nn.BatchNorm3d(features * _BOTTLENECK_EXPANSION))
+
+        layers = [
+            block_cls(self.inplanes + extra_inp_features, features,
+                      resnet3d.Conv3DNoTemporal, stride, downsample)
+        ]
+
+        self.inplanes = features * _BOTTLENECK_EXPANSION
+        layers += [
+            block_cls(self.inplanes, features, resnet3d.Conv3DNoTemporal)
+            for _ in range(1, blocks)
+        ]
+        return nn.Sequential(*layers)
+
+
+class SlowFast(ar.utils.checkpoint.SerializableModule):
+    """Implementation of the SlowFast model.
+
+    Model described in the article "SlowFast Networks for Video Recognition"
+    (https://arxiv.org/pdf/1812.03982.pdf).
+
+    Parameters
+    ----------
+    n_classes: int
+        Number of model outputs to perform classification.
+    alpha: float, defaults 8
+        Rate of frames of fast path with respect the slow one.
+    beta: float, defaults 1/8
+        Proportion of features of fast pathway with respect the slow one.
+    tau: int, defaults 16
+        Stride to sample frames for slow path.
+    dropout: float, default .3
+        Prob of dropout applied after concatenating the 
+        features from both paths.
+    fusion_mode: str, defaults time-strided-conv'
+        Fusion method for the residual connections from fast to slow path.
+        Either 'time-to-channel', 'time-strided-sample' or 'time-strided-conv'.
+    """
+    def __init__(self,
+                 n_classes: int,
+                 alpha: float = 8,
+                 beta: float = 1 / 8,
+                 tau: int = 16,
+                 dropout: float = .3,
                  fusion_mode: str = 'time-strided-conv') -> None:
 
         super().__init__()
+
+        self.n_classes = n_classes
+
+        self.tau = tau
+        self.beta = beta
+        self.alpha = alpha
+        self.fusion_mode = fusion_mode
+
+        self.slow_stride = self.tau
+        self.fast_stride = self.tau // self.alpha
 
         slow_blocks = [
             _Bottleneck, _Bottleneck, _NoDegenTempBottleNeck,
@@ -626,15 +731,47 @@ class SlowFast(ar.utils.checkpoint.SerializableModule):
             _NoDegenTempBottleNeck, _NoDegenTempBottleNeck
         ]
 
-        self.slowpath = _PathWay(slow_blocks, beta=1)
-        self.fastpath = _PathWay(fast_blocks, beta=1 / 8)
+        self.slowpath = _PathWay(slow_blocks,
+                                 alpha=self.alpha,
+                                 beta=self.beta,
+                                 is_slow=True,
+                                 fusion_mode=self.fusion_mode)
+        self.fastpath = _PathWay(fast_blocks,
+                                 alpha=self.alpha,
+                                 beta=self.beta,
+                                 is_slow=False)
+
+        self._out_features = (self.slowpath.output_features +
+                              self.fastpath.output_features)
+
+        self.avg_pool = nn.AdaptiveAvgPool3d((1, 1, 1))
+        self.dropout = nn.Dropout(dropout)
+        self.linear = nn.Linear(self._out_features, n_classes)
 
     def config(self) -> dict:
-        return {}
+        return {
+            'n_classes': self.n_classes,
+            'alpha': self.alpha,
+            'beta': self.beta,
+            'tau': self.tau,
+            'fusion_mode': self.fusion_mode,
+        }
 
     def forward(self, video: torch.Tensor) -> torch.Tensor:
-        fast_out, laterals = self.fastpath(video)
-        slow_out, _ = self.slowpath(video)
+        slow_video = video[:, :, ::self.slow_stride]
+        fast_video = video[:, :, ::self.fast_stride]
+
+        fast_out, laterals = self.fastpath(fast_video)
+        slow_out, _ = self.slowpath(slow_video, laterals)
+
+        pooled_fast = self.avg_pool(fast_out)
+        pooled_slow = self.avg_pool(slow_out)
+
+        pooled_features = torch.cat([pooled_fast, pooled_slow], dim=1)
+        pooled_features = pooled_features.view(-1, self._out_features)
+        pooled_features = self.dropout(pooled_features)
+
+        return self.linear(pooled_features).log_softmax(-1)
 
 
 ################################################################################
