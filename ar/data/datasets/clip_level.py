@@ -95,9 +95,5 @@ class UCF101(ClipLevelDataset):
         return self._video_clips
 
     @property
-    def classes(self) -> Sequence[str]:
-        return self._classes
-
-    @property
     def split_root(self) -> Path:
         return self.root

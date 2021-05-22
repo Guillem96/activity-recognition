@@ -72,7 +72,9 @@ def video_feature_extractor(fe: str,
         module = nn.Sequential(r2plus1d_18.stem, r2plus1d_18.layer1,
                                r2plus1d_18.layer2, r2plus1d_18.layer3,
                                r2plus1d_18.layer4, r2plus1d_18.avgpool)
-        return module, r2plus1d_18.fc.in_features
+        in_features = r2plus1d_18.fc.in_features
+
+    return module, in_features
 
 
 def image_feature_extractor(fe: str,

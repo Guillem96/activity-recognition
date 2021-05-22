@@ -95,7 +95,7 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
     print('done')
 
     print('Loading model... ', end='')
-    model: Optional[ar.checkpoint.SerializableModule] = None
+    model: Optional[ar.utils.checkpoint.SerializableModule] = None
     if model_arch == 'LRCN':
         model = ar.video.LRCN.from_pretrained(checkpoint)
         model.eval()

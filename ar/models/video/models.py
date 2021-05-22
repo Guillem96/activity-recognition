@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 from typing import Sequence
 from typing import Type
 
@@ -439,7 +439,7 @@ class _Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         residual = x
 
         out = self.conv1(x)
@@ -455,8 +455,9 @@ class _Bottleneck(nn.Module):
 
 class _NoDegenTempBottleNeck(_Bottleneck):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs, non_temp_degen=True)
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs['non_temp_degen'] = False
+        super().__init__(*args, **kwargs)
 
 
 class _TimeToChannelFusion(nn.Module):
@@ -589,7 +590,7 @@ class _PathWay(nn.Module):
             ])
         else:
             # No track fusion features in fast path
-            fusion_features = [None] * len(features)
+            fusion_features = [0] * len(features)
 
         self.stem = nn.Sequential(
             nn.Conv3d(in_channels=3,
@@ -721,7 +722,7 @@ class SlowFast(ar.utils.checkpoint.SerializableModule):
         self.fusion_mode = fusion_mode
 
         self.slow_stride = self.tau
-        self.fast_stride = self.tau // self.alpha
+        self.fast_stride = int(self.tau // self.alpha)
 
         slow_blocks = [
             _Bottleneck, _Bottleneck, _NoDegenTempBottleNeck,

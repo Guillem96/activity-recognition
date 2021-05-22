@@ -20,7 +20,7 @@ def _load_model(
     out_units: int,
     alpha: float,
     beta: float,
-    tau: float,
+    tau: int,
     dropout: float,
     fusion_mode: str,
     resume_checkpoint: Optional[PathLike] = None,

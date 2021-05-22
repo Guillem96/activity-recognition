@@ -109,7 +109,7 @@ def download_clip(video_identifier: str,
 
     tmp_filename = Path(tmp_dir, str(fname) + '.mp4')
 
-    if start_time is None and end_time is None:
+    if start_time is None or end_time is None:
         shutil.copy(str(tmp_filename), str(output_filename))
     else:
         command = ' '.join([

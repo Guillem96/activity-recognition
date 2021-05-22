@@ -1,7 +1,7 @@
 import abc
 import warnings
 from pathlib import Path
-from typing import Collection
+from typing import Collection, List
 from typing import Mapping
 from typing import Optional
 from typing import Sequence
@@ -40,8 +40,8 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         self._num_workers = num_workers
         self._extensions = extensions
 
-        self._classes = None
-        self._class_2_idx = None
+        self._classes: Optional[List[str]] = None
+        self._class_2_idx: Optional[Mapping[str, int]] = None
 
     def _build_video_clips(self) -> VideoClips:
         return VideoClips(list(map(str, self.paths)),
@@ -69,7 +69,7 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         raise NotImplementedError()
 
     @property
-    def classes(self) -> Sequence[str]:
+    def classes(self) -> List[str]:
         if self._classes:
             return self._classes
         self._classes = sorted(list(set(self.labels)))
@@ -79,7 +79,7 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
     def class_2_idx(self) -> Mapping[str, int]:
         if self._class_2_idx:
             return self._class_2_idx
-        self._class_2_idx = dict(enumerate(self.classes))
+        self._class_2_idx = {c: i for i, c in enumerate(self.classes)}
         return self._class_2_idx
 
     @property

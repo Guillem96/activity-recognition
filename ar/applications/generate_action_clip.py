@@ -65,7 +65,7 @@ def _find_video_clips(video: torch.Tensor,
 def _process_videofile(video_path: Path, skip_frames: int, clip_len: int,
                        batch_size: int, n_clips: int, tfms: Transform,
                        model: torch.nn.Module, classes: List[str],
-                       out_dir: Path):
+                       out_dir: Path) -> None:
 
     video_it = ar.io.VideoFramesIterator(video_path,
                                          batch_size=batch_size,

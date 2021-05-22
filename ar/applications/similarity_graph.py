@@ -68,6 +68,8 @@ def main(video_path: Union[str, Path], feature_extractor: str, skip_frames: int,
     out = Path(out)
     out.parent.mkdir(exist_ok=True, parents=True)
 
+    video_path = Path(video_path)
+
     model, _ = ar.nn.image_feature_extractor(feature_extractor)
     model.eval()
     model.to(device)

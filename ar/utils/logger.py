@@ -1,5 +1,7 @@
 from collections import deque
 from datetime import datetime
+from math import log
+from pathlib import Path
 from typing import Any
 from typing import Deque
 from typing import Dict
@@ -13,7 +15,7 @@ import tqdm.auto as tqdm
 from ar.data import ClipLevelDataset
 from ar.transforms import imagenet_stats
 from ar.transforms.functional import video_unnormalize
-from ar.typing import Number
+from ar.typing import Number, PathLike
 from ar.typing import TensorBoard
 
 
@@ -108,17 +110,18 @@ class ValuesLogger(object):
         return {k: v.mean.item() for k, v in self.values.items()}
 
 
-def build_summary_writter(log_dir: str) -> TensorBoard:
+def build_summary_writter(log_dir: PathLike) -> TensorBoard:
     """
     Builds a hierarchical log directory structure for ease of experiments 
     tracking
 
     Parameters
     ----------
-    log_dir: str
+    log_dir: PathLike
         Base log directory. Given a log_dir this method adds a unique identifier
         as a postfix
     """
+    log_dir = str(log_dir)
     if log_dir.endswith('/'):
         log_dir = log_dir[:-1]
 

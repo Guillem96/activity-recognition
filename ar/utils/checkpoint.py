@@ -1,4 +1,5 @@
 import abc
+from ar.typing import PathLike
 from pathlib import Path
 from typing import Any
 from typing import Optional
@@ -26,14 +27,14 @@ class SerializableModule(nn.Module, abc.ABC):
     def config(self) -> dict:
         raise NotImplemented
 
-    def save(self, path: str, **kwargs: Any) -> None:
+    def save(self, path: PathLike, **kwargs: Any) -> None:
         checkpoint = dict(config=self.config(),
                           model=self.state_dict(),
                           **kwargs)
         torch.save(checkpoint, path)
 
     @classmethod
-    def load(cls: Type[T], path: str, map_location: torch.device,
+    def load(cls: Type[T], path: PathLike, map_location: torch.device,
              **kwargs: Any) -> Tuple[T, dict]:
 
         checkpoint = torch.load(path, map_location=map_location)
@@ -47,9 +48,9 @@ class SerializableModule(nn.Module, abc.ABC):
 
     @classmethod
     def from_pretrained(cls: Type[T],
-                        name_or_path: Union[str, Path],
+                        name_or_path: PathLike,
                         map_location: torch.device = torch.device('cpu'),
-                        dst_file: Optional[Union[str, Path]] = None) -> T:
+                        dst_file: Optional[PathLike] = None) -> T:
 
         bucket = 'ml-generic-purpose-pt-models'
         base_url = f'https://storage.googleapis.com/{bucket}/ar'

@@ -142,7 +142,7 @@ class VideoResize(torch.nn.Module):
 
 class VideoToTensor(torch.nn.Module):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(VideoToTensor, self).__init__()
 
     def forward(self, vid: torch.Tensor) -> torch.Tensor:
