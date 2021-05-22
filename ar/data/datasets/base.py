@@ -3,6 +3,7 @@ import warnings
 from pathlib import Path
 from typing import Collection
 from typing import Mapping
+from typing import Optional
 from typing import Sequence
 from typing import Tuple
 from typing import Union
@@ -25,8 +26,8 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         split: str,
         frames_per_clip: int,
         step_between_clips: int = 1,
-        frame_rate: int = None,
-        transform: Transform = None,
+        frame_rate: Optional[int] = None,
+        transform: Optional[Transform] = None,
         num_workers: int = 4,
         extensions: Collection[str] = ('mp4', 'avi')) -> None:
 

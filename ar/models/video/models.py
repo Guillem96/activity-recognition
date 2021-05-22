@@ -1,11 +1,12 @@
-from typing import Optional, Sequence, Type
+from typing import Optional
+from typing import Sequence
+from typing import Type
 
 import torch
 import torch.nn as nn
+import torchvision.models.video.resnet as resnet3d
 from torch.nn.modules import padding
 from torch.nn.modules.module import Module
-
-import torchvision.models.video.resnet as resnet3d
 
 import ar
 
@@ -701,6 +702,7 @@ class SlowFast(ar.utils.checkpoint.SerializableModule):
         Fusion method for the residual connections from fast to slow path.
         Either 'time-to-channel', 'time-strided-sample' or 'time-strided-conv'.
     """
+
     def __init__(self,
                  n_classes: int,
                  alpha: float = 8,

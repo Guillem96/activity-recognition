@@ -24,6 +24,7 @@ def load_datasets(
     frames_per_clip: int,
     steps_between_clips: int,
     workers: int = 1,
+    frame_rate: Optional[int] = None,
     annotations_path: Optional[ar.typing.PathLike] = None,
     validation_size: float = .1,
     train_transforms: ar.typing.Transform = None,
@@ -33,13 +34,13 @@ def load_datasets(
     Given a dataset type, performs a set of operations to generate a train
     and validation dataset
     """
-
     train_ds: Optional[ar.data.ClipLevelDataset] = None
     valid_ds: Optional[ar.data.ClipLevelDataset] = None
     if dataset_type == 'kinetics400':
         train_ds = ar.data.Kinetics400(root=root,
                                        split='train',
                                        frames_per_clip=frames_per_clip,
+                                       frame_rate=frame_rate,
                                        step_between_clips=steps_between_clips,
                                        extensions=('.mp4',),
                                        num_workers=workers,
@@ -48,6 +49,7 @@ def load_datasets(
         valid_ds = ar.data.Kinetics400(root=root,
                                        split='validate',
                                        frames_per_clip=frames_per_clip,
+                                       frame_rate=frame_rate,
                                        step_between_clips=steps_between_clips,
                                        extensions=('.mp4',),
                                        num_workers=workers,
@@ -61,6 +63,7 @@ def load_datasets(
         train_ds = ar.data.UCF101(root=root,
                                   annotation_path=annotations_path,
                                   frames_per_clip=frames_per_clip,
+                                  frame_rate=frame_rate,
                                   split='train',
                                   step_between_clips=steps_between_clips,
                                   transform=train_transforms,
@@ -69,6 +72,7 @@ def load_datasets(
         valid_ds = ar.data.UCF101(root=root,
                                   annotation_path=annotations_path,
                                   frames_per_clip=frames_per_clip,
+                                  frame_rate=frame_rate,
                                   split='test',
                                   step_between_clips=steps_between_clips,
                                   transform=valid_transforms,
@@ -149,6 +153,7 @@ def data_preparation(
         frames_per_clip: int,
         batch_size: int,
         video_size: Optional[Tuple[int, int]] = None,
+        frame_rate: Optional[int] = None,
         size_before_crop: Optional[Tuple[int, int]] = None,
         annotations_path: Optional[PathLike] = None,
         writer: Optional[ar.typing.TensorBoard] = None,
@@ -187,6 +192,7 @@ def data_preparation(
                                        root=data_dir,
                                        annotations_path=annotations_path,
                                        frames_per_clip=frames_per_clip,
+                                       frame_rate=frame_rate,
                                        steps_between_clips=steps_between_clips,
                                        workers=workers,
                                        validation_size=validation_size,
