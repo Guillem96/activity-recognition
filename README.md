@@ -2,7 +2,7 @@
 
 1. [Literature Implementations 📔](#literature-implementations-)
 2. [Datasets (TBD)💾](#datasets-)
-3. [FineTune models](#finetune-models-)
+3. [FineTune models 🎨](#finetune-models-)
 4. [Reports and model weights 📈 (TBD)](#reports-and-model-weights-)
 5. [Project structure 🏗️](#project-structure-%EF%B8%8F)
 6. [Roadmap 🗺️](#roadmap)
@@ -269,10 +269,10 @@ The project is thought to be a single python package called `ar`.
 
 # Roadmap 🗺️
 
-[ ] Transformations running on GPU with kornia integration.
-[ ] Serialize models and store them in a public storage service so everyone can use them.
-[ ] Provide a trainer api to make the trainings simpler.
-[ ] Dataset registry to allow users create custom datasets and also use the out of the box utilities.
+- [ ] Transformations running on GPU with kornia integration.
+- [ ] Serialize models and store them in a public storage service so everyone can use them.
+- [ ] Provide a trainer api to make the trainings simpler.
+- [ ] Dataset registry to allow users create custom datasets and also use the out of the box utilities.
 
 ## References
 
