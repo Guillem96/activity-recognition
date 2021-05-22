@@ -231,11 +231,11 @@ def train(
     valid_dl: data.DataLoader,
     *,
     epochs: int,
-    grad_accum_steps: int,
-    train_from: dict,
-    fp16: bool,
     save_checkpoint: PathLike,
-    summary_writer: Optional[ar.typing.TensorBoard],
+    train_from: dict = {},
+    grad_accum_steps: int = 1,
+    fp16: bool = False,
+    summary_writer: Optional[ar.typing.TensorBoard] = None,
     scheduler: Optional[Scheduler] = None,
     device: torch.device = torch.device('cpu')
 ) -> Dict[str, float]:
