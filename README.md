@@ -1,10 +1,10 @@
 # Activity Recognition 🏊🏼‍♀️💃🏼
 
-1. [Literature Implementations 📔](#literature-implementations)
-2. [Datasets (TBD)💾](#datasets)
-3. [FineTune models](#finetune-models)
-4. [Reports and model weights 📈 (TBD)](#reports-and-model-weights)
-5. [Project structure 🏗️](#project-structure)
+1. [Literature Implementations 📔](#literature-implementations-)
+2. [Datasets (TBD)💾](#datasets-)
+3. [FineTune models](#finetune-models-)
+4. [Reports and model weights 📈 (TBD)](#reports-and-model-weights-)
+5. [Project structure 🏗️](#project-structure-%EF%B8%8F)
 6. [Roadmap 🗺️](#roadmap)
 7. [Useful Applications 📔](#applications)
 8. [References 🧾](#references)
@@ -147,11 +147,6 @@ dl = torch.utils.data.DataLoader(ds, batch_size=32, sampler=sampler)
 4. Train the model!
 
 ```python
-model: ar.utils.checkpoint.SerializableModule,
-    optimizer: torch.optim.Optimizer,
-    train_dl: data.DataLoader,
-    valid_dl: data.DataLoader,
-
 # Please create a better optimizers an complement it with an Scheduler 😁
 trainable_ps = [p for p in model.parameters() if p.requires_grad]
 optimizer = torch.optim.SGD(trainable_ps, lr=1e-4)
