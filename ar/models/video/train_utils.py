@@ -225,7 +225,7 @@ def data_preparation(
 
 
 def train(
-    model: ar.checkpoint.SerializableModule,
+    model: ar.utils.checkpoint.SerializableModule,
     optimizer: torch.optim.Optimizer,
     train_dl: data.DataLoader,
     valid_dl: data.DataLoader,

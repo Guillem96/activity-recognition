@@ -20,7 +20,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def _load_model(out_units: int,
                 freeze_fe: bool,
                 resume_checkpoint: Optional[PathLike] = None,
-                **kwargs: Any) -> Tuple[ar.checkpoint.SerializableModule, dict]:
+                **kwargs: Any) -> Tuple[ar.SerializableModule, dict]:
 
     if resume_checkpoint is None:
         checkpoint: dict = dict()

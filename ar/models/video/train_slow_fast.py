@@ -24,7 +24,7 @@ def _load_model(
     dropout: float,
     fusion_mode: str,
     resume_checkpoint: Optional[PathLike] = None,
-) -> Tuple[ar.checkpoint.SerializableModule, dict]:
+) -> Tuple[ar.SerializableModule, dict]:
 
     if resume_checkpoint is None:
         checkpoint: dict = dict()

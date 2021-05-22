@@ -8,3 +8,5 @@ from .models import video
 from .utils import engine
 from .utils import logger
 from .utils import nn
+
+from .utils.checkpoint import SerializableModule
