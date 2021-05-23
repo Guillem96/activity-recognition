@@ -99,7 +99,7 @@ class _LRCNDecoder(nn.Module):
         hidden_size = rnn_units * (2 if bidirectional else 1)
 
         if self.fusion_mode == 'attn':
-            self.fusion = nn.MultiheadAttention(hidden_size, num_heads=8)
+            self.fusion = nn.MultiheadAttention(hidden_size, num_heads=8, dropout=.3)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (BATCH, FRAMES, FEATURES)
@@ -107,17 +107,16 @@ class _LRCNDecoder(nn.Module):
         # lstm_out: (BATCH, FRAMES, HIDDEN_SIZE)
         lstm_out, _ = self.rnn(x)
 
-        # lstm_out: (FRAMES, BATCH, HIDDEN_SIZE)
-        lstm_out = lstm_out.permute(1, 0, 2)
-
         # (BATCH, HIDDEN_SIZE)
         if self.fusion_mode == 'attn':
+            # lstm_out: (FRAMES, BATCH, HIDDEN_SIZE)
+            lstm_out = lstm_out.permute(1, 0, 2)
             attn_out, _ = self.fusion(lstm_out, lstm_out, lstm_out)
             return attn_out.sum(0)
         elif self.fusion_mode == 'sum':
-            return lstm_out.sum(0)
+            return lstm_out.sum(1)
         elif self.fusion_mode == 'avg':
-            return lstm_out.mean(0)
+            return lstm_out.mean(1)
         elif self.fusion_mode == 'last':
             return lstm_out[-1]
         else:

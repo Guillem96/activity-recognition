@@ -97,3 +97,11 @@ class UCF101(ClipLevelDataset):
     @property
     def split_root(self) -> Path:
         return self.root
+
+    @property
+    def paths(self) -> Sequence[Path]:
+        return self._videos_path
+
+    @property
+    def labels(self) -> Sequence[str]:
+        return self._labels

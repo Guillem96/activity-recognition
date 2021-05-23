@@ -54,7 +54,7 @@ class VideoFramesIterator(object):
             return self.tranforms(frames)
         return frames
 
-    def __iter__(self) -> VideoFramesIterator:
+    def __iter__(self) -> 'VideoFramesIterator':
         return self
 
     def __next__(self) -> torch.Tensor:

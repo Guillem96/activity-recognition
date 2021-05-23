@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -34,9 +35,15 @@ def load_datasets(
     Given a dataset type, performs a set of operations to generate a train
     and validation dataset
     """
+    cache_file = Path.home() / '.ar' / 'datasets' / f'{dataset_type}.pt'
+    cache_file.parent.mkdir(exist_ok=True, parents=True)
+
     train_ds: Optional[ar.data.ClipLevelDataset] = None
     valid_ds: Optional[ar.data.ClipLevelDataset] = None
-    if dataset_type == 'kinetics400':
+
+    if cache_file.exists():
+        train_ds, valid_ds = torch.load(cache_file)
+    elif dataset_type == 'kinetics400':
         train_ds = ar.data.Kinetics400(root=root,
                                        split='train',
                                        frames_per_clip=frames_per_clip,
@@ -55,6 +62,7 @@ def load_datasets(
                                        num_workers=workers,
                                        transform=valid_transforms)
 
+        torch.save((train_ds, valid_ds), cache_file)
     else:  # dataset_type == 'UCF-101':
         if annotations_path is None:
             raise ValueError(f'The annotations must be provided when using '
@@ -77,6 +85,8 @@ def load_datasets(
                                   step_between_clips=steps_between_clips,
                                   transform=valid_transforms,
                                   num_workers=workers)
+
+        torch.save((train_ds, valid_ds), cache_file)
 
     return train_ds, valid_ds
 
@@ -275,7 +285,7 @@ def train(
 
         # Save the model jointly with the optimizer
         model.save(
-            save_checkpoint,
+            save_checkpoint.format(epoch=epoch, model=model.__class__.__name__),
             epoch=epoch,
             optimizer=optimizer.state_dict(),
             scheduler=scheduler.state_dict() if scheduler is not None else {})
