@@ -9,8 +9,6 @@ import ar
 from ar.models.video.models import R2plus1_18
 from ar.models.video.train_utils import data_preparation
 from ar.models.video.train_utils import load_optimizer
-from ar.models.video.train_utils import train
-from ar.typing import PathLike
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 
@@ -19,7 +17,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def _load_model(out_units: int,
                 freeze_fe: bool,
-                resume_checkpoint: Optional[PathLike] = None,
+                resume_checkpoint: Optional[ar.typing.PathLike] = None,
                 **kwargs: Any) -> Tuple[ar.SerializableModule, dict]:
 
     if resume_checkpoint is None:
@@ -90,13 +88,14 @@ def _load_model(out_units: int,
               default=False,
               help='Wether or not to fine tune the pretrained'
               ' feature extractor')
-def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
-         validation_split: float, data_loader_workers: int,
-         frames_per_clip: int, clips_stride: int, epochs: int, batch_size: int,
-         optimizer: str, grad_accum_steps: int, learning_rate: float,
-         scheduler: str, fp16: bool, logdir: Optional[PathLike],
-         resume_checkpoint: PathLike, save_checkpoint: PathLike,
-         freeze_fe: bool) -> None:
+def main(dataset: str, data_dir: ar.typing.PathLike,
+         annots_dir: ar.typing.PathLike, validation_split: float,
+         data_loader_workers: int, frames_per_clip: int, clips_stride: int,
+         epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
+         learning_rate: float, scheduler: str, fp16: bool,
+         logdir: Optional[ar.typing.PathLike],
+         resume_checkpoint: ar.typing.PathLike,
+         save_checkpoint: ar.typing.PathLike, freeze_fe: bool) -> None:
     ar.engine.seed()
 
     if logdir:
@@ -130,18 +129,18 @@ def main(dataset: str, data_dir: PathLike, annots_dir: PathLike,
         epochs=epochs,
         steps_per_epoch=len(train_dl))
 
-    eval_metrics = train(model,
-                         torch_optimizer,
-                         train_dl,
-                         valid_dl,
-                         epochs=epochs,
-                         grad_accum_steps=grad_accum_steps,
-                         scheduler=torch_scheduler,
-                         fp16=fp16,
-                         summary_writer=summary_writer,
-                         train_from=checkpoint,
-                         save_checkpoint=save_checkpoint,
-                         device=device)
+    eval_metrics = ar.engine.train(model,
+                                   torch_optimizer,
+                                   train_dl,
+                                   valid_dl,
+                                   epochs=epochs,
+                                   grad_accum_steps=grad_accum_steps,
+                                   scheduler=torch_scheduler,
+                                   fp16=fp16,
+                                   summary_writer=summary_writer,
+                                   train_from=checkpoint,
+                                   save_checkpoint=save_checkpoint,
+                                   device=device)
 
     if summary_writer is not None:
         hparams = {

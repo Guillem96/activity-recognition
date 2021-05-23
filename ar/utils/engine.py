@@ -1,4 +1,5 @@
-from typing import Collection
+from ar.utils.checkpoint import SerializableModule
+from typing import Collection, Sequence
 from typing import Mapping
 from typing import Optional
 
@@ -7,15 +8,13 @@ import torch
 import torch.cuda.amp as amp
 import torch.nn as nn
 
-from ar.typing import LossFn
-from ar.typing import MetricFn
-from ar.typing import Optimizer
-from ar.typing import Scheduler
-from ar.typing import TensorBoard
-
+import ar
 from .logger import LogValue
 from .logger import ValuesLogger
 from .nn import get_lr
+
+_DEFAULT_METRICS = (ar.metrics.top_3_accuracy, ar.metrics.top_5_accuracy,
+                    ar.metrics.accuracy)
 
 
 def seed(seed: int = 0) -> None:
@@ -28,15 +27,15 @@ def seed(seed: int = 0) -> None:
 def train_one_epoch(
     dl: torch.utils.data.DataLoader,
     model: nn.Module,
-    optimizer: Optimizer,
-    loss_fn: LossFn,
+    optimizer: ar.typing.Optimizer,
+    loss_fn: ar.typing.LossFn,
     epoch: int,
-    metrics: Collection[MetricFn] = (),
+    metrics: Collection[ar.typing.MetricFn] = (),
     grad_accum_steps: int = 1,
-    scheduler: Scheduler = None,
-    summary_writer: TensorBoard = None,
+    scheduler: ar.typing.Scheduler = None,
+    summary_writer: ar.typing.TensorBoard = None,
     mixed_precision: bool = False,
-    device: torch.device = torch.device('cpu')
+    device: torch.device = torch.device('cpu'),
 ) -> None:
 
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
@@ -122,11 +121,11 @@ def train_one_epoch(
 def evaluate(
     dl: torch.utils.data.DataLoader,
     model: nn.Module,
-    loss_fn: LossFn,
-    metrics: Collection[MetricFn],
+    loss_fn: ar.typing.LossFn,
+    metrics: Collection[ar.typing.MetricFn],
     epoch: int,
     mixed_precision: bool = False,
-    summary_writer: TensorBoard = None,
+    summary_writer: ar.typing.TensorBoard = None,
     device: torch.device = torch.device('cpu')
 ) -> Mapping[str, float]:
 
@@ -161,3 +160,58 @@ def evaluate(
                                    global_step=epoch)
 
     return logger.as_dict()
+
+
+def train(
+    model: SerializableModule,
+    optimizer: torch.optim.Optimizer,
+    train_dl: torch.utils.data.DataLoader,
+    valid_dl: torch.utils.data.DataLoader,
+    *,
+    epochs: int,
+    save_checkpoint: ar.typing.PathLike,
+    train_from: dict = {},
+    grad_accum_steps: int = 1,
+    fp16: bool = False,
+    summary_writer: Optional[ar.typing.TensorBoard] = None,
+    scheduler: Optional[ar.typing.Scheduler] = None,
+    metrics: Sequence[ar.typing.MetricFn] = _DEFAULT_METRICS,
+    device: torch.device = torch.device('cpu'),
+) -> Mapping[str, float]:
+    """
+    Trains the models along specified epochs with the given train and validation
+    dataloader.
+    """
+    criterion_fn = torch.nn.NLLLoss()
+    starting_epoch = train_from.get('epoch', -1) + 1
+
+    for epoch in range(starting_epoch, epochs):
+        train_one_epoch(dl=train_dl,
+                        model=model,
+                        optimizer=optimizer,
+                        scheduler=scheduler,
+                        loss_fn=criterion_fn,
+                        metrics=metrics,
+                        grad_accum_steps=grad_accum_steps,
+                        mixed_precision=fp16,
+                        epoch=epoch,
+                        summary_writer=summary_writer,
+                        device=device)
+
+        eval_metrics = evaluate(dl=valid_dl,
+                                model=model,
+                                metrics=metrics,
+                                loss_fn=criterion_fn,
+                                epoch=epoch,
+                                summary_writer=summary_writer,
+                                mixed_precision=fp16,
+                                device=device)
+
+        # Save the model jointly with the optimizer
+        model.save(
+            save_checkpoint.format(epoch=epoch, model=model.__class__.__name__),
+            epoch=epoch,
+            optimizer=optimizer.state_dict(),
+            scheduler=scheduler.state_dict() if scheduler is not None else {})
+
+    return eval_metrics

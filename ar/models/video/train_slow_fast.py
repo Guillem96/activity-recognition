@@ -8,8 +8,6 @@ import ar
 from ar.models.video.models import SlowFast
 from ar.models.video.train_utils import data_preparation
 from ar.models.video.train_utils import load_optimizer
-from ar.models.video.train_utils import train
-from ar.typing import PathLike
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 
@@ -23,7 +21,7 @@ def _load_model(
     tau: int,
     dropout: float,
     fusion_mode: str,
-    resume_checkpoint: Optional[PathLike] = None,
+    resume_checkpoint: Optional[ar.typing.PathLike] = None,
 ) -> Tuple[ar.SerializableModule, dict]:
 
     if resume_checkpoint is None:
@@ -98,13 +96,15 @@ def _load_model(
 @click.option('--dropout', type=float, default=.3)
 @click.option('--fusion-mode',
               type=click.Choice([
-                  'time-to-channel', 'time-strided-sample', 'time-strided-conv',
+                  'time-to-channel',
+                  'time-strided-sample',
+                  'time-strided-conv',
               ]),
               default='time-strided-conv')
 def main(
     dataset: str,
-    data_dir: PathLike,
-    annots_dir: PathLike,
+    data_dir: ar.typing.PathLike,
+    annots_dir: ar.typing.PathLike,
     validation_split: float,
     data_loader_workers: int,
     base_fps: int,
@@ -116,9 +116,9 @@ def main(
     learning_rate: float,
     scheduler: str,
     fp16: bool,
-    logdir: Optional[PathLike],
-    resume_checkpoint: PathLike,
-    save_checkpoint: PathLike,
+    logdir: Optional[ar.typing.PathLike],
+    resume_checkpoint: ar.typing.PathLike,
+    save_checkpoint: ar.typing.PathLike,
     alpha: float,
     beta: float,
     tau: int,
@@ -137,6 +137,7 @@ def main(
     train_dl, valid_dl = data_preparation(dataset,
                                           data_dir=data_dir,
                                           frames_per_clip=frames_per_clip,
+                                          frame_rate=base_fps,
                                           batch_size=batch_size,
                                           annotations_path=annots_dir,
                                           steps_between_clips=clips_stride,
@@ -164,18 +165,18 @@ def main(
         epochs=epochs,
         steps_per_epoch=len(train_dl))
 
-    eval_metrics = train(model,
-                         torch_optimizer,
-                         train_dl,
-                         valid_dl,
-                         epochs=epochs,
-                         grad_accum_steps=grad_accum_steps,
-                         scheduler=torch_scheduler,
-                         fp16=fp16,
-                         summary_writer=summary_writer,
-                         train_from=checkpoint,
-                         save_checkpoint=save_checkpoint,
-                         device=device)
+    eval_metrics = ar.engine.train(model,
+                                   torch_optimizer,
+                                   train_dl,
+                                   valid_dl,
+                                   epochs=epochs,
+                                   grad_accum_steps=grad_accum_steps,
+                                   scheduler=torch_scheduler,
+                                   fp16=fp16,
+                                   summary_writer=summary_writer,
+                                   train_from=checkpoint,
+                                   save_checkpoint=save_checkpoint,
+                                   device=device)
 
     if summary_writer is not None:
         hparams = {
