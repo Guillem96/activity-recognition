@@ -33,7 +33,8 @@ def load_datasets(
     Given a dataset type, performs a set of operations to generate a train
     and validation dataset
     """
-    cache_file = Path.home() / '.ar' / 'datasets' / f'{dataset_type}.pt'
+    cache_fname = f'{dataset_type}_{frames_per_clip}_{frame_rate}.pt'
+    cache_file = Path.home() / '.ar' / 'datasets' / cache_fname
     cache_file.parent.mkdir(exist_ok=True, parents=True)
 
     train_ds: Optional[ar.data.ClipLevelDataset] = None

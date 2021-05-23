@@ -121,13 +121,10 @@ def build_summary_writter(log_dir: PathLike) -> TensorBoard:
         Base log directory. Given a log_dir this method adds a unique identifier
         as a postfix
     """
-    log_dir = str(log_dir)
-    if log_dir.endswith('/'):
-        log_dir = log_dir[:-1]
-
+    log_dir = Path(log_dir)
     current_time = datetime.now().strftime('%b%d_%H_%M_%S')
-    log_dir = f'{log_dir}_{current_time}'
-    return torch.utils.tensorboard.SummaryWriter(log_dir, flush_secs=20)
+    log_dir = log_dir / f'experiment_{current_time}'
+    return torch.utils.tensorboard.SummaryWriter(str(log_dir), flush_secs=20)
 
 
 def log_random_videos(ds: ClipLevelDataset,
