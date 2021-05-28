@@ -1,13 +1,8 @@
 from collections import deque
 from datetime import datetime
-from math import log
 from pathlib import Path
-from typing import Any
 from typing import Deque
 from typing import Dict
-from typing import Mapping
-from typing import Tuple
-from typing import Union
 
 import torch
 import tqdm.auto as tqdm

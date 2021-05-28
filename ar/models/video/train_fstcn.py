@@ -1,3 +1,4 @@
+import math
 from typing import Any
 from typing import Optional
 from typing import Tuple
@@ -131,7 +132,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
     # the strided clips and to compute the Vdiff
     frames_per_clip = (frames_per_clip + dt) * st
 
-    train_dl, valid_dl = data_preparation(dataset,
+    train_ds, valid_ds = data_preparation(dataset,
                                           data_dir=data_dir,
                                           frames_per_clip=frames_per_clip,
                                           batch_size=batch_size,
@@ -141,7 +142,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                           validation_size=validation_split,
                                           writer=summary_writer)
 
-    n_classes = len(train_dl.dataset.classes)
+    n_classes = len(train_ds.classes)
 
     model, checkpoint = _load_model(n_classes,
                                     feature_extractor=feature_extractor,
@@ -160,12 +161,14 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
         checkpoint=checkpoint,
         learning_rate=learning_rate,
         epochs=epochs,
-        steps_per_epoch=len(train_dl))
+        steps_per_epoch=len(math.ceil(train_ds / batch_size)))
 
     eval_metrics = ar.engine.train(model,
                                    torch_optimizer,
-                                   train_dl,
-                                   valid_dl,
+                                   train_ds,
+                                   valid_ds,
+                                   batch_size=batch_size,
+                                   dl_workers=data_loader_workers,
                                    epochs=epochs,
                                    grad_accum_steps=grad_accum_steps,
                                    scheduler=torch_scheduler,
