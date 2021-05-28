@@ -1,7 +1,8 @@
 import abc
 import warnings
 from pathlib import Path
-from typing import Collection, List
+from typing import Collection
+from typing import List
 from typing import Mapping
 from typing import Optional
 from typing import Sequence

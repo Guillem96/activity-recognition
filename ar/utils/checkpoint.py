@@ -1,5 +1,4 @@
 import abc
-from ar.typing import PathLike
 from pathlib import Path
 from typing import Any
 from typing import Optional
@@ -11,6 +10,8 @@ from typing import Union
 import requests
 import torch
 import torch.nn as nn
+
+from ar.typing import PathLike
 
 T = TypeVar('T', bound='SerializableModule')
 

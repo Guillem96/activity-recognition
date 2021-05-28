@@ -9,7 +9,6 @@ import tqdm.auto as tqdm
 from googleapiclient.discovery import Resource
 from googleapiclient.discovery import build
 
-
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 

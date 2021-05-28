@@ -1,8 +1,8 @@
 import click
 
 from .data import download
-from .models.video import train_lrcn
 from .models.video import train_fstcn
+from .models.video import train_lrcn
 from .models.video import train_r2plus1d_18
 from .models.video import train_slow_fast
 

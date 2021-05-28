@@ -1,3 +1,5 @@
+#!/bin/bash
+
 BASE_URL=https://www.crcv.ucf.edu/
 DATASET_URL=${BASE_URL}datasets/human-actions/ucf101/UCF101.rar
 ANNOTATION_URL=${BASE_URL}wp-content/uploads/2019/03/UCF101TrainTestSplits-RecognitionTask.zip
@@ -25,11 +27,11 @@ unrar -idq e UCF101.rar
 rm UCF101.rar
 cd ..
 
-ls -1 videos/*.avi | xargs -n 1 basename | while read x; do 
-    IFS='_' read -ra file_comp <<< "$x"
+for fname in $(ls -1 videos/*.avi | xargs -n 1 basename); do
+    readarray -d _ -t file_comp <<<"$fname"
     LABEL=${file_comp[1]}
     mkdir -p videos/${LABEL}
-    mv videos/${x} videos/${LABEL}/${x}
+    mv videos/${fname} videos/${LABEL}/${fname}
 done
 
 echo "done"

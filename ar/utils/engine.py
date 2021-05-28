@@ -1,7 +1,7 @@
-from ar.utils.checkpoint import SerializableModule
-from typing import Collection, Sequence
+from typing import Collection
 from typing import Mapping
 from typing import Optional
+from typing import Sequence
 
 import numpy as np
 import torch
@@ -9,6 +9,8 @@ import torch.cuda.amp as amp
 import torch.nn as nn
 
 import ar
+from ar.utils.checkpoint import SerializableModule
+
 from .logger import LogValue
 from .logger import ValuesLogger
 from .nn import get_lr
@@ -35,7 +37,7 @@ def train_one_epoch(
     scheduler: ar.typing.Scheduler = None,
     summary_writer: ar.typing.TensorBoard = None,
     mixed_precision: bool = False,
-    device: torch.device = torch.device('cpu'),
+    device: torch.device = torch.device('cpu')
 ) -> None:
 
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
@@ -56,17 +58,21 @@ def train_one_epoch(
         x = x.to(device)
         y = y.to(device)
 
-        with amp.autocast(enabled=mixed_precision):
+        if mixed_precision:
+            with amp.autocast():
+                predictions = model(x)
+                loss = loss_fn(predictions, y)
+        else:
             predictions = model(x)
             loss = loss_fn(predictions, y)
 
-        if scaler is not None:
+        if mixed_precision:
             scaler.scale(loss / grad_accum_steps).backward()
         else:
             (loss / grad_accum_steps).backward()
 
         if (i + 1) % grad_accum_steps == 0:
-            if scaler is not None:
+            if mixed_precision:
                 scaler.step(optimizer)
                 scaler.update()
             else:
@@ -108,7 +114,7 @@ def train_one_epoch(
                                    log_values,
                                    global_step=epoch)
 
-    if scaler is not None:
+    if mixed_precision:
         scaler.step(optimizer)
         scaler.update()
     else:
@@ -176,7 +182,7 @@ def train(
     summary_writer: Optional[ar.typing.TensorBoard] = None,
     scheduler: Optional[ar.typing.Scheduler] = None,
     metrics: Sequence[ar.typing.MetricFn] = _DEFAULT_METRICS,
-    device: torch.device = torch.device('cpu'),
+    device: torch.device = torch.device('cpu')
 ) -> Mapping[str, float]:
     """
     Trains the models along specified epochs with the given train and validation

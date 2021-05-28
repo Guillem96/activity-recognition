@@ -40,7 +40,7 @@ def top_5_accuracy(y_preds: torch.Tensor,
 
 def top_3_accuracy(y_preds: torch.Tensor,
                    y_trues: torch.Tensor) -> torch.Tensor:
-    return top_k_accuracy(y_preds, y_trues, k=2)
+    return top_k_accuracy(y_preds, y_trues, k=3)
 
 
 def accuracy(y_preds: torch.Tensor, y_trues: torch.Tensor) -> torch.Tensor:

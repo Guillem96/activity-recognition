@@ -15,7 +15,8 @@ import tqdm.auto as tqdm
 from ar.data import ClipLevelDataset
 from ar.transforms import imagenet_stats
 from ar.transforms.functional import video_unnormalize
-from ar.typing import Number, PathLike
+from ar.typing import Number
+from ar.typing import PathLike
 from ar.typing import TensorBoard
 
 

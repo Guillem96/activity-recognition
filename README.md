@@ -154,11 +154,11 @@ optimizer = torch.optim.SGD(trainable_ps, lr=1e-4)
 # For tensorboard logging
 logger = ar.logger.build_summary_writter('logs')
 
-ar.video.train(model=model, optimizer=optimizer,
-               train_dl=dl, valid_dl=...,
-               epochs=10,
-               save_checkpoint='model.pt',
-               summary_writer=logger)
+ar.engine.train(model=model, optimizer=optimizer,
+                train_dl=dl, valid_dl=...,
+                epochs=10,
+                save_checkpoint='model.pt',
+                summary_writer=logger)
 
 # The checkpoint is a torch pickle containing
 # {'config': Model configuration to reinitialize the model with the same hyper params,

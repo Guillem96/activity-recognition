@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Any
+from typing import Optional
 from typing import Sequence
 from typing import Type
 
@@ -99,7 +100,9 @@ class _LRCNDecoder(nn.Module):
         hidden_size = rnn_units * (2 if bidirectional else 1)
 
         if self.fusion_mode == 'attn':
-            self.fusion = nn.MultiheadAttention(hidden_size, num_heads=8, dropout=.3)
+            self.fusion = nn.MultiheadAttention(hidden_size,
+                                                num_heads=8,
+                                                dropout=.3)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (BATCH, FRAMES, FEATURES)
@@ -118,7 +121,7 @@ class _LRCNDecoder(nn.Module):
         elif self.fusion_mode == 'avg':
             return lstm_out.mean(1)
         elif self.fusion_mode == 'last':
-            return lstm_out[-1]
+            return lstm_out[:, -1]
         else:
             return lstm_out
 
@@ -164,7 +167,7 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
 
         self.linear = MLP(features=[hidden_size, 512, self.n_classes],
                           batch_norm=False,
-                          dropout=.5)
+                          dropout=.2)
 
     def config(self) -> dict:
         return {
@@ -379,7 +382,8 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
         self.pretrained = pretrained
         self.freeze_feature_extractor = freeze_feature_extractor
 
-        fe, in_features = ar.nn.video_feature_extractor('r2plus1d_18')
+        fe, in_features = ar.nn.video_feature_extractor('r2plus1d_18',
+                                                        pretrained=True)
         for p in fe.parameters():
             p.requires_grad = not freeze_feature_extractor
 

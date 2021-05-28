@@ -101,30 +101,15 @@ def _load_model(
                   'time-strided-conv',
               ]),
               default='time-strided-conv')
-def main(
-    dataset: str,
-    data_dir: ar.typing.PathLike,
-    annots_dir: ar.typing.PathLike,
-    validation_split: float,
-    data_loader_workers: int,
-    base_fps: int,
-    clips_stride: int,
-    epochs: int,
-    batch_size: int,
-    optimizer: str,
-    grad_accum_steps: int,
-    learning_rate: float,
-    scheduler: str,
-    fp16: bool,
-    logdir: Optional[ar.typing.PathLike],
-    resume_checkpoint: ar.typing.PathLike,
-    save_checkpoint: ar.typing.PathLike,
-    alpha: float,
-    beta: float,
-    tau: int,
-    dropout: float,
-    fusion_mode: str,
-) -> None:
+def main(dataset: str, data_dir: ar.typing.PathLike,
+         annots_dir: ar.typing.PathLike, validation_split: float,
+         data_loader_workers: int, base_fps: int, clips_stride: int,
+         epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
+         learning_rate: float, scheduler: str, fp16: bool,
+         logdir: Optional[ar.typing.PathLike],
+         resume_checkpoint: ar.typing.PathLike,
+         save_checkpoint: ar.typing.PathLike, alpha: float, beta: float,
+         tau: int, dropout: float, fusion_mode: str) -> None:
     ar.engine.seed()
 
     if logdir:
