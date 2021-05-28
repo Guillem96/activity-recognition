@@ -1,19 +1,15 @@
 from pathlib import Path
 from typing import Any
 from typing import Optional
-from typing import Sequence
 from typing import Tuple
 
 import torch
 import torch.optim as optim
 import torch.utils.data as data
 import torchvision.transforms as T
-from torchvision.datasets.samplers import RandomClipSampler
-from torchvision.datasets.samplers import UniformClipSampler
 
 import ar
 import ar.transforms as VT
-from ar.data.datasets.base import ClipLevelDataset
 from ar.typing import PathLike
 
 
@@ -137,30 +133,11 @@ def load_optimizer(
     return optimizer, scheduler
 
 
-def default_collate_fn(
-        batch: Sequence[Any]) -> Tuple[torch.Tensor, torch.Tensor]:
-    video, _, label, _ = zip(*batch)
-    return torch.stack(video), torch.as_tensor(label)
-
-
-def dl_samplers(
-        train_ds: ClipLevelDataset, valid_ds: ClipLevelDataset
-) -> Tuple[RandomClipSampler, UniformClipSampler]:
-    if all(hasattr(o, 'video_clips') for o in [train_ds, valid_ds]):
-        train_sampler = RandomClipSampler(train_ds.video_clips, 10)
-        valid_sampler = UniformClipSampler(valid_ds.video_clips, 10)
-    else:
-        raise ValueError('Video dataset must have the video_clips attribute')
-
-    return train_sampler, valid_sampler
-
-
 def data_preparation(
         dataset: str,
         *,
         data_dir: PathLike,
         frames_per_clip: int,
-        batch_size: int,
         video_size: Optional[Tuple[int, int]] = None,
         frame_rate: Optional[int] = None,
         size_before_crop: Optional[Tuple[int, int]] = None,
@@ -214,20 +191,4 @@ def data_preparation(
                                     unnormalize_videos=True,
                                     video_format='CTHW')
 
-    train_sampler, valid_sampler = dl_samplers(train_ds, valid_ds)
-
-    train_dl = data.DataLoader(train_ds,
-                               batch_size=batch_size,
-                               num_workers=workers,
-                               sampler=train_sampler,
-                               collate_fn=default_collate_fn,
-                               pin_memory=True)
-
-    valid_dl = data.DataLoader(valid_ds,
-                               batch_size=batch_size,
-                               num_workers=workers,
-                               sampler=valid_sampler,
-                               collate_fn=default_collate_fn,
-                               pin_memory=True)
-
-    return train_dl, valid_dl
+    return train_ds, valid_ds

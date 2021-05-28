@@ -1,7 +1,7 @@
-from ar.utils.checkpoint import SerializableModule
-from typing import Collection, Sequence
+from typing import Collection
 from typing import Mapping
 from typing import Optional
+from typing import Sequence
 
 import numpy as np
 import torch
@@ -9,6 +9,8 @@ import torch.cuda.amp as amp
 import torch.nn as nn
 
 import ar
+from ar.utils.checkpoint import SerializableModule
+
 from .logger import LogValue
 from .logger import ValuesLogger
 from .nn import get_lr
@@ -35,7 +37,7 @@ def train_one_epoch(
     scheduler: ar.typing.Scheduler = None,
     summary_writer: ar.typing.TensorBoard = None,
     mixed_precision: bool = False,
-    device: torch.device = torch.device('cpu'),
+    device: torch.device = torch.device('cpu')
 ) -> None:
 
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
@@ -165,25 +167,67 @@ def evaluate(
 def train(
     model: SerializableModule,
     optimizer: torch.optim.Optimizer,
-    train_dl: torch.utils.data.DataLoader,
-    valid_dl: torch.utils.data.DataLoader,
+    train_ds: torch.utils.data.Dataset,
+    valid_ds: torch.utils.data.Dataset,
     *,
     epochs: int,
+    batch_size: int,
     save_checkpoint: ar.typing.PathLike,
+    dl_workers: int = 1,
     train_from: dict = {},
     grad_accum_steps: int = 1,
     fp16: bool = False,
     summary_writer: Optional[ar.typing.TensorBoard] = None,
     scheduler: Optional[ar.typing.Scheduler] = None,
     metrics: Sequence[ar.typing.MetricFn] = _DEFAULT_METRICS,
-    device: torch.device = torch.device('cpu'),
+    device: torch.device = torch.device('cpu')
 ) -> Mapping[str, float]:
-    """
-    Trains the models along specified epochs with the given train and validation
-    dataloader.
+    """Train a model
+
+    Parameters
+    ----------
+    model: SerializableModule
+        Model to train
+    optimizer: torch.optim.Optimizer
+        Optimizer instance to train the model.
+    train_ds: torch.utils.data.Dataset
+        Dataset containing the training examples
+    valid_ds: torch.utils.data.Dataset
+        Dataset containing the validation examples.
+    epochs: int
+        Number of iterations over all the dataset
+    batch_size: int
+        Load dataset samples in groups of `batch_size` examples.
+    save_checkpoint: ar.typing.PathLike
+        Path to serialize the model. Allows the {epoch} and {model} 
+        placeholders.
+    dl_workers: int, defaults 1
+        Threads to generate the batches.
+    train_from: dict, defaults {}
+        Checkpoint to resume the training.
+    grad_accum_steps: int, default 1
+        Gradient accumulation steps.
+    fp16: bool, defaults False
+        Train with mixed precision?
+    summary_writer: Optional[ar.typing.TensorBoard]
+        Tensorboard summary writter.
+    scheduler: Optional[ar.typing.Scheduler]
+        Learning rate scheduler
+    metrics: Sequence[ar.typing.MetricFn]
+        Metrics to evaluate
+    device: torch.device, default torch.device('cpu')
+        Device where to run the training.
+
+    Returns
+    -------
+    Mapping[str, float]
+        Metrics of the validation set
     """
     criterion_fn = torch.nn.NLLLoss()
     starting_epoch = train_from.get('epoch', -1) + 1
+
+    train_dl = ar.data.batch_data(train_ds, batch_size, workers=dl_workers)
+    valid_dl = ar.data.batch_data(valid_ds, batch_size, workers=dl_workers)
 
     for epoch in range(starting_epoch, epochs):
         train_one_epoch(dl=train_dl,

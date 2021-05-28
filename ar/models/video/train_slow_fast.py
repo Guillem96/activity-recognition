@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 from typing import Tuple
 
@@ -134,7 +135,7 @@ def main(
 
     desired_slow_frames = 4
     frames_per_clip = desired_slow_frames * tau
-    train_dl, valid_dl = data_preparation(dataset,
+    train_ds, valid_ds = data_preparation(dataset,
                                           data_dir=data_dir,
                                           frames_per_clip=frames_per_clip,
                                           frame_rate=base_fps,
@@ -145,7 +146,7 @@ def main(
                                           validation_size=validation_split,
                                           writer=summary_writer)
 
-    n_classes = len(train_dl.dataset.classes)
+    n_classes = len(train_ds.classes)
 
     model, checkpoint = _load_model(n_classes,
                                     alpha=alpha,
@@ -163,13 +164,15 @@ def main(
         checkpoint=checkpoint,
         learning_rate=learning_rate,
         epochs=epochs,
-        steps_per_epoch=len(train_dl))
+        steps_per_epoch=math.ceil(len(train_ds) / batch_size))
 
     eval_metrics = ar.engine.train(model,
                                    torch_optimizer,
-                                   train_dl,
-                                   valid_dl,
+                                   train_ds,
+                                   valid_ds,
                                    epochs=epochs,
+                                   batch_size=batch_size,
+                                   dl_workers=data_loader_workers,
                                    grad_accum_steps=grad_accum_steps,
                                    scheduler=torch_scheduler,
                                    fp16=fp16,

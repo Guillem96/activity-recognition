@@ -4,7 +4,6 @@ import shutil
 import subprocess
 import urllib
 import uuid
-from functools import partial
 from pathlib import Path
 from typing import Any
 from typing import Mapping

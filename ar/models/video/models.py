@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Any
+from typing import Optional
 from typing import Sequence
 from typing import Type
 
@@ -99,7 +100,9 @@ class _LRCNDecoder(nn.Module):
         hidden_size = rnn_units * (2 if bidirectional else 1)
 
         if self.fusion_mode == 'attn':
-            self.fusion = nn.MultiheadAttention(hidden_size, num_heads=8, dropout=.3)
+            self.fusion = nn.MultiheadAttention(hidden_size,
+                                                num_heads=8,
+                                                dropout=.3)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (BATCH, FRAMES, FEATURES)
