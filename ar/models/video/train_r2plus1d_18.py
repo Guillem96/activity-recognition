@@ -107,7 +107,6 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
     train_ds, valid_ds = data_preparation(dataset,
                                           data_dir=data_dir,
                                           frames_per_clip=frames_per_clip,
-                                          batch_size=batch_size,
                                           annotations_path=annots_dir,
                                           steps_between_clips=clips_stride,
                                           workers=data_loader_workers,
@@ -128,7 +127,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
         checkpoint=checkpoint,
         learning_rate=learning_rate,
         epochs=epochs,
-        steps_per_epoch=len(math.ceil(len(train_ds) / batch_size)))
+        steps_per_epoch=math.ceil(len(train_ds) / batch_size))
 
     eval_metrics = ar.engine.train(model,
                                    torch_optimizer,

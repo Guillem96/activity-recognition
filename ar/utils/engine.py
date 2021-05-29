@@ -20,6 +20,13 @@ _DEFAULT_METRICS = (ar.metrics.top_3_accuracy, ar.metrics.top_5_accuracy,
 
 
 def seed(seed: int = 0) -> None:
+    """Sets random seed for reproducibility
+
+    Parameters
+    ----------
+    seed : int, defaults 0
+        Random seed.
+    """
     torch.manual_seed(seed)
     # torch.backends.cudnn.deterministic = True # type: ignore
     # torch.backends.cudnn.benchmark = False # type: ignore
@@ -39,7 +46,6 @@ def train_one_epoch(
     mixed_precision: bool = False,
     device: torch.device = torch.device('cpu')
 ) -> None:
-
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
     logger = ValuesLogger(LogValue('loss', window_size=len(dl)),
                           LogValue('lr', 1),
@@ -114,7 +120,7 @@ def train_one_epoch(
                                    log_values,
                                    global_step=epoch)
 
-    if mixed_precision:
+    if scaler is not None:
         scaler.step(optimizer)
         scaler.update()
     else:
@@ -230,8 +236,14 @@ def train(
     criterion_fn = torch.nn.NLLLoss()
     starting_epoch = train_from.get('epoch', -1) + 1
 
-    train_dl = ar.data.batch_data(train_ds, batch_size, workers=dl_workers)
-    valid_dl = ar.data.batch_data(valid_ds, batch_size, workers=dl_workers)
+    train_dl = ar.data.batch_data(train_ds,
+                                  batch_size,
+                                  workers=dl_workers,
+                                  is_train=True)
+    valid_dl = ar.data.batch_data(valid_ds,
+                                  batch_size,
+                                  workers=dl_workers,
+                                  is_train=False)
 
     for epoch in range(starting_epoch, epochs):
         train_one_epoch(dl=train_dl,
