@@ -3,8 +3,8 @@ from typing import Any
 from typing import Optional
 from typing import Tuple
 
+import accelerate
 import click
-import torch
 
 import ar
 from ar.models.video.models import FstCN
@@ -12,8 +12,6 @@ from ar.models.video.train_utils import data_preparation
 from ar.models.video.train_utils import load_optimizer
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def _load_model(out_units: int,
@@ -28,10 +26,8 @@ def _load_model(out_units: int,
                       n_classes=out_units,
                       freeze_feature_extractor=freeze_fe,
                       **kwargs)
-
     else:
         model, checkpoint = FstCN.load(resume_checkpoint,
-                                       map_location=device,
                                        freeze_feature_extractor=freeze_fe)
 
     return model, checkpoint
@@ -68,6 +64,7 @@ def _load_model(out_units: int,
               type=click.Choice(['OneCycle', 'Step', 'None']),
               default='None')
 # Training optimizations
+@click.option('--cpu/--no-cpu', default=False, help='Force CPU?')
 @click.option('--fp16/--no-fp16',
               default=False,
               help='Perform the forward pass of the model and the loss '
@@ -115,13 +112,17 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
          annots_dir: ar.typing.PathLike, validation_split: float,
          data_loader_workers: int, frames_per_clip: int, clips_stride: int,
          epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
-         learning_rate: float, scheduler: str, fp16: bool,
+         learning_rate: float, scheduler: str, fp16: bool, cpu: bool,
          logdir: Optional[ar.typing.PathLike],
          resume_checkpoint: ar.typing.PathLike,
          save_checkpoint: ar.typing.PathLike, feature_extractor: str,
          freeze_fe: bool, st: int, dt: int, scl_features: int,
          tcl_features: int) -> None:
     ar.engine.seed()
+
+    accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)
+    print("=== Accelerator State ===")
+    print(accelerator)
 
     if logdir:
         summary_writer = ar.logger.build_summary_writter(logdir)
@@ -132,27 +133,29 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
     # the strided clips and to compute the Vdiff
     frames_per_clip = (frames_per_clip + dt) * st
 
-    train_ds, valid_ds = data_preparation(dataset,
-                                          data_dir=data_dir,
-                                          frames_per_clip=frames_per_clip,
-                                          annotations_path=annots_dir,
-                                          steps_between_clips=clips_stride,
-                                          workers=data_loader_workers,
-                                          validation_size=validation_split,
-                                          writer=summary_writer)
+    with ar.distributed.master_first(accelerator):
+        train_ds, valid_ds = data_preparation(dataset,
+                                              data_dir=data_dir,
+                                              frames_per_clip=frames_per_clip,
+                                              annotations_path=annots_dir,
+                                              steps_between_clips=clips_stride,
+                                              workers=data_loader_workers,
+                                              validation_size=validation_split,
+                                              writer=summary_writer)
 
     n_classes = len(train_ds.classes)
 
-    model, checkpoint = _load_model(n_classes,
-                                    feature_extractor=feature_extractor,
-                                    freeze_fe=freeze_fe,
-                                    resume_checkpoint=resume_checkpoint,
-                                    st=st,
-                                    dt=dt,
-                                    scl_features=scl_features,
-                                    tcl_features=tcl_features)
-    model.to(device)
+    with ar.distributed.master_first(accelerator):
+        model, checkpoint = _load_model(n_classes,
+                                        feature_extractor=feature_extractor,
+                                        freeze_fe=freeze_fe,
+                                        resume_checkpoint=resume_checkpoint,
+                                        st=st,
+                                        dt=dt,
+                                        scl_features=scl_features,
+                                        tcl_features=tcl_features)
 
+    steps_per_epoch = math.ceil(len(train_ds) / batch_size / grad_accum_steps)
     torch_optimizer, torch_scheduler = load_optimizer(
         model,
         optimizer,
@@ -160,24 +163,23 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
         checkpoint=checkpoint,
         learning_rate=learning_rate,
         epochs=epochs,
-        steps_per_epoch=math.ceil(len(train_ds) / batch_size))
+        steps_per_epoch=steps_per_epoch)
 
     eval_metrics = ar.engine.train(model,
                                    torch_optimizer,
                                    train_ds,
                                    valid_ds,
+                                   accelerator,
+                                   epochs=epochs,
                                    batch_size=batch_size,
                                    dl_workers=data_loader_workers,
-                                   epochs=epochs,
                                    grad_accum_steps=grad_accum_steps,
                                    scheduler=torch_scheduler,
-                                   fp16=fp16,
                                    summary_writer=summary_writer,
                                    train_from=checkpoint,
-                                   save_checkpoint=save_checkpoint,
-                                   device=device)
+                                   save_checkpoint=save_checkpoint)
 
-    if summary_writer is not None:
+    if accelerator.is_main_process and summary_writer:
         hparams = {
             **model.config(), 'optimizer': optimizer,
             'learning_rate': learning_rate,

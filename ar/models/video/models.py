@@ -1,7 +1,9 @@
 from typing import Any
 from typing import Optional
 from typing import Sequence
+from typing import Tuple
 from typing import Type
+from typing import Union
 
 import torch
 import torch.nn as nn
@@ -403,6 +405,8 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
 ################################################################################
 
 _BOTTLENECK_EXPANSION = 4
+_BlockCls = Union[Type['_NoDegenTempBottleNeck'], Type['_Bottleneck']]
+_3DKernel = Union[int, Tuple[int, int, int]]
 
 
 class _Bottleneck(nn.Module):
@@ -418,8 +422,8 @@ class _Bottleneck(nn.Module):
         super().__init__()
 
         # 1x1x1
-        ks = (3, 1, 1) if non_temp_degen else 1
-        pad = (1, 0, 0) if non_temp_degen else 0
+        ks: _3DKernel = (3, 1, 1) if non_temp_degen else 1
+        pad: _3DKernel = (1, 0, 0) if non_temp_degen else 0
 
         self.conv1 = nn.Sequential(
             nn.Conv3d(inplanes, planes, kernel_size=ks,
@@ -496,7 +500,7 @@ class _TimeStridedSampleFuse(nn.Module):
 
 class _TimeStridedConvFuse(nn.Module):
 
-    def __init__(self, slow_features: int, alpha: float, beta: float) -> None:
+    def __init__(self, slow_features: int, alpha: int, beta: float) -> None:
         super().__init__()
         fast_features = int(slow_features * beta)
 
@@ -520,10 +524,12 @@ class _TimeStridedConvFuse(nn.Module):
 
 class _FusionFastSlow(nn.Module):
 
-    def __init__(self, fusion_mode: str, in_features: int, alpha: float,
+    def __init__(self, fusion_mode: str, in_features: int, alpha: int,
                  beta: float) -> None:
         super().__init__()
 
+        self.fuser: Union[_TimeToChannelFusion, _TimeStridedSampleFuse,
+                          _TimeStridedConvFuse]
         if fusion_mode == 'time-to-channel':
             self.fuser = _TimeToChannelFusion(alpha, beta)
         elif fusion_mode == 'time-strided-sample':
@@ -543,8 +549,8 @@ class _FusionFastSlow(nn.Module):
 class _PathWay(nn.Module):
 
     def __init__(self,
-                 blocks_classes: Sequence[Type[nn.Module]],
-                 alpha: float = 8,
+                 blocks_classes: Sequence[_BlockCls],
+                 alpha: int = 8,
                  beta: float = 1 / 8,
                  strides: Sequence[int] = (1, 2, 2, 2),
                  is_slow: bool = False,
@@ -634,10 +640,10 @@ class _PathWay(nn.Module):
         return self._output_features
 
     def forward(
-            self,
-            x: torch.Tensor,
-            residuals: Optional[Sequence[torch.Tensor]] = None) -> torch.Tensor:
-
+        self,
+        x: torch.Tensor,
+        residuals: Optional[Sequence[torch.Tensor]] = None
+    ) -> Tuple[torch.Tensor, Optional[Sequence[torch.Tensor]]]:
         x = self.stem(x)
         laterals = [x]
 
@@ -653,7 +659,7 @@ class _PathWay(nn.Module):
         return x, laterals[:-1]
 
     def _make_layer(self,
-                    block_cls: Type[nn.Module],
+                    block_cls: _BlockCls,
                     features: int,
                     blocks: int,
                     stride: int = 1,
@@ -709,7 +715,7 @@ class SlowFast(ar.utils.checkpoint.SerializableModule):
 
     def __init__(self,
                  n_classes: int,
-                 alpha: float = 8,
+                 alpha: int = 8,
                  beta: float = 1 / 8,
                  tau: int = 16,
                  dropout: float = .3,

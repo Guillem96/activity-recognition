@@ -1,4 +1,5 @@
 from . import data
+from . import distributed
 from . import io
 from . import metrics
 from . import transforms

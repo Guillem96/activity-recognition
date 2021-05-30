@@ -1,8 +1,10 @@
+import random
 from typing import Collection
 from typing import Mapping
 from typing import Optional
 from typing import Sequence
 
+import accelerate
 import numpy as np
 import torch
 import torch.cuda.amp as amp
@@ -27,10 +29,10 @@ def seed(seed: int = 0) -> None:
     seed : int, defaults 0
         Random seed.
     """
-    torch.manual_seed(seed)
-    # torch.backends.cudnn.deterministic = True # type: ignore
-    # torch.backends.cudnn.benchmark = False # type: ignore
+    random.seed(seed)
     np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 
 def train_one_epoch(
@@ -39,94 +41,51 @@ def train_one_epoch(
     optimizer: ar.typing.Optimizer,
     loss_fn: ar.typing.LossFn,
     epoch: int,
-    metrics: Collection[ar.typing.MetricFn] = (),
+    accelerator: accelerate.Accelerator,
     grad_accum_steps: int = 1,
     scheduler: ar.typing.Scheduler = None,
     summary_writer: ar.typing.TensorBoard = None,
-    mixed_precision: bool = False,
-    device: torch.device = torch.device('cpu')
 ) -> None:
-    metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
     logger = ValuesLogger(LogValue('loss', window_size=len(dl)),
                           LogValue('lr', 1),
-                          *metrics_log,
                           total_steps=len(dl),
-                          header=f'Epoch[{epoch}]')
+                          header=f'Epoch[{epoch}]',
+                          disable=not accelerator.is_local_main_process)
 
     model.train()
     optimizer.zero_grad()
 
-    scaler: Optional[amp.GradScaler] = None
-    if mixed_precision:
-        scaler = amp.GradScaler()
-
     for i, (x, y) in enumerate(dl):
-        x = x.to(device)
-        y = y.to(device)
-
-        if mixed_precision:
-            with amp.autocast():
-                predictions = model(x)
-                loss = loss_fn(predictions, y)
-        else:
-            predictions = model(x)
-            loss = loss_fn(predictions, y)
-
-        if mixed_precision:
-            scaler.scale(loss / grad_accum_steps).backward()
-        else:
-            (loss / grad_accum_steps).backward()
+        predictions = model(x)
+        loss = loss_fn(predictions, y)
+        accelerator.backward(loss / grad_accum_steps)
 
         if (i + 1) % grad_accum_steps == 0:
-            if mixed_precision:
-                scaler.step(optimizer)
-                scaler.update()
-            else:
-                optimizer.step()
-
+            optimizer.step()
             optimizer.zero_grad()
+            if scheduler:
+                scheduler.step()
 
-        if scheduler is not None:
-            scheduler.step()
-
-        current_metrics = {
-            m.__name__: m(predictions.float(), y).item() for m in metrics
-        }
-        logger(loss=loss.item(), lr=get_lr(optimizer), **current_metrics)
+        logger(loss=accelerator.gather(loss).item(), lr=get_lr(optimizer))
 
         # Write logs to tensorboard
         step = epoch * len(dl) + i
 
-        if summary_writer is not None:
+        if accelerator.is_main_process and summary_writer:
             summary_writer.add_scalar('learning_rate',
                                       get_lr(optimizer),
                                       global_step=step)
             summary_writer.add_scalar('train_loss',
                                       loss.item(),
                                       global_step=step)
-            summary_writer.add_scalars('train_metrics',
-                                       current_metrics,
-                                       global_step=step)
 
-    if summary_writer is not None:
+    if summary_writer:
         log_values = logger.as_dict()
         del log_values['lr']
 
         summary_writer.add_scalar('epoch_train_loss',
                                   log_values.pop('loss'),
                                   global_step=epoch)
-
-        summary_writer.add_scalars('epoch_train_metrics',
-                                   log_values,
-                                   global_step=epoch)
-
-    if scaler is not None:
-        scaler.step(optimizer)
-        scaler.update()
-    else:
-        optimizer.step()
-
-    optimizer.zero_grad()
 
 
 @torch.no_grad()
@@ -136,30 +95,28 @@ def evaluate(
     loss_fn: ar.typing.LossFn,
     metrics: Collection[ar.typing.MetricFn],
     epoch: int,
+    accelerator: accelerate.Accelerator,
     mixed_precision: bool = False,
     summary_writer: ar.typing.TensorBoard = None,
-    device: torch.device = torch.device('cpu')
 ) -> Mapping[str, float]:
 
     metrics_log = [LogValue(m.__name__, len(dl)) for m in metrics]
     logger = ValuesLogger(*metrics_log,
                           LogValue('loss', len(dl)),
                           total_steps=len(dl),
-                          header='Validation')
+                          header='Validation',
+                          disable=not accelerator.is_local_main_process)
 
     model.eval()
     for x, y in dl:
-        x = x.to(device)
-        y = y.to(device)
-
-        with amp.autocast(enabled=mixed_precision):
-            predictions = model(x)
-            loss = loss_fn(predictions, y)
+        predictions = model(x)
+        loss = loss_fn(predictions, y)
 
         updates_values = {
-            m.__name__: m(predictions.float(), y).item() for m in metrics
+            m.__name__: m(accelerator.gather(predictions).float(), y).item()
+            for m in metrics
         }
-        updates_values['loss'] = loss.item()
+        updates_values['loss'] = accelerator.gather(loss).item()
         logger(**updates_values)
 
     if summary_writer is not None:
@@ -177,8 +134,9 @@ def evaluate(
 def train(
     model: SerializableModule,
     optimizer: torch.optim.Optimizer,
-    train_ds: torch.utils.data.Dataset,
-    valid_ds: torch.utils.data.Dataset,
+    train_ds: ar.data.ClipLevelDataset,
+    valid_ds: ar.data.ClipLevelDataset,
+    accelerator: accelerate.Accelerator,
     *,
     epochs: int,
     batch_size: int,
@@ -186,11 +144,9 @@ def train(
     dl_workers: int = 1,
     train_from: dict = {},
     grad_accum_steps: int = 1,
-    fp16: bool = False,
     summary_writer: Optional[ar.typing.TensorBoard] = None,
     scheduler: Optional[ar.typing.Scheduler] = None,
     metrics: Sequence[ar.typing.MetricFn] = _DEFAULT_METRICS,
-    device: torch.device = torch.device('cpu')
 ) -> Mapping[str, float]:
     """Train a model
 
@@ -204,6 +160,8 @@ def train(
         Dataset containing the training examples
     valid_ds: torch.utils.data.Dataset
         Dataset containing the validation examples.
+    accelerator: accelerate.Accelerator
+        Device acceleration specs
     epochs: int
         Number of iterations over all the dataset
     batch_size: int
@@ -240,10 +198,14 @@ def train(
                                   batch_size,
                                   workers=dl_workers,
                                   is_train=True)
+
     valid_dl = ar.data.batch_data(valid_ds,
                                   batch_size,
                                   workers=dl_workers,
                                   is_train=False)
+
+    model, optimizer, train_dl, valid_dl = accelerator.prepare(
+        model, optimizer, train_dl, valid_dl)
 
     for epoch in range(starting_epoch, epochs):
         train_one_epoch(dl=train_dl,
@@ -251,12 +213,10 @@ def train(
                         optimizer=optimizer,
                         scheduler=scheduler,
                         loss_fn=criterion_fn,
-                        metrics=metrics,
                         grad_accum_steps=grad_accum_steps,
-                        mixed_precision=fp16,
                         epoch=epoch,
                         summary_writer=summary_writer,
-                        device=device)
+                        accelerator=accelerator)
 
         eval_metrics = evaluate(dl=valid_dl,
                                 model=model,
@@ -264,14 +224,15 @@ def train(
                                 loss_fn=criterion_fn,
                                 epoch=epoch,
                                 summary_writer=summary_writer,
-                                mixed_precision=fp16,
-                                device=device)
+                                accelerator=accelerator)
 
         # Save the model jointly with the optimizer
         model.save(
-            save_checkpoint.format(epoch=epoch, model=model.__class__.__name__),
+            str(save_checkpoint).format(epoch=epoch,
+                                        model=model.__class__.__name__),
             epoch=epoch,
             optimizer=optimizer.state_dict(),
-            scheduler=scheduler.state_dict() if scheduler is not None else {})
+            scheduler=scheduler.state_dict() if scheduler is not None else {},
+            save_fn=accelerator.save)
 
     return eval_metrics

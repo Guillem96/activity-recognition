@@ -30,7 +30,7 @@ class LogValue(object):
     
     """
 
-    def __init__(self, name: str, window_size: int):
+    def __init__(self, name: str, window_size: int = 1) -> None:
         self.name = name
         self.window_size = window_size
         self.logs: Deque[Number] = deque(maxlen=window_size)
@@ -83,9 +83,13 @@ class ValuesLogger(object):
     def __init__(self,
                  *values: LogValue,
                  total_steps: int,
-                 header: str = '') -> None:
+                 header: str = '',
+                 disable: bool = False) -> None:
         self.values = {v.name: v for v in values}
-        self.t = tqdm.trange(total_steps, desc=header, leave=True)
+        self.t = tqdm.trange(total_steps,
+                             desc=header,
+                             leave=True,
+                             disable=disable)
 
     def __call__(self, **kwargs: Number) -> None:
 

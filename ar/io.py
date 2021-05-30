@@ -2,6 +2,7 @@ import itertools
 import math
 from pathlib import Path
 from typing import Optional
+from typing import Tuple
 
 import torch
 import torchvision
@@ -57,7 +58,7 @@ class VideoFramesIterator(object):
     def __iter__(self) -> 'VideoFramesIterator':
         return self
 
-    def __next__(self) -> torch.Tensor:
+    def __next__(self) -> Tuple[torch.Tensor, torch.Tensor]:
         if self._is_it_end:
             raise StopIteration
 

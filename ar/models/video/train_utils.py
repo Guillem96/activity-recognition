@@ -58,30 +58,32 @@ def load_datasets(
                                        transform=valid_transforms)
 
         torch.save((train_ds, valid_ds), cache_file)
-    else:  # dataset_type == 'UCF-101':
-        if annotations_path is None:
-            raise ValueError(f'The annotations must be provided when using '
-                             f'{dataset_type}')
+        return train_ds, valid_ds
 
-        train_ds = ar.data.UCF101(root=root,
-                                  annotation_path=annotations_path,
-                                  frames_per_clip=frames_per_clip,
-                                  frame_rate=frame_rate,
-                                  split='train',
-                                  step_between_clips=steps_between_clips,
-                                  transform=train_transforms,
-                                  num_workers=workers)
+    # dataset_type == 'UCF-101':
+    if annotations_path is None:
+        raise ValueError(f'The annotations must be provided when using '
+                         f'{dataset_type}')
 
-        valid_ds = ar.data.UCF101(root=root,
-                                  annotation_path=annotations_path,
-                                  frames_per_clip=frames_per_clip,
-                                  frame_rate=frame_rate,
-                                  split='test',
-                                  step_between_clips=steps_between_clips,
-                                  transform=valid_transforms,
-                                  num_workers=workers)
+    train_ds = ar.data.UCF101(root=root,
+                              annotation_path=annotations_path,
+                              frames_per_clip=frames_per_clip,
+                              frame_rate=frame_rate,
+                              split='train',
+                              step_between_clips=steps_between_clips,
+                              transform=train_transforms,
+                              num_workers=workers)
 
-        torch.save((train_ds, valid_ds), cache_file)
+    valid_ds = ar.data.UCF101(root=root,
+                              annotation_path=annotations_path,
+                              frames_per_clip=frames_per_clip,
+                              frame_rate=frame_rate,
+                              split='test',
+                              step_between_clips=steps_between_clips,
+                              transform=valid_transforms,
+                              num_workers=workers)
+
+    torch.save((train_ds, valid_ds), cache_file)
 
     return train_ds, valid_ds
 
@@ -134,18 +136,19 @@ def load_optimizer(
 
 
 def data_preparation(
-        dataset: str,
-        *,
-        data_dir: PathLike,
-        frames_per_clip: int,
-        video_size: Optional[Tuple[int, int]] = None,
-        frame_rate: Optional[int] = None,
-        size_before_crop: Optional[Tuple[int, int]] = None,
-        annotations_path: Optional[PathLike] = None,
-        writer: Optional[ar.typing.TensorBoard] = None,
-        steps_between_clips: int = 1,
-        workers: int = 1,
-        validation_size: float = .1) -> Tuple[data.DataLoader, data.DataLoader]:
+    dataset: str,
+    *,
+    data_dir: PathLike,
+    frames_per_clip: int,
+    video_size: Optional[Tuple[int, int]] = None,
+    frame_rate: Optional[int] = None,
+    size_before_crop: Optional[Tuple[int, int]] = None,
+    annotations_path: Optional[PathLike] = None,
+    writer: Optional[ar.typing.TensorBoard] = None,
+    steps_between_clips: int = 1,
+    workers: int = 1,
+    validation_size: float = .1
+) -> Tuple[ar.data.ClipLevelDataset, ar.data.ClipLevelDataset]:
     """
     Loads the datasets with corresponding transformations and creates two data
     loaders, one for train and validation

@@ -2,8 +2,8 @@ import math
 from typing import Optional
 from typing import Tuple
 
+import accelerate
 import click
-import torch
 
 import ar
 from ar.models.video.models import SlowFast
@@ -12,12 +12,10 @@ from ar.models.video.train_utils import load_optimizer
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 def _load_model(
     out_units: int,
-    alpha: float,
+    alpha: int,
     beta: float,
     tau: int,
     dropout: float,
@@ -34,8 +32,7 @@ def _load_model(
                          dropout=dropout,
                          fusion_mode=fusion_mode)
     else:
-        model, checkpoint = SlowFast.load(resume_checkpoint,
-                                          map_location=device)
+        model, checkpoint = SlowFast.load(resume_checkpoint)
 
     return model, checkpoint
 
@@ -71,6 +68,7 @@ def _load_model(
               type=click.Choice(['OneCycle', 'Step', 'None']),
               default='None')
 # Training optimizations
+@click.option('--cpu/--no-cpu', default=False, help='Force CPU?')
 @click.option('--fp16/--no-fp16',
               default=False,
               help='Perform the forward pass of the model and the loss '
@@ -91,7 +89,7 @@ def _load_model(
               type=click.Path(dir_okay=False),
               default='models/model.pt',
               help='File to save the checkpoint')
-@click.option('--alpha', type=float, default=8)
+@click.option('--alpha', type=int, default=8)
 @click.option('--beta', type=float, default=1 / 8)
 @click.option('--tau', type=int, default=16)
 @click.option('--dropout', type=float, default=.3)
@@ -106,12 +104,16 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
          annots_dir: ar.typing.PathLike, validation_split: float,
          data_loader_workers: int, base_fps: int, clips_stride: int,
          epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
-         learning_rate: float, scheduler: str, fp16: bool,
+         learning_rate: float, scheduler: str, fp16: bool, cpu: bool,
          logdir: Optional[ar.typing.PathLike],
          resume_checkpoint: ar.typing.PathLike,
-         save_checkpoint: ar.typing.PathLike, alpha: float, beta: float,
-         tau: int, dropout: float, fusion_mode: str) -> None:
+         save_checkpoint: ar.typing.PathLike, alpha: int, beta: float, tau: int,
+         dropout: float, fusion_mode: str) -> None:
     ar.engine.seed()
+
+    accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)
+    print("=== Accelerator State ===")
+    print(accelerator)
 
     if logdir:
         summary_writer = ar.logger.build_summary_writter(logdir)
@@ -120,27 +122,30 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
 
     desired_slow_frames = 4
     frames_per_clip = desired_slow_frames * tau
-    train_ds, valid_ds = data_preparation(dataset,
-                                          data_dir=data_dir,
-                                          frames_per_clip=frames_per_clip,
-                                          frame_rate=base_fps,
-                                          annotations_path=annots_dir,
-                                          steps_between_clips=clips_stride,
-                                          workers=data_loader_workers,
-                                          validation_size=validation_split,
-                                          writer=summary_writer)
+
+    with ar.distributed.master_first(accelerator):
+        train_ds, valid_ds = data_preparation(dataset,
+                                              data_dir=data_dir,
+                                              frames_per_clip=frames_per_clip,
+                                              frame_rate=base_fps,
+                                              annotations_path=annots_dir,
+                                              steps_between_clips=clips_stride,
+                                              workers=data_loader_workers,
+                                              validation_size=validation_split,
+                                              writer=summary_writer)
 
     n_classes = len(train_ds.classes)
 
-    model, checkpoint = _load_model(n_classes,
-                                    alpha=alpha,
-                                    beta=beta,
-                                    tau=tau,
-                                    dropout=dropout,
-                                    resume_checkpoint=resume_checkpoint,
-                                    fusion_mode=fusion_mode)
-    model.to(device)
+    with ar.distributed.master_first(accelerator):
+        model, checkpoint = _load_model(n_classes,
+                                        alpha=alpha,
+                                        beta=beta,
+                                        tau=tau,
+                                        dropout=dropout,
+                                        resume_checkpoint=resume_checkpoint,
+                                        fusion_mode=fusion_mode)
 
+    steps_per_epoch = math.ceil(len(train_ds) / batch_size / grad_accum_steps)
     torch_optimizer, torch_scheduler = load_optimizer(
         model,
         optimizer,
@@ -148,24 +153,23 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
         checkpoint=checkpoint,
         learning_rate=learning_rate,
         epochs=epochs,
-        steps_per_epoch=math.ceil(len(train_ds) / batch_size))
+        steps_per_epoch=steps_per_epoch)
 
     eval_metrics = ar.engine.train(model,
                                    torch_optimizer,
                                    train_ds,
                                    valid_ds,
+                                   accelerator,
                                    epochs=epochs,
                                    batch_size=batch_size,
                                    dl_workers=data_loader_workers,
                                    grad_accum_steps=grad_accum_steps,
                                    scheduler=torch_scheduler,
-                                   fp16=fp16,
                                    summary_writer=summary_writer,
-                                   train_from=checkpoint,
                                    save_checkpoint=save_checkpoint,
-                                   device=device)
+                                   train_from=checkpoint)
 
-    if summary_writer is not None:
+    if accelerator.is_main_process and summary_writer:
         hparams = {
             **model.config(), 'optimizer': optimizer,
             'learning_rate': learning_rate,

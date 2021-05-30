@@ -44,7 +44,7 @@ def _process_video(video: ar.io.VideoFramesIterator,
     return torch.cat(predictions, dim=0)
 
 
-def _find_video_clips(video: torch.Tensor,
+def _find_video_clips(video: ar.io.VideoFramesIterator,
                       image_classifier: torch.nn.Module,
                       topk: int = 2) -> Tuple[torch.Tensor, torch.Tensor]:
     """

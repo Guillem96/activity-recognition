@@ -2,11 +2,14 @@ from pathlib import Path
 from typing import Any
 from typing import Optional
 
+import accelerate
 import click
 import torch
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as T
+from accelerate import accelerator
+from accelerate.utils import save
 from torch.utils.data import DataLoader
 from torch.utils.data import Subset
 
@@ -14,11 +17,12 @@ import ar
 from ar.typing import Optimizer
 from ar.typing import Scheduler
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 def train(**kwargs: Any) -> None:
     ar.engine.seed()
+
+    accelerator = accelerate.Accelerator(fp16=kwargs['fp16'], cpu=False)
+    print(accelerator.state)
 
     Path(kwargs['save_checkpoint']).parent.mkdir(exist_ok=True)
 
@@ -65,10 +69,8 @@ def train(**kwargs: Any) -> None:
     else:
         model, checkpoint = ar.image.ImageClassifier.load(
             kwargs['resume_checkpoint'],
-            map_location=device,
+            map_location=accelerator.device,
             freeze_feature_extractor=kwargs['freeze_fe'])
-
-    model.to(device)
 
     trainable_params = [p for p in model.parameters() if p.requires_grad]
 
@@ -104,6 +106,9 @@ def train(**kwargs: Any) -> None:
     else:
         starting_epoch = 0
 
+    model, optimizer, train_dl, valid_dl = accelerator.prepare(
+        model, optimizer, train_dl, valid_dl)
+
     criterion_fn = torch.nn.NLLLoss()
 
     for epoch in range(starting_epoch, kwargs['epochs']):
@@ -113,21 +118,22 @@ def train(**kwargs: Any) -> None:
                                   scheduler=scheduler,
                                   loss_fn=criterion_fn,
                                   epoch=epoch,
-                                  device=device)
+                                  accelerator=accelerator)
 
         ar.engine.evaluate(dl=valid_dl,
                            model=model,
                            epoch=epoch,
                            metrics=[ar.metrics.accuracy],
                            loss_fn=criterion_fn,
-                           device=device)
+                           accelerator=accelerator)
 
         # Save the model jointly with the optimizer
-        model.save(
-            kwargs['save_checkpoint'],
-            epoch=epoch,
-            optimizer=optimizer.state_dict(),
-            scheduler=scheduler.state_dict() if scheduler is not None else {})
+        if accelerator.is_local_main_process:
+            model.save(kwargs['save_checkpoint'],
+                       epoch=epoch,
+                       optimizer=optimizer.state_dict(),
+                       scheduler=scheduler.state_dict() if scheduler else {},
+                       save_fn=accelerator.save)
 
 
 @click.command()

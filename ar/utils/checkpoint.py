@@ -1,6 +1,8 @@
 import abc
 from pathlib import Path
 from typing import Any
+from typing import Callable
+from typing import Dict
 from typing import Optional
 from typing import Tuple
 from typing import Type
@@ -13,6 +15,7 @@ import torch.nn as nn
 from ar.typing import PathLike
 
 T = TypeVar('T', bound='SerializableModule')
+_SaveFn = Callable[[Dict[str, Any], PathLike], None]
 
 
 class SerializableModule(nn.Module, abc.ABC):
@@ -27,14 +30,20 @@ class SerializableModule(nn.Module, abc.ABC):
     def config(self) -> dict:
         raise NotImplemented
 
-    def save(self, path: PathLike, **kwargs: Any) -> None:
+    def save(self,
+             path: PathLike,
+             save_fn: Optional[_SaveFn] = None,
+             **kwargs: Any) -> None:
         checkpoint = dict(config=self.config(),
                           model=self.state_dict(),
                           **kwargs)
-        torch.save(checkpoint, path)
+        save_fn = save_fn or torch.save
+        save_fn(checkpoint, path)
 
     @classmethod
-    def load(cls: Type[T], path: PathLike, map_location: torch.device,
+    def load(cls: Type[T],
+             path: PathLike,
+             map_location: Optional[torch.device] = None,
              **kwargs: Any) -> Tuple[T, dict]:
 
         checkpoint = torch.load(path, map_location=map_location)
