@@ -113,7 +113,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
 
     accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)
     print("=== Accelerator State ===")
-    print(accelerator)
+    print(accelerator.state)
 
     if logdir:
         summary_writer = ar.logger.build_summary_writter(logdir)

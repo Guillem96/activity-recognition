@@ -33,12 +33,13 @@ def load_datasets(
     cache_file = Path.home() / '.ar' / 'datasets' / cache_fname
     cache_file.parent.mkdir(exist_ok=True, parents=True)
 
+    if cache_file.exists():
+        return torch.load(cache_file)
+
     train_ds: Optional[ar.data.ClipLevelDataset] = None
     valid_ds: Optional[ar.data.ClipLevelDataset] = None
 
-    if cache_file.exists():
-        train_ds, valid_ds = torch.load(cache_file)
-    elif dataset_type == 'kinetics400':
+    if dataset_type == 'kinetics400':
         train_ds = ar.data.Kinetics400(root=root,
                                        split='train',
                                        frames_per_clip=frames_per_clip,

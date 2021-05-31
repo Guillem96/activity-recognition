@@ -11,5 +11,5 @@ def master_first(accelerator: accelerate.Accelerator) -> Generator:
 
     yield
 
-    if accelerator.is_local_main_process():
+    if accelerator.is_local_main_process:
         accelerator.wait_for_everyone()
