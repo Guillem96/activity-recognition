@@ -148,7 +148,8 @@ def data_preparation(
     writer: Optional[ar.typing.TensorBoard] = None,
     steps_between_clips: int = 1,
     workers: int = 1,
-    validation_size: float = .1
+    validation_size: float = .1,
+    log_videos: bool = False,
 ) -> Tuple[ar.data.ClipLevelDataset, ar.data.ClipLevelDataset]:
     """
     Loads the datasets with corresponding transformations and creates two data
@@ -189,7 +190,7 @@ def data_preparation(
                                        train_transforms=train_tfms,
                                        valid_transforms=valid_tfms)
 
-    if writer:
+    if writer and log_videos:
         ar.logger.log_random_videos(train_ds,
                                     writer=writer,
                                     unnormalize_videos=True,

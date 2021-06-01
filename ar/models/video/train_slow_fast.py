@@ -124,15 +124,17 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
     frames_per_clip = desired_slow_frames * tau
 
     with ar.distributed.master_first(accelerator):
-        train_ds, valid_ds = data_preparation(dataset,
-                                              data_dir=data_dir,
-                                              frames_per_clip=frames_per_clip,
-                                              frame_rate=base_fps,
-                                              annotations_path=annots_dir,
-                                              steps_between_clips=clips_stride,
-                                              workers=data_loader_workers,
-                                              validation_size=validation_split,
-                                              writer=summary_writer)
+        train_ds, valid_ds = data_preparation(
+            dataset,
+            data_dir=data_dir,
+            frames_per_clip=frames_per_clip,
+            frame_rate=base_fps,
+            annotations_path=annots_dir,
+            steps_between_clips=clips_stride,
+            workers=data_loader_workers,
+            validation_size=validation_split,
+            writer=summary_writer,
+            log_videos=accelerator.is_main_process)
 
     n_classes = len(train_ds.classes)
 
@@ -182,6 +184,10 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
         }
 
         summary_writer.add_hparams(hparams, eval_metrics)
+
+
+def run():
+    main()
 
 
 if __name__ == "__main__":

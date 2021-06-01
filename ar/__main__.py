@@ -12,7 +12,6 @@ from .models.video import train_lrcn
 from .models.video import train_r2plus1d_18
 from .models.video import train_slow_fast
 
-
 _data_commands_function = {
     'data-image-dataset': build_image_ds.main,
     'data-video-candidates': build_video_candidates.main,
@@ -20,14 +19,17 @@ _data_commands_function = {
 }
 
 _train_commands_function = {
-  'train-lrcn': train_lrcn.main,
-  'train-fstcn': train_fstcn.main,
-  'train-r2plus1d': train_r2plus1d_18.main,
-  'train-slowfast': train_slow_fast.main,
+    'train-lrcn': train_lrcn.main,
+    'train-fstcn': train_fstcn.main,
+    'train-r2plus1d': train_r2plus1d_18.main,
+    'train-slowfast': train_slow_fast.main,
 }
 
-_train_commands_path = {k: os.path.abspath(inspect.getfile(v.callback)) 
-                        for k, v in _train_commands_function.items()}
+_train_commands_path = {
+    k: os.path.abspath(inspect.getfile(v.callback))
+    for k, v in _train_commands_function.items()
+}
+
 
 def main():
     if len(sys.argv) == 1:
@@ -46,14 +48,15 @@ def main():
         elif len(sys.argv) == 3 and sys.argv[2] in {'--help', '-h'}:
             _cmd_help(cmd, fn)
         else:
-            bash_cmd = ['accelerate', 'launch', 
-                        _train_commands_path[cmd], *sys.argv[2:]]
+            bash_cmd = [
+                'accelerate', 'launch', _train_commands_path[cmd], *sys.argv[2:]
+            ]
 
             process = subprocess.Popen(bash_cmd)
             process.wait()
             if process.returncode != 0:
                 raise subprocess.CalledProcessError(
-                  returncode=process.returncode, cmd=cmd)
+                    returncode=process.returncode, cmd=cmd)
 
     elif len(sys.argv) >= 2 and cmd in _data_commands_function:
         fn = _data_commands_function[cmd]
