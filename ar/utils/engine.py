@@ -66,7 +66,7 @@ def train_one_epoch(
             if scheduler:
                 scheduler.step()
 
-        logger(loss=accelerator.gather(loss).item(), lr=get_lr(optimizer))
+        logger(loss=loss.item(), lr=get_lr(optimizer))
 
         # Write logs to tensorboard
         step = epoch * len(dl) + i
@@ -79,7 +79,7 @@ def train_one_epoch(
                                       loss.item(),
                                       global_step=step)
 
-    if summary_writer:
+    if summary_writer and accelerator.is_main_process:
         log_values = logger.as_dict()
         del log_values['lr']
 
@@ -112,11 +112,14 @@ def evaluate(
         predictions = model(x)
         loss = loss_fn(predictions, y)
 
+        predictions = accelerator.gather(predictions)
+        y = accelerator.gather(y)
+
         updates_values = {
-            m.__name__: m(accelerator.gather(predictions).float(), y).item()
+            m.__name__: m(predictions, y).item()
             for m in metrics
         }
-        updates_values['loss'] = accelerator.gather(loss).item()
+        updates_values['loss'] = loss.item()
         logger(**updates_values)
 
     if summary_writer is not None:

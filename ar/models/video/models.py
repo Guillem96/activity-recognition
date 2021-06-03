@@ -389,7 +389,8 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
         for p in fe.parameters():
             p.requires_grad = not freeze_feature_extractor
 
-        self.module = nn.Sequential(fe, nn.Linear(in_features, n_classes))
+        self.fe = fe
+        self.classifier = nn.Linear(in_features, n_classes)
 
     def config(self) -> dict:
         return {
@@ -399,7 +400,8 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
         }
 
     def forward(self, video: torch.Tensor) -> torch.Tensor:
-        return self.module(video).log_softmax(-1)
+        x = self.fe(video).flatten(1)
+        return self.classifier(x).log_softmax(-1)
 
 
 ################################################################################
