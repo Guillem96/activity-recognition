@@ -36,7 +36,6 @@ class Kinetics400(ClipLevelDataset):
                                     is_valid_file=None)
         self._videos_path = [x[0] for x in self.samples]
         self._labels = [x[1] for x in self.samples]
-        self._video_clips = self._build_video_clips()
 
     @property
     def paths(self) -> Sequence[Path]:
@@ -45,10 +44,6 @@ class Kinetics400(ClipLevelDataset):
     @property
     def labels(self) -> Sequence[str]:
         return self._labels
-
-    @property
-    def video_clips(self) -> VideoClips:
-        return self._video_clips
 
     @property
     def split_root(self) -> Path:
@@ -86,13 +81,6 @@ class UCF101(ClipLevelDataset):
 
         # Get the video labels in str format
         self._labels = [o.parent.name for o in videos_path]
-
-        # Unique elements in the whole labels collection are the classes
-        self._video_clips = self._build_video_clips()
-
-    @property
-    def video_clips(self) -> VideoClips:
-        return self._video_clips
 
     @property
     def split_root(self) -> Path:

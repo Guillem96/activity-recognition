@@ -149,7 +149,10 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                         bidirectional=bidirectional,
                                         fusion_mode=fusion_mode)
 
-    steps_per_epoch = math.ceil(len(train_ds) / batch_size / grad_accum_steps)
+    steps_per_epoch = math.ceil(
+        len(train_ds) / batch_size / grad_accum_steps /
+        accelerator.num_processes)
+
     torch_optimizer, torch_scheduler = load_optimizer(
         model,
         optimizer,

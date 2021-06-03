@@ -14,16 +14,39 @@ import torch.utils.data as data
 import torchvision
 from torchvision.datasets.video_utils import VideoClips
 
-from ar.typing import Transform
+from ar.typing import PathLike, Transform
 
 _ClipDatasetSample = Tuple[torch.Tensor, torch.Tensor, int, dict]
 
 
 class ClipLevelDataset(data.Dataset, abc.ABC):
+    """Base class to provide a common interface among video datasets.
+
+    The subclasses of this class are expected to work at clip level.
+
+    Parameters
+    ----------
+    root: PathLike
+        Path to the folder containing the video clips
+    split: str
+        Data split that you are using: train, valid, train01, etc.
+    frames_per_clip: int
+        Number of frames per sampled clip
+    step_between_clip: int, defaults 1
+        Stride between sampled clips.
+    frame_rate: Optional[int], defaults to None
+        Resample the sampled clips at the given frame_rate. If left to None
+        the clips are not resampled
+    transform: Optional[Transform], defaults None
+        Callables that receive a tensor and returns a modified tensor. This
+        parameter is useful for data augmentation.
+    num_workers: int, defaults 4
+        Number of processes to index the video clips
+    """
 
     def __init__(
         self,
-        root: Union[Path, str],
+        root: PathLike,
         split: str,
         frames_per_clip: int,
         step_between_clips: int = 1,
@@ -44,6 +67,8 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         self._classes: Optional[List[str]] = None
         self._class_2_idx: Optional[Mapping[str, int]] = None
 
+        self.video_clips = self._build_video_clips()
+
     def _build_video_clips(self) -> VideoClips:
         return VideoClips(list(map(str, self.paths)),
                           self.frames_per_clip,
@@ -59,18 +84,61 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
     @abc.abstractproperty
     def split_root(self) -> Path:
-        raise NotImplementedError()
+        """Get the directory of the videos belonging to a split.
+
+        Some datasets like UCF-101 do not use these method since the
+        splits are defined in a text file.
+
+        Examples
+        --------
+        def split_root(self) -> Path:
+            return self.root / self.split
+
+        Returns
+        -------
+        Path
+            Path to the folder containing the videos for a given split
+        """
+        return self.root
 
     @abc.abstractproperty
     def paths(self) -> Sequence[Path]:
-        raise NotImplementedError()
+        """Get a list of all videos of the dataset.
+
+        Recurse in the self.root directory may be a good idea.
+
+        Returns
+        -------
+        Sequence[Path]
+            List of all videos paths. 
+        """
 
     @abc.abstractproperty
     def labels(self) -> Sequence[str]:
-        raise NotImplementedError()
+        """List of all video labels.
+
+        Please note that the position i of the list returned here must be the
+        label of the self.paths[i]
+
+        Returns
+        -------
+        Sequence[str]
+            List of labels. The label at position i matches the class of the
+            path at position i
+        """
 
     @property
     def classes(self) -> List[str]:
+        """Returns a list of the dataset classes.
+
+        It is computed by taking the unique values returned by th self.labels
+        property.
+
+        Returns
+        -------
+        List[str]
+            List of dataset classes
+        """
         if self._classes:
             return self._classes
         self._classes = sorted(list(set(self.labels)))
@@ -78,6 +146,13 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
     @property
     def class_2_idx(self) -> Mapping[str, int]:
+        """Get the dictionary to encode a label
+
+        Returns
+        -------
+        Mapping[str, int]
+            Class string to index mapping.
+        """
         if self._class_2_idx:
             return self._class_2_idx
         self._class_2_idx = {c: i for i, c in enumerate(self.classes)}
@@ -85,16 +160,43 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
     @property
     def metadata(self) -> dict:
+        """VideoClips metadata
+
+        Delegates to VideoClips property.
+
+        Returns
+        -------
+        dict
+            VideoClips metadata
+        """
         return self.video_clips.metadata
 
-    @abc.abstractproperty
-    def video_clips(self) -> VideoClips:
-        raise NotImplementedError()
-
     def __len__(self) -> int:
+        """Magic method that computes the length of the dataset.
+
+        This is required by PyTorch
+
+        Returns
+        -------
+        int
+            Length
+        """
         return self.video_clips.num_clips()
 
     def __getitem__(self, idx: int) -> _ClipDatasetSample:
+        """Fetch an indexed sample.
+
+        Parameters
+        ----------
+        idx : int
+            Sample index
+
+        Returns
+        -------
+        _ClipDatasetSample
+            Dataset sample being a tuple of four items containing the video,
+            the audio, the video information and the label.
+        """
         video, audio, info, video_idx = self.video_clips.get_clip(idx)
         label = self.class_2_idx[self.labels[video_idx]]
 
@@ -105,7 +207,15 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
 
 class VideoLevelDataset(data.Dataset, abc.ABC):
+    """[summary]
 
+    Parameters
+    ----------
+    data : [type]
+        [description]
+    abc : [type]
+        [description]
+    """
     def __init__(self,
                  video_paths: Sequence[Union[str, Path]],
                  labels: Sequence[str],
