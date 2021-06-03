@@ -97,7 +97,7 @@ def load_optimizer(
     checkpoint: dict,
     learning_rate: float,
     epochs: int = -1,
-    steps_per_epoch: int = -1
+    steps_per_epoch: int = -1,
 ) -> Tuple[ar.typing.Optimizer, Optional[ar.typing.Scheduler]]:
     """
     Load an optimizer to update the model parameters and if specified,
