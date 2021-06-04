@@ -3,6 +3,8 @@ from typing import Tuple
 
 import torch
 
+# TODO: Rewrite this to use VideoIterator instead of video Tensor
+
 
 def _align_video(video: torch.Tensor, src_fmt: str,
                  dst_fmt: str) -> torch.Tensor:

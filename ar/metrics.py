@@ -1,6 +1,3 @@
-import functools
-from typing import Any
-
 import torch
 
 
@@ -35,13 +32,55 @@ def top_k_accuracy(y_preds: torch.Tensor,
 
 def top_5_accuracy(y_preds: torch.Tensor,
                    y_trues: torch.Tensor) -> torch.Tensor:
+    """
+    Computes the top 5 accuracy
+
+    Parameters
+    ----------
+    y_preds: torch.Tensor of shape [BATCH, N_CLASSES]
+        Log probabilities, probabilities or logits from the model
+    y_trues: torch.LongTensor of shape [BATCH]
+        Ground truths. With range [0, N_CLASSES]
+
+    Returns
+    -------
+    torch.Tensor
+    """
     return top_k_accuracy(y_preds, y_trues, k=5)
 
 
 def top_3_accuracy(y_preds: torch.Tensor,
                    y_trues: torch.Tensor) -> torch.Tensor:
+    """
+    Computes the top 3 accuracy
+
+    Parameters
+    ----------
+    y_preds: torch.Tensor of shape [BATCH, N_CLASSES]
+        Log probabilities, probabilities or logits from the model
+    y_trues: torch.LongTensor of shape [BATCH]
+        Ground truths. With range [0, N_CLASSES]
+
+    Returns
+    -------
+    torch.Tensor
+    """
     return top_k_accuracy(y_preds, y_trues, k=3)
 
 
 def accuracy(y_preds: torch.Tensor, y_trues: torch.Tensor) -> torch.Tensor:
+    """
+    Computes the accuracy
+
+    Parameters
+    ----------
+    y_preds: torch.Tensor of shape [BATCH, N_CLASSES]
+        Log probabilities, probabilities or logits from the model
+    y_trues: torch.LongTensor of shape [BATCH]
+        Ground truths. With range [0, N_CLASSES]
+
+    Returns
+    -------
+    torch.Tensor
+    """
     return top_k_accuracy(y_preds, y_trues, k=1)

@@ -14,7 +14,8 @@ import torch.utils.data as data
 import torchvision
 from torchvision.datasets.video_utils import VideoClips
 
-from ar.typing import PathLike, Transform
+from ar.typing import PathLike
+from ar.typing import Transform
 
 _ClipDatasetSample = Tuple[torch.Tensor, torch.Tensor, int, dict]
 
@@ -42,6 +43,8 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         parameter is useful for data augmentation.
     num_workers: int, defaults 4
         Number of processes to index the video clips
+    extensions: Collection[str], defaults ('mp4', 'avi')
+        Files extensions of the videos
     """
 
     def __init__(
@@ -82,7 +85,6 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
                           _audio_samples=0,
                           _audio_channels=0)
 
-    @abc.abstractproperty
     def split_root(self) -> Path:
         """Get the directory of the videos belonging to a split.
 
@@ -207,15 +209,7 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
 
 class VideoLevelDataset(data.Dataset, abc.ABC):
-    """[summary]
 
-    Parameters
-    ----------
-    data : [type]
-        [description]
-    abc : [type]
-        [description]
-    """
     def __init__(self,
                  video_paths: Sequence[Union[str, Path]],
                  labels: Sequence[str],

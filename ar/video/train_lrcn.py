@@ -7,9 +7,9 @@ import accelerate
 import click
 
 import ar
-from ar.models.video.models import FstCN
-from ar.models.video.train_utils import data_preparation
-from ar.models.video.train_utils import load_optimizer
+from ar.video.models import LRCN
+from ar.video.train_utils import data_preparation
+from ar.video.train_utils import load_optimizer
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 
@@ -22,13 +22,13 @@ def _load_model(out_units: int,
 
     if resume_checkpoint is None:
         checkpoint: dict = dict()
-        model = FstCN(feature_extractor=feature_extractor,
-                      n_classes=out_units,
-                      freeze_feature_extractor=freeze_fe,
-                      **kwargs)
+        model = LRCN(feature_extractor,
+                     out_units,
+                     freeze_feature_extractor=freeze_fe,
+                     **kwargs)
     else:
-        model, checkpoint = FstCN.load(resume_checkpoint,
-                                       freeze_feature_extractor=freeze_fe)
+        model, checkpoint = LRCN.load(resume_checkpoint,
+                                      freeze_feature_extractor=freeze_fe)
 
     return model, checkpoint
 
@@ -63,8 +63,8 @@ def _load_model(out_units: int,
 @click.option('--scheduler',
               type=click.Choice(['OneCycle', 'Step', 'None']),
               default='None')
-# Training optimizations
 @click.option('--cpu/--no-cpu', default=False, help='Force CPU?')
+# Training optimizations
 @click.option('--fp16/--no-fp16',
               default=False,
               help='Perform the forward pass of the model and the loss '
@@ -92,32 +92,29 @@ def _load_model(out_units: int,
               default=False,
               help='Wether or not to fine tune the pretrained'
               ' feature extractor')
-@click.option('--st',
+@click.option('--rnn-units',
               type=int,
-              default=5,
-              help='Stride to sample frames from video clips')
-@click.option('--dt',
-              type=int,
-              default=9,
-              help='Offset to create the Vdiff tensors')
-@click.option('--scl-features',
-              type=int,
-              default=64,
-              help='Features for the SCL branch')
-@click.option('--tcl-features',
-              type=int,
-              default=64,
-              help='Features for the TCL branch')
+              default=512,
+              help='Hidden size of the LSTM layer added on top of the feature '
+              'extractors')
+@click.option('--fusion-mode',
+              type=click.Choice(['sum', 'attn', 'avg', 'last']),
+              default='sum',
+              help='How to aggregate the timestep level logits')
+@click.option('--bidirectional/--no-bidirectional',
+              default=True,
+              help='Wether to use a bidirectional LSTM or an '
+              ' autoregressive')
 def main(dataset: str, data_dir: ar.typing.PathLike,
          annots_dir: ar.typing.PathLike, validation_split: float,
          data_loader_workers: int, frames_per_clip: int, clips_stride: int,
          epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
-         learning_rate: float, scheduler: str, fp16: bool, cpu: bool,
+         learning_rate: float, scheduler: str, cpu: bool, fp16: bool,
          logdir: Optional[ar.typing.PathLike],
          resume_checkpoint: ar.typing.PathLike,
          save_checkpoint: ar.typing.PathLike, feature_extractor: str,
-         freeze_fe: bool, st: int, dt: int, scl_features: int,
-         tcl_features: int) -> None:
+         freeze_fe: bool, rnn_units: int, fusion_mode: str,
+         bidirectional: bool) -> None:
     ar.engine.seed()
 
     accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)
@@ -128,10 +125,6 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
         summary_writer = ar.logger.build_summary_writter(logdir)
     else:
         summary_writer = None
-
-    # Make the frames per clips large enough to have enough frames to generate
-    # the strided clips and to compute the Vdiff
-    frames_per_clip = (frames_per_clip + dt) * st
 
     with ar.distributed.master_first(accelerator):
         train_ds, valid_ds = data_preparation(
@@ -152,10 +145,9 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                         feature_extractor=feature_extractor,
                                         freeze_fe=freeze_fe,
                                         resume_checkpoint=resume_checkpoint,
-                                        st=st,
-                                        dt=dt,
-                                        scl_features=scl_features,
-                                        tcl_features=tcl_features)
+                                        rnn_units=rnn_units,
+                                        bidirectional=bidirectional,
+                                        fusion_mode=fusion_mode)
 
     steps_per_epoch = math.ceil(
         len(train_ds) / batch_size / grad_accum_steps /
@@ -193,11 +185,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
             'epochs': epochs,
             'batch_size': batch_size,
             'clips_stride': clips_stride,
-            'frames_per_clip': frames_per_clip,
-            'st': st,
-            'dt': dt,
-            'tcl_features': tcl_features,
-            'scl_features': scl_features
+            'frames_per_clip': frames_per_clip
         }
 
         summary_writer.add_hparams(hparams, eval_metrics)

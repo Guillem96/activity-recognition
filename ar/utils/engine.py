@@ -7,7 +7,6 @@ from typing import Sequence
 import accelerate
 import numpy as np
 import torch
-import torch.cuda.amp as amp
 import torch.nn as nn
 
 import ar
@@ -96,7 +95,6 @@ def evaluate(
     metrics: Collection[ar.typing.MetricFn],
     epoch: int,
     accelerator: accelerate.Accelerator,
-    mixed_precision: bool = False,
     summary_writer: ar.typing.TensorBoard = None,
 ) -> Mapping[str, float]:
 
@@ -115,10 +113,7 @@ def evaluate(
         predictions = accelerator.gather(predictions)
         y = accelerator.gather(y)
 
-        updates_values = {
-            m.__name__: m(predictions, y).item()
-            for m in metrics
-        }
+        updates_values = {m.__name__: m(predictions, y).item() for m in metrics}
         updates_values['loss'] = loss.item()
         logger(**updates_values)
 

@@ -7,9 +7,9 @@ import accelerate
 import click
 
 import ar
-from ar.models.video.models import R2plus1_18
-from ar.models.video.train_utils import data_preparation
-from ar.models.video.train_utils import load_optimizer
+from ar.video.models import R2plus1_18
+from ar.video.train_utils import data_preparation
+from ar.video.train_utils import load_optimizer
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 

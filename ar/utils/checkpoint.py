@@ -27,13 +27,35 @@ class SerializableModule(nn.Module, abc.ABC):
         super(SerializableModule, self).__init__()
 
     @abc.abstractmethod
-    def config(self) -> dict:
-        raise NotImplemented
+    def config(self) -> Dict[str, Any]:
+        """Get the model configuration.
+        
+        This method should return a dictionary which the keys are the __init__
+        method arguments are the values are the values to restore the instance
+        from.
+
+        Returns
+        -------
+        Dict[str, Any]
+            Dictionary which the keys are equal to the __init__ parameters
+            and the values are pickeable.
+        """
 
     def save(self,
              path: PathLike,
              save_fn: Optional[_SaveFn] = None,
              **kwargs: Any) -> None:
+        """Serializes the model and the provided kwargs
+
+        Parameters
+        ----------
+        path: PathLike
+            File to serialize the checkpoint
+        save_fn: Optional[_SaveFn], defaults None
+            Function to use to serialize the checkpoint. This is set when 
+            saving with accelerator.save instead of torch.save. I left to None
+            by default the method uses the `torch.save`.
+        """
         checkpoint = dict(config=self.config(),
                           model=self.state_dict(),
                           **kwargs)
@@ -44,8 +66,22 @@ class SerializableModule(nn.Module, abc.ABC):
     def load(cls: Type[T],
              path: PathLike,
              map_location: Optional[torch.device] = None,
-             **kwargs: Any) -> Tuple[T, dict]:
+             **kwargs: Any) -> Tuple[T, Dict[str, Any]]:
+        """Loads a checkpoint and also returns the remaining elements from it.
 
+        Parameters
+        ----------
+        path: PathLike
+            Path where the checkpoint is stored
+        map_location : Optional[torch.device], defaults None
+            Device where to load the checkpoint
+
+        Returns
+        -------
+        Tuple[T, Dict[str, Any]]
+            First element is the restored model instance. The second element
+            are the remaining objects in the checkpoint.
+        """
         checkpoint = torch.load(path, map_location=map_location)
         config = dict(checkpoint.pop('config'), **kwargs)
 
@@ -60,7 +96,32 @@ class SerializableModule(nn.Module, abc.ABC):
                         name_or_path: PathLike,
                         map_location: torch.device = torch.device('cpu'),
                         dst_file: Optional[PathLike] = None) -> T:
+        """Loads a model from a name or a path.
 
+        If user uses a name then the method checks if the name is available in
+        the model registry and download the checkpoint automatically.
+
+        Parameters
+        ----------
+        name_or_path: PathLike
+            Pretrained model name or path
+        map_location : Optional[torch.device], defaults torch.device('cpu')
+            Device where to load the checkpoint
+        dst_file: Optional[PathLike], defaults None
+            Cache file to store the downladed checkpoint. If left to None the 
+            method stores the checkpoints at ~.ar/ directory.
+
+        Returns
+        -------
+        T
+            Loaded model in evaluation mode.
+
+        Raises
+        ------
+        ValueError
+            If name and path does not exist
+        """
+        # TODO: Rewrite this to use google drive.
         bucket = 'ml-generic-purpose-pt-models'
         base_url = f'https://storage.googleapis.com/{bucket}/ar'
 
@@ -77,7 +138,7 @@ class SerializableModule(nn.Module, abc.ABC):
         name = str(name_or_path)
 
         if path.is_file():
-            model, _ = cls.load(str(path), map_location=map_location)
+            model, _ = cls.load(path, map_location=map_location)
         elif name in names_url:
             if dst_file is None:
                 dst_file = Path.home() / '.ar' / (name + '.pt')
@@ -95,5 +156,5 @@ class SerializableModule(nn.Module, abc.ABC):
                              f'You can reference a model using a path or an '
                              f'available name. The available model names are: '
                              f'{available_names}')
-
+        model.eval()
         return model

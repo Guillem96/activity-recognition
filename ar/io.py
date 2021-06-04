@@ -7,13 +7,33 @@ from typing import Tuple
 import torch
 import torchvision
 
+from ar.typing import PathLike
 from ar.typing import Transform
 
 
 class VideoFramesIterator(object):
+    """Iterates over the given video.
+
+    With this object you can iterate over a video with a batched approach. 
+    This means that you can progressively take `batch_size` frames at every
+    iteration.
+
+    This object is useful to safe memory when processing a video.
+
+    Parameters
+    ----------
+    video_path: PathLike
+        Video filesystem path
+    batch_size: int
+        Number of frames to retrieve after each iteration
+    skip_frames: int, defaults 1
+        Skip frames to process the video faster but with less precision
+    transforms: Optional[Transform], defaults None
+        Video transformations
+    """
 
     def __init__(self,
-                 video_path: Path,
+                 video_path: PathLike,
                  batch_size: int,
                  skip_frames: int = 1,
                  transforms: Optional[Transform] = None) -> None:
@@ -27,14 +47,35 @@ class VideoFramesIterator(object):
 
     @property
     def video_fps(self) -> float:
+        """Get video FPS
+
+        Returns
+        -------
+        float
+            Video's FPS
+        """
         return self.metadata['video']['fps'][0]
 
     @property
     def video_duration(self) -> float:
+        """Get the video duration in seconds
+
+        Returns
+        -------
+        float
+            Video duration in seconds
+        """
         return self.metadata['video']['duration'][0]
 
     @property
     def total_frames(self) -> int:
+        """Get the total number of frames.
+
+        Returns
+        -------
+        int
+            Number of frames that the video is composed of.
+        """
         return int(self.video_fps * self.video_duration)
 
     def take(self,
@@ -42,6 +83,25 @@ class VideoFramesIterator(object):
              to_sec: int,
              do_skip_frames: bool = False,
              do_transform: bool = False) -> torch.Tensor:
+        """Take the frames between two timestamps in seconds.
+
+        Parameters
+        ----------
+        from_sec: int
+            Init of the interval
+        to_sec: int
+            End of the interval
+        do_skip_frames: bool, defaults Fale
+            Skip the frames specified in the __init__?
+        do_transform: bool, defaults False
+            Apply the given transformations
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor containing the stacked frames. The shape before being fed to
+            the self.transform callable is [FRAMES, HEIGHT, WIDTH, CHANNELS]
+        """
         video_it = self._video_reader.seek(from_sec)
         frames = [
             f['data']
@@ -56,9 +116,28 @@ class VideoFramesIterator(object):
         return frames
 
     def __iter__(self) -> 'VideoFramesIterator':
+        """Python iterator interface"""
         return self
 
     def __next__(self) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Get next frames batch
+
+        Examples
+        --------
+        >>> vit = VideoFramesIterator("path", batch_size=4, skip_frames=2)
+        >>> frames, idx = next(vit)
+        >>> frames.size
+        torch.Size([4, 112, 168, 3])
+        >>> idx  # Selected frames are:
+        [0, 2, 4, 6]
+        Returns
+        -------
+        Tuple[torch.Tensor, torch.Tensor]
+            Tuple of two tensors, the first tensor contains the stacked frames. 
+            The shape before being fed to the self.transform callable is 
+            [FRAMES, HEIGHT, WIDTH, CHANNELS], the second tensor contains the 
+            frame indices
+        """
         if self._is_it_end:
             raise StopIteration
 
@@ -92,5 +171,6 @@ class VideoFramesIterator(object):
         return frames_idx, video_clip
 
     def __len__(self) -> int:
+        """Length of the iterator"""
         return math.ceil(
             (self.total_frames / self.skip_frames) / self.batch_size)

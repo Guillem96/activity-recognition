@@ -1,8 +1,10 @@
-import click
-import sys
-import os
 import inspect
+import os
 import subprocess
+import sys
+
+import click
+
 from ar.data.cli import build_image_ds
 from ar.data.cli import build_video_candidates
 from ar.data.cli import download

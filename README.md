@@ -201,7 +201,7 @@ Once we have the dataset downloaded, we can train an image classifier using this
 data by running:
 
 ```bash
-$ python -m ar.models.image.train \
+$ python -m ar.image.train \
     --data-dir data/kinetics400-image \
     --epochs 8 \
     --batch-size 32 \

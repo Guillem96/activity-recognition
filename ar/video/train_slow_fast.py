@@ -1,5 +1,4 @@
 import math
-from typing import Any
 from typing import Optional
 from typing import Tuple
 
@@ -7,28 +6,33 @@ import accelerate
 import click
 
 import ar
-from ar.models.video.models import LRCN
-from ar.models.video.train_utils import data_preparation
-from ar.models.video.train_utils import load_optimizer
+from ar.video.models import SlowFast
+from ar.video.train_utils import data_preparation
+from ar.video.train_utils import load_optimizer
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 
 
-def _load_model(out_units: int,
-                feature_extractor: str,
-                freeze_fe: bool,
-                resume_checkpoint: Optional[ar.typing.PathLike] = None,
-                **kwargs: Any) -> Tuple[ar.SerializableModule, dict]:
+def _load_model(
+    out_units: int,
+    alpha: int,
+    beta: float,
+    tau: int,
+    dropout: float,
+    fusion_mode: str,
+    resume_checkpoint: Optional[ar.typing.PathLike] = None,
+) -> Tuple[ar.SerializableModule, dict]:
 
     if resume_checkpoint is None:
         checkpoint: dict = dict()
-        model = LRCN(feature_extractor,
-                     out_units,
-                     freeze_feature_extractor=freeze_fe,
-                     **kwargs)
+        model = SlowFast(out_units,
+                         alpha=alpha,
+                         beta=beta,
+                         tau=tau,
+                         dropout=dropout,
+                         fusion_mode=fusion_mode)
     else:
-        model, checkpoint = LRCN.load(resume_checkpoint,
-                                      freeze_feature_extractor=freeze_fe)
+        model, checkpoint = SlowFast.load(resume_checkpoint)
 
     return model, checkpoint
 
@@ -50,7 +54,7 @@ def _load_model(out_units: int,
               'UCF-101')
 @click.option('--validation-split', type=float, default=.1)
 @click.option('--data-loader-workers', type=int, default=2)
-@click.option('--frames-per-clip', type=int, required=True)
+@click.option('--base-fps', type=int, default=30)
 @click.option('--clips-stride', type=int, default=1)
 # Training behavior
 @click.option('--epochs', type=int, default=10)
@@ -63,8 +67,8 @@ def _load_model(out_units: int,
 @click.option('--scheduler',
               type=click.Choice(['OneCycle', 'Step', 'None']),
               default='None')
-@click.option('--cpu/--no-cpu', default=False, help='Force CPU?')
 # Training optimizations
+@click.option('--cpu/--no-cpu', default=False, help='Force CPU?')
 @click.option('--fp16/--no-fp16',
               default=False,
               help='Perform the forward pass of the model and the loss '
@@ -85,36 +89,26 @@ def _load_model(out_units: int,
               type=click.Path(dir_okay=False),
               default='models/model.pt',
               help='File to save the checkpoint')
-@click.option('--feature-extractor',
-              type=click.Choice(list(ar.nn._FEATURE_EXTRACTORS)),
-              default='resnet18')
-@click.option('--freeze-fe/--no-freeze-fe',
-              default=False,
-              help='Wether or not to fine tune the pretrained'
-              ' feature extractor')
-@click.option('--rnn-units',
-              type=int,
-              default=512,
-              help='Hidden size of the LSTM layer added on top of the feature '
-              'extractors')
+@click.option('--alpha', type=int, default=8)
+@click.option('--beta', type=float, default=1 / 8)
+@click.option('--tau', type=int, default=16)
+@click.option('--dropout', type=float, default=.3)
 @click.option('--fusion-mode',
-              type=click.Choice(['sum', 'attn', 'avg', 'last']),
-              default='sum',
-              help='How to aggregate the timestep level logits')
-@click.option('--bidirectional/--no-bidirectional',
-              default=True,
-              help='Wether to use a bidirectional LSTM or an '
-              ' autoregressive')
+              type=click.Choice([
+                  'time-to-channel',
+                  'time-strided-sample',
+                  'time-strided-conv',
+              ]),
+              default='time-strided-conv')
 def main(dataset: str, data_dir: ar.typing.PathLike,
          annots_dir: ar.typing.PathLike, validation_split: float,
-         data_loader_workers: int, frames_per_clip: int, clips_stride: int,
+         data_loader_workers: int, base_fps: int, clips_stride: int,
          epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
-         learning_rate: float, scheduler: str, cpu: bool, fp16: bool,
+         learning_rate: float, scheduler: str, fp16: bool, cpu: bool,
          logdir: Optional[ar.typing.PathLike],
          resume_checkpoint: ar.typing.PathLike,
-         save_checkpoint: ar.typing.PathLike, feature_extractor: str,
-         freeze_fe: bool, rnn_units: int, fusion_mode: str,
-         bidirectional: bool) -> None:
+         save_checkpoint: ar.typing.PathLike, alpha: int, beta: float, tau: int,
+         dropout: float, fusion_mode: str) -> None:
     ar.engine.seed()
 
     accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)
@@ -126,11 +120,15 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
     else:
         summary_writer = None
 
+    desired_slow_frames = 4
+    frames_per_clip = desired_slow_frames * tau
+
     with ar.distributed.master_first(accelerator):
         train_ds, valid_ds = data_preparation(
             dataset,
             data_dir=data_dir,
             frames_per_clip=frames_per_clip,
+            frame_rate=base_fps,
             annotations_path=annots_dir,
             steps_between_clips=clips_stride,
             workers=data_loader_workers,
@@ -142,11 +140,11 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
 
     with ar.distributed.master_first(accelerator):
         model, checkpoint = _load_model(n_classes,
-                                        feature_extractor=feature_extractor,
-                                        freeze_fe=freeze_fe,
+                                        alpha=alpha,
+                                        beta=beta,
+                                        tau=tau,
+                                        dropout=dropout,
                                         resume_checkpoint=resume_checkpoint,
-                                        rnn_units=rnn_units,
-                                        bidirectional=bidirectional,
                                         fusion_mode=fusion_mode)
 
     steps_per_epoch = math.ceil(
@@ -173,8 +171,8 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                    grad_accum_steps=grad_accum_steps,
                                    scheduler=torch_scheduler,
                                    summary_writer=summary_writer,
-                                   train_from=checkpoint,
-                                   save_checkpoint=save_checkpoint)
+                                   save_checkpoint=save_checkpoint,
+                                   train_from=checkpoint)
 
     if accelerator.is_main_process and summary_writer:
         hparams = {

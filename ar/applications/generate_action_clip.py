@@ -11,7 +11,7 @@ import tqdm.auto as tqdm
 
 import ar
 import ar.transforms as T
-from ar.models.image import ImageClassifier
+from ar.image import ImageClassifier
 from ar.typing import Transform
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

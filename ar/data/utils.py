@@ -59,6 +59,26 @@ def batch_data(
     workers: int = 1,
     collate_fn: _CollateFn = video_default_collate_fn
 ) -> torch.utils.data.DataLoader:
+    """Wraps a ClipLevelDataset with a torch DataLoader.
+
+    Parameters
+    ----------
+    ds: ClipLevelDataset
+        Dataset to batch
+    batch_size: int
+        Size of the batch
+    is_train: bool
+        Is the given dataset the training one?
+    workers: int, defaults 1
+        Number of processes to generate the batches
+    collate_fn : _CollateFn, defaults video_default_collate_fn
+        collate_fn parameter of the torch DataLoader
+
+    Returns
+    -------
+    torch.utils.data.DataLoader
+        Dataset wrapped with a DataLoader.
+    """
     if is_train:
         sampler = RandomClipSampler(ds.video_clips, 10)
     else:
