@@ -132,6 +132,9 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
     Model described at Long-term Recurrent Convolutional Networks for Visual 
     Recognition and Description (https://arxiv.org/abs/1411.4389).
 
+    .. image:: ../images/ar-lrcn.png
+        :width: 400
+
     Parameters
     ----------
     feature_extractor: str
@@ -236,6 +239,9 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
     (https://arxiv.org/pdf/1510.00562.pdf)
 
     NOTE: Only works with video clips of 112x112
+
+    .. image:: ../images/ar-fstcn.png
+        :width: 400
 
     Parameters
     ----------
@@ -395,6 +401,9 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
 class R2plus1_18(ar.utils.checkpoint.SerializableModule):
     """Implements the model defined at A Closer Look at Spatiotemporal 
     Convolutions for Action Recognition (https://arxiv.org/abs/1711.11248).
+
+    .. image:: ../images/r2-1.png
+        :width: 500
 
     Parameters
     ----------
@@ -729,6 +738,9 @@ class SlowFast(ar.utils.checkpoint.SerializableModule):
 
     Model described in the article "SlowFast Networks for Video Recognition"
     (https://arxiv.org/pdf/1812.03982.pdf).
+
+    .. image:: ../images/slowfast.png
+        :width: 400
 
     Parameters
     ----------
