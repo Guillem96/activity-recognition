@@ -110,7 +110,9 @@ def load_optimizer(
 
     optimizer: Optimizer = None  # type: ignore
     if optimizer_type == 'AdamW':
-        optimizer = optim.AdamW(trainable_params, lr=learning_rate)
+        optimizer = optim.AdamW(trainable_params,
+                                lr=learning_rate,
+                                weight_decay=4e-5)
     elif optimizer_type == 'SGD':
         optimizer = optim.SGD(trainable_params,
                               lr=learning_rate,
