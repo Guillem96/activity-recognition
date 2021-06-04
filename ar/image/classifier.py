@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from ar.utils.checkpoint import SerializableModule
 from ar.utils.nn import image_feature_extractor

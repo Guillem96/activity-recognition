@@ -1,4 +1,5 @@
 from typing import Any
+from typing import Dict
 from typing import Optional
 from typing import Sequence
 from typing import Tuple
@@ -8,22 +9,20 @@ from typing import Union
 import torch
 import torch.nn as nn
 import torchvision.models.video.resnet as resnet3d
-from torch.nn.modules import padding
-from torch.nn.modules.module import Module
 
 import ar
 
 ################################################################################
 
 
-class MLP(nn.Module):
+class _MLP(nn.Module):
 
     def __init__(self,
                  features: Sequence[int],
                  batch_norm: bool = True,
                  dropout: float = .3) -> None:
 
-        super(MLP, self).__init__()
+        super(_MLP, self).__init__()
 
         def build_block(in_f: int, out_f: int, idx: int) -> nn.Module:
             block = nn.Sequential()
@@ -131,7 +130,26 @@ class _LRCNDecoder(nn.Module):
 class LRCN(ar.utils.checkpoint.SerializableModule):
     """
     Model described at Long-term Recurrent Convolutional Networks for Visual 
-    Recognition and Description (https://arxiv.org/abs/1411.4389)
+    Recognition and Description (https://arxiv.org/abs/1411.4389).
+
+    Parameters
+    ----------
+    feature_extractor: str
+        Model architecture to use as a encoder. 
+        See `ar.nn.image_feature_extractor`
+    n_classes: int
+        Number of NN outputs
+    rnn_units: int, defaults 512
+        Neurons used in the decoder. Note that if `bidirectional` is True
+        this value will be doubled.
+    bidirectional: bool, defaults True
+        Use a bidirectional LSTM at the decoder
+    pretrained: bool, defaults True
+        Use a pretrained encoder
+    freeze_feature_extractor: bool, defaults False
+        Requires grad set to false for the encoder.
+    fusion_mode: str, defaults 'sum'
+        Method to fuse the outputs of the decoder (sum, avg, attn or last)
     """
 
     def __init__(self,
@@ -167,11 +185,11 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
 
         hidden_size = self.rnn_units * (2 if self.bidirectional else 1)
 
-        self.linear = MLP(features=[hidden_size, 512, self.n_classes],
-                          batch_norm=False,
-                          dropout=.2)
+        self.linear = _MLP(features=[hidden_size, 512, self.n_classes],
+                           batch_norm=False,
+                           dropout=.2)
 
-    def config(self) -> dict:
+    def config(self) -> Dict[str, Any]:
         return {
             'feature_extractor': self.feature_extractor,
             'n_classes': self.n_classes,
@@ -191,10 +209,10 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
 ################################################################################
 
 
-class TemporalConv(nn.Module):
+class _TemporalConv(nn.Module):
 
     def __init__(self, clips_length: int, out_features: int) -> None:
-        super(TemporalConv, self).__init__()
+        super(_TemporalConv, self).__init__()
 
         self.conv1 = nn.Sequential(
             nn.Conv2d(clips_length, out_features // 2, 3, padding=1),
@@ -216,6 +234,8 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
     """Implements the model defined at Human Action Recognition using 
     Factorized Spatio-Temporal Convolutional Networks 
     (https://arxiv.org/pdf/1510.00562.pdf)
+
+    NOTE: Only works with video clips of 112x112
 
     Parameters
     ----------
@@ -282,16 +302,16 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
 
         # H x W of reduced Vdiff clips are 4 and 4 respectively for clips of
         # 112x112
-        self.tcl_temp_conv = TemporalConv(4 * 4, self.tcl_features)
+        self.tcl_temp_conv = _TemporalConv(4 * 4, self.tcl_features)
         self.tcl_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.tcl_linear = MLP([self.tcl_features, 2048, self.tcl_features])
+        self.tcl_linear = _MLP([self.tcl_features, 2048, self.tcl_features])
 
         # Get more abstract SCL features branch
         self.xtra_conv = nn.Sequential(
             nn.Conv2d(scl_out_features, self.scl_features, 1, 1),
             nn.BatchNorm2d(self.scl_features), nn.ReLU(inplace=True))
         self.xtra_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.xtra_linear = MLP([self.scl_features, 2048, self.scl_features])
+        self.xtra_linear = _MLP([self.scl_features, 2048, self.scl_features])
 
         self.classifier = nn.Linear(self.scl_features + self.tcl_features,
                                     self.n_classes)
@@ -373,6 +393,19 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
 
 
 class R2plus1_18(ar.utils.checkpoint.SerializableModule):
+    """Implements the model defined at A Closer Look at Spatiotemporal 
+    Convolutions for Action Recognition (https://arxiv.org/abs/1711.11248).
+
+    Parameters
+    ----------
+    n_classes: int
+        Number of outputs of the architecture.
+    pretrainedL bool, defaults True
+        Use the pretrained weights of kinetics-400
+    freeze_feature_extractor: bool, defaults False
+        All parameters requires grad set to false except from the last linear
+        layer. 
+    """
 
     def __init__(self,
                  n_classes: int,

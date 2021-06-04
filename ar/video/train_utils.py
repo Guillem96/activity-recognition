@@ -1,11 +1,9 @@
 from pathlib import Path
-from typing import Any
 from typing import Optional
 from typing import Tuple
 
 import torch
 import torch.optim as optim
-import torch.utils.data as data
 import torchvision.transforms as T
 
 import ar

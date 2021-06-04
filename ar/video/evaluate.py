@@ -15,6 +15,8 @@ _AVAILABLE_MODELS = {'LRCN', 'FstCN'}
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+# TODO: Rewrite this to VideoIterator
+
 
 def video_level_evaluation(ds: ar.data.VideoLevelDataset,
                            model: torch.nn.Module,

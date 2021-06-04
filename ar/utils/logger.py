@@ -27,7 +27,6 @@ class LogValue(object):
         Value name
     window_size: int
         How many values should we keep track
-    
     """
 
     def __init__(self, name: str, window_size: int = 1) -> None:
@@ -120,6 +119,8 @@ def build_summary_writter(log_dir: PathLike) -> TensorBoard:
     log_dir: PathLike
         Base log directory. Given a log_dir this method adds a unique identifier
         as a postfix
+    
+
     """
     log_dir = Path(log_dir)
     current_time = datetime.now().strftime('%b%d_%H_%M_%S')
