@@ -59,7 +59,7 @@ def train_one_epoch(
         loss = loss_fn(predictions, y)
         accelerator.backward(loss / grad_accum_steps)
 
-        if (i + 1) % grad_accum_steps == 0:
+        if i % grad_accum_steps == 0:
             optimizer.step()
             optimizer.zero_grad()
             if scheduler:

@@ -9,10 +9,10 @@ from ar.data.cli import build_image_ds
 from ar.data.cli import build_video_candidates
 from ar.data.cli import download
 
-from .models.video import train_fstcn
-from .models.video import train_lrcn
-from .models.video import train_r2plus1d_18
-from .models.video import train_slow_fast
+from .video import train_fstcn
+from .video import train_lrcn
+from .video import train_r2plus1d_18
+from .video import train_slow_fast
 
 _data_commands_function = {
     'data-image-dataset': build_image_ds.main,

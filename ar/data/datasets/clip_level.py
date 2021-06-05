@@ -50,6 +50,7 @@ class Kinetics400(ClipLevelDataset):
         num_workers: int = 4,
         extensions: Collection[str] = ('mp4', 'avi')) -> None:
 
+
         super(Kinetics400,
               self).__init__(root, split, frames_per_clip, step_between_clips,
                              frame_rate, transform, num_workers, extensions)
@@ -60,6 +61,8 @@ class Kinetics400(ClipLevelDataset):
                                     is_valid_file=None)
         self._videos_path = [x[0] for x in self.samples]
         self._labels = [x[1] for x in self.samples]
+
+        self.video_clips = self._build_video_clips()
 
     @property
     def paths(self) -> Sequence[Path]:
@@ -164,6 +167,8 @@ class UCF101(ClipLevelDataset):
 
         # Get the video labels in str format
         self._labels = [o.parent.name for o in videos_path]
+
+        self.video_clips = self._build_video_clips()
 
     @property
     def paths(self) -> Sequence[Path]:

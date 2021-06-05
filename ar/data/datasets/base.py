@@ -70,8 +70,6 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
         self._classes: Optional[List[str]] = None
         self._class_2_idx: Optional[Mapping[str, int]] = None
 
-        self.video_clips = self._build_video_clips()
-
     def _build_video_clips(self) -> VideoClips:
         return VideoClips(list(map(str, self.paths)),
                           self.frames_per_clip,
@@ -85,6 +83,7 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
                           _audio_samples=0,
                           _audio_channels=0)
 
+    @property
     def split_root(self) -> Path:
         """Get the directory of the videos belonging to a split.
 

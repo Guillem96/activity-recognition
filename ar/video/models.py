@@ -95,7 +95,7 @@ class _LRCNDecoder(nn.Module):
                            rnn_units,
                            num_layers=2,
                            bidirectional=bidirectional,
-                           dropout=.5,
+                           dropout=.3,
                            batch_first=True)
 
         hidden_size = rnn_units * (2 if bidirectional else 1)
@@ -162,6 +162,7 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
                  bidirectional: bool = True,
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False,
+                 dropout: float = .3,
                  fusion_mode: str = 'sum') -> None:
         super(LRCN, self).__init__()
 
@@ -174,6 +175,7 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
         self.bidirectional = bidirectional
         self.rnn_units = rnn_units
         self.fusion_mode = fusion_mode
+        self.dropout = dropout
 
         self.encoder = _LRCNEncoder(
             feature_extractor=self.feature_extractor,
@@ -188,9 +190,11 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
 
         hidden_size = self.rnn_units * (2 if self.bidirectional else 1)
 
-        self.linear = _MLP(features=[hidden_size, 512, self.n_classes],
+        self.linear = _MLP(features=[hidden_size, 512],
                            batch_norm=False,
-                           dropout=.2)
+                           dropout=dropout)
+
+        self.clf = nn.Linear(512, self.n_classes)
 
     def config(self) -> Dict[str, Any]:
         return {
@@ -200,13 +204,15 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
             'bidirectional': self.bidirectional,
             'rnn_units': self.rnn_units,
             'freeze_feature_extractor': False,
-            'fusion_mode': self.fusion_mode
+            'fusion_mode': self.fusion_mode,
+            'dropout': self.dropout,
         }
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.encoder(x)
         x = self.decoder(x)
-        return self.linear(x).log_softmax(-1)
+        x = self.linear(x)
+        return self.clf(x).log_softmax(-1)
 
 
 ################################################################################

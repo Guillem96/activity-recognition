@@ -121,7 +121,8 @@ def load_optimizer(
 
     if scheduler_type == 'OneCycle':
         scheduler = optim.lr_scheduler.OneCycleLR(  # type: ignore
-            optimizer, learning_rate * 10, steps_per_epoch * epochs)
+            optimizer, learning_rate, steps_per_epoch * epochs, 
+            pct_start=.1, base_momentum=.9)
     elif scheduler_type == 'Step':
         scheduler = optim.lr_scheduler.StepLR(optimizer, steps_per_epoch, .1)
     elif scheduler_type == 'None':
