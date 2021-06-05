@@ -1,7 +1,7 @@
 import itertools
 import math
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 from typing import Tuple
 
 import torch
@@ -9,6 +9,10 @@ import torchvision
 
 from ar.typing import PathLike
 from ar.typing import Transform
+
+import matplotlib.pyplot as plt
+from matplotlib import animation
+from matplotlib.figure import Figure
 
 
 class VideoFramesIterator(object):
@@ -24,7 +28,7 @@ class VideoFramesIterator(object):
     ----------
     video_path: PathLike
         Video filesystem path
-    batch_size: int
+    batch_size: int, defaults 1
         Number of frames to retrieve after each iteration
     skip_frames: int, defaults 1
         Skip frames to process the video faster but with less precision
@@ -34,7 +38,7 @@ class VideoFramesIterator(object):
 
     def __init__(self,
                  video_path: PathLike,
-                 batch_size: int,
+                 batch_size: int = 1,
                  skip_frames: int = 1,
                  transforms: Optional[Transform] = None) -> None:
         self._video_reader = torchvision.io.VideoReader(str(video_path))
@@ -79,17 +83,17 @@ class VideoFramesIterator(object):
         return int(self.video_fps * self.video_duration)
 
     def take(self,
-             from_sec: int,
-             to_sec: int,
+             from_sec: float,
+             to_sec: float,
              do_skip_frames: bool = False,
              do_transform: bool = False) -> torch.Tensor:
         """Take the frames between two timestamps in seconds.
 
         Parameters
         ----------
-        from_sec: int
+        from_sec: float
             Init of the interval
-        to_sec: int
+        to_sec: float
             End of the interval
         do_skip_frames: bool, defaults Fale
             Skip the frames specified in the __init__?
@@ -174,3 +178,91 @@ class VideoFramesIterator(object):
         """Length of the iterator"""
         return math.ceil(
             (self.total_frames / self.skip_frames) / self.batch_size)
+
+
+def plot_video(video: torch.Tensor,
+               fig: Optional[Figure] = None,
+               title: str = '') -> animation.Animation:
+    """Plots a video using matplotlib.
+
+    Parameters
+    ----------
+    video: torch.Tensor
+        Of shape [FRAMES, HEIGHT, WIDTH, CHANNELS]
+    fig: Optional[Figure]
+        Matplotlib figure used to generate the animation
+    title: str, defaults ''
+        Title to display at the generated matplotlib figure
+
+    Returns
+    -------
+    animation.Animation
+        Matplotlib animation, you can plot it with plt.show()
+    """
+    fig = fig or plt.figure()
+    plt.title(title)
+    plt.axis('off')
+    im = plt.imshow(video[0, :, :, :])
+
+    def init() -> None:
+        im.set_data(video[0, :, :, :])
+
+    def animate(i: int) -> Any:
+        im.set_data(video[i, :, :, :])
+        return im
+
+    return animation.FuncAnimation(fig,
+                                   animate,
+                                   init_func=init,
+                                   frames=video.shape[0],
+                                   interval=50)
+
+
+def plot_video_grid(
+    clips: torch.Tensor,
+    cols: int,
+    rows: int,
+    title: str = '',
+    figsize: Tuple[int, int] = (15, 5)) -> animation.Animation:
+    """Plot a grid of animated videos.
+
+    Parameters
+    ----------
+    clips: torch.Tensor
+        Tensor of shape [N, FRAMES, H, W, C]
+    cols: int
+        Grid columns
+    rows: int
+        Grid rows
+    title: str, defaults ''
+        Plot title, directly feed to plt.title
+    figsize: Tuple[int, int], defaults (15, 5)
+        Size of the matplotlib figure
+
+    Returns
+    -------
+    animation.Animation
+        Generated matplotlib animation
+    """
+    def animate(i: int) -> None:
+        for j, ax in enumerate(axes):
+            ax.set_data(clips[j][i])
+
+    def init_fn() -> None:
+        for j, ax in enumerate(axes):
+            ax.set_data(clips[j][0])
+
+    fig = plt.figure(figsize=figsize)
+    plt.suptitle(title)
+    axes = []
+    for i, clip in enumerate(clips, start=1):
+        plt.subplot(rows, cols, i)
+        plt.axis('off')
+        im = plt.imshow(clip.numpy()[0])
+        axes.append(im)
+
+    return animation.FuncAnimation(fig,
+                                   animate,
+                                   init_func=init_fn,
+                                   frames=clips[0].size(0),
+                                   interval=50)

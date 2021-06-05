@@ -1,66 +1,22 @@
+from ar.io import VideoFramesIterator
 from typing import List
 from typing import Tuple
 
 import torch
 
-# TODO: Rewrite this to use VideoIterator instead of video Tensor
 
-
-def _align_video(video: torch.Tensor, src_fmt: str,
-                 dst_fmt: str) -> torch.Tensor:
-    """
-    Examples
-    --------
-    >>> video = torch.randn(16, 112, 112, 3)
-    >>> src_fmt = 'THWC'
-    >>> dst_fmt = 'CTHW'
-    >>> video = _align_video(video, src_fmt, dst_fmt)
-    >>> video.size()
-    torch.Size([3, 16, 112, 112])
-    """
-
-    assert len(src_fmt) == 4 and len(dst_fmt) == 4, "Formats must have 4 chars"
-    assert len(set('THWC').intersection(src_fmt)) == 4, \
-        "Format should contain TCHW"
-    assert len(set('THWC').intersection(dst_fmt)), \
-        "Format should contain TCHW"
-
-    if src_fmt == dst_fmt:
-        return video
-
-    src_H_idx = src_fmt.index('H')
-    src_W_idx = src_fmt.index('W')
-    src_T_idx = src_fmt.index('T')
-    src_C_idx = src_fmt.index('C')
-
-    dst_H_idx = dst_fmt.index('H')
-    dst_W_idx = dst_fmt.index('W')
-    dst_T_idx = dst_fmt.index('T')
-    dst_C_idx = dst_fmt.index('C')
-
-    permutation = [0] * 4
-    permutation[dst_H_idx] = src_H_idx
-    permutation[dst_W_idx] = src_W_idx
-    permutation[dst_T_idx] = src_T_idx
-    permutation[dst_C_idx] = src_C_idx
-
-    return video.permute(*permutation)
-
-
-def uniform_sampling(video: torch.Tensor,
+def uniform_sampling(video: VideoFramesIterator,
                      clips_len: int,
-                     frames_stride: int = 1,
                      n_clips: int = 10,
-                     overlap: bool = True,
-                     video_fmt: str = 'THWC') -> List[torch.Tensor]:
+                     overlap: bool = True) -> List[torch.Tensor]:
     """
     Uniformly samples `n_clips` from a video. The clips samples by default can 
     be overlapping.
 
     Parameters
     ----------
-    video: torch.Tensor
-        Tensor of shape according to `video_fmt`
+    video: VideoFramesIterator
+        VideoFramesIterator to take the clips from.
     clips_len: int
         Length of the sampled clips in frames
     frames_stride: int, default 1
@@ -69,11 +25,6 @@ def uniform_sampling(video: torch.Tensor,
         Number of clips to sample
     overlap: bool, default True
         If set to False the sampled clips won't be overlapping
-    video_fmt: str, default 'THWC'
-        Format of the given video. Each character in the string indicates the 
-        meaning of each dimension. For instance the format 'CTHW' specifies that
-        the dimensions are the channels, timestamps, height and with 
-        respectively. video_fmt has only 4 possible values {'T', 'C', 'H', 'W'}.
 
     Returns
     -------
@@ -81,34 +32,31 @@ def uniform_sampling(video: torch.Tensor,
         List of tensors containing `n_clips` of shape according to video_fmt, 
         where T will be `clips_len`
     """
-    dst_fmt = 'THWC'
-    video = _align_video(video, video_fmt, dst_fmt)
+    clips_in_sec = clips_len / (video.video_fps / video.skip_frames)
 
-    n_frames = video.size(0)
     if overlap:
-        indices = torch.randint(high=n_frames - (clips_len * frames_stride),
-                                size=(n_clips,))
-        indices = indices.tolist()
+        start_secs = torch.rand(size=(n_clips,))
+        start_secs = start_secs * video.video_duration - clips_in_sec
+        start_secs = start_secs.tolist()
     else:
-        possible_indices = torch.arange(0, n_frames,
-                                        clips_len * frames_stride)[:-1]
-        choices = torch.randint(high=possible_indices.size(0), size=(n_clips,))
-        indices = possible_indices[choices].tolist()
+        possible_start_secs = torch.arange(0,
+                                           video.video_duration - clips_in_sec,
+                                           clips_in_sec)
+        choices = torch.randperm(possible_start_secs.size(0))[:n_clips]
+        start_secs = possible_start_secs[choices]
 
-    clips = [
-        video[i:i + (clips_len * frames_stride)][::frames_stride]
-        for i in indices
+    return [
+        video.take(ss,
+                   ss + clips_in_sec,
+                   do_skip_frames=True,
+                   do_transform=True) for ss in start_secs
     ]
-    clips = [_align_video(o, dst_fmt, video_fmt) for o in clips]
-
-    return clips
 
 
-def lrcn_sampling(video: torch.Tensor,
+def lrcn_sampling(video: VideoFramesIterator,
                   clips_len: int,
                   n_clips: int = 16,
-                  stride: int = 8,
-                  video_fmt: str = 'THWC') -> List[torch.Tensor]:
+                  stride: int = 8) -> List[torch.Tensor]:
     """
     Sample clips as described in LRCN paper. 
     Citation: At test time, we extract 16 frame clips with a stride of 8 frames
@@ -119,114 +67,89 @@ def lrcn_sampling(video: torch.Tensor,
 
     Parameters
     ----------
-    video: torch.Tensor
-        Tensor of shape according to `video_fmt`
+    VideoFramesIterator: torch.Tensor
+        VideoFramesIterator to take the clips from.
     clips_len: int
         Length of the sampled clips in frames
     n_clips: int, default 16
         Number of clips to sample
     stride: int, default 8
         Distance in frames 
-    video_fmt: str, default 'THWC'
-        Format of the given video. Each character in the string indicates the 
-        meaning of each dimension. For instance the format 'CTHW' specifies that
-        the dimensions are the channels, timestamps, height and with 
-        respectively. video_fmt has only 4 possible values {'T', 'C', 'H', 'W'}.
 
     Returns
     -------
     List[torch.Tensor]
-        List of tensors containing `n_clips` of shape equal to the specified in
-        `video_fmt`, where T will be equal to `clips_len`
+        List of tensors containing `n_clips` of shape equal to the returned by
+        the VideoFramesIterator.
     """
-    dst_fmt = 'THWC'
-    video = _align_video(video, video_fmt, dst_fmt)
+    clips_in_sec = clips_len / (video.video_fps / video.skip_frames)
+    stride_in_sec = stride / (video.video_fps / video.skip_frames)
+    samples_duration = (clips_in_sec + stride_in_sec) * n_clips
 
-    n_video_frames = video.size(0)
-    max_clips = n_video_frames // (clips_len + stride)
-
-    if n_clips > max_clips:
-        n_clips = max_clips
-
-    start_idx = torch.randint(0,
-                              high=(n_video_frames -
-                                    (clips_len + stride) * n_clips) + 1,
-                              size=(1,)).item()
-
-    clips_start_idx = torch.arange(start_idx, n_video_frames,
-                                   stride + clips_len)[:n_clips]
+    start_sec = torch.rand((1,)).item()
+    start_sec = start_sec * video.video_duration - samples_duration
+    clips_start_idx = torch.arange(start_sec, video.video_duration,
+                                   stride_in_sec + clips_in_sec)[:n_clips]
 
     return [
-        _align_video(video[i:i + clips_len], dst_fmt, video_fmt)
-        for i in clips_start_idx.tolist()
+        video.take(ss,
+                   ss + clips_in_sec,
+                   do_skip_frames=True,
+                   do_transform=True) for ss in clips_start_idx
     ]
 
 
-def FstCN_sampling(video: torch.Tensor,
+def FstCN_sampling(video: VideoFramesIterator,
                    clips_len: int,
                    n_clips: int = 16,
-                   n_crops: int = 9,
+                   n_crops: int = 4,
                    frames_stride: int = 1,
-                   crops_size: Tuple[int, int] = (224, 224),
-                   overlap: bool = False,
-                   video_fmt: str = 'THWC') -> List[List[torch.Tensor]]:
+                   crops_size: Tuple[int, int] = (112, 112),
+                   overlap: bool = False) -> List[List[torch.Tensor]]:
     """
     Uniformly sampling `n_clips` from a given video, and for each clip, we
     randomly sample `n_crops` different crops.
 
     Parameters
     ----------
-    video: torch.Tensor
-        Tensor of shape according to `video_fmt`
+    video: VideoFramesIterator
+        VideoFramesIterator to take the clips from. It is mandatory that the
+        VideoFramesIterator returns a tensor of shape 
+        [FRAMES, CHANNELS, HEIGHT, WIDTH]
     clips_len: int
         Length of the sampled clips in frames
     n_clips: int, default 16
         Number of clips to sample
-    n_crops: int, default 0
+    n_crops: int, default 4
         Number of crops to extract for each video clip
     frames_stride: int, default 1
         Distance between frames within a clip
-    crops_size: Tuple[int, int], default (224, 224)
+    crops_size: Tuple[int, int], default (112, 112)
         Size of the generated crops
     overlap: bool, default True
         When sampling clips, can clips be overlapping
-    video_fmt: str, default 'THWC'
-        Format of the given video. Each character in the string indicates the 
-        meaning of each dimension. For instance the format 'CTHW' specifies that
-        the dimensions are the channels, timestamps, height and with 
-        respectively. video_fmt has only 4 possible values {'T', 'C', 'H', 'W'}.
 
     Returns
     -------
-    List[List[torch.Tensor]]
-        Each list item contains a list of clips cropped at different points
+    List[torch.Tensor]
+        Each list item contains a list of clips cropped at different points.
+        The tensors have the shape [FRAMES, CHANNELS, HEIGHT, WIDTH].
+        The list will contain n_clips * n_crops * 2 clips
     """
-    import torchvision.transforms as T
-
     import ar.transforms as VT
 
-    def to_video(o: torch.Tensor) -> torch.Tensor:
-        return _align_video(o, 'CTHW', video_fmt).mul(255).byte()
-
-    dst_fmt = 'THWC'
-    video = _align_video(video, video_fmt, dst_fmt)
-    W_idx = video_fmt.index('W')
-
-    crop_fn = T.Compose(
-        [VT.VideoToTensor(),
-         VT.VideoRandomCrop(crops_size), to_video])
+    crop_fn = VT.VideoRandomCrop(crops_size)
 
     clips = uniform_sampling(video=video,
                              clips_len=clips_len,
                              frames_stride=frames_stride,
                              n_clips=n_clips,
-                             overlap=overlap,
-                             video_fmt=dst_fmt)
+                             overlap=overlap)
 
     results = []
     for clip in clips:
         cropped_clips = [crop_fn(clip) for i in range(n_crops)]
-        flipped_clips = [o.flip(dims=[W_idx]) for o in cropped_clips]
-        results.append(cropped_clips + flipped_clips)
+        flipped_clips = [o.flip(dims=-1) for o in cropped_clips]
+        results.extend(cropped_clips + flipped_clips)
 
     return results
