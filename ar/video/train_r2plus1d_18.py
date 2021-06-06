@@ -83,6 +83,9 @@ def _load_model(out_units: int,
               type=click.Path(dir_okay=False),
               default='models/model.pt',
               help='File to save the checkpoint')
+@click.option('--dropout',
+              default=.3,
+              help='Dropout rate of the last linear layer')
 @click.option('--freeze-fe/--no-freeze-fe',
               default=False,
               help='Wether or not to fine tune the pretrained'
@@ -94,6 +97,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
          learning_rate: float, scheduler: str, fp16: bool, cpu: bool,
          logdir: Optional[ar.typing.PathLike],
          resume_checkpoint: ar.typing.PathLike,
+         dropout: float,
          save_checkpoint: ar.typing.PathLike, freeze_fe: bool) -> None:
     ar.engine.seed()
 
@@ -123,6 +127,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
     with ar.distributed.master_first(accelerator):
         model, checkpoint = _load_model(n_classes,
                                         freeze_fe=freeze_fe,
+                                        dropout=dropout,
                                         resume_checkpoint=resume_checkpoint)
 
     steps_per_epoch = math.ceil(

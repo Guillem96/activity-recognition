@@ -112,15 +112,6 @@ def video_resize(vid: torch.Tensor,
                                            align_corners=False)
 
 
-def video_pad(vid: torch.Tensor,
-              padding: List[int],
-              fill: int = 0,
-              padding_mode: str = "constant") -> torch.Tensor:
-    # NOTE: don't want to pad on temporal dimension, so let as non-batch
-    # (4d) before padding. This works as expected
-    return torch.nn.functional.pad(vid, padding, value=fill, mode=padding_mode)
-
-
 def video_to_tensor(vid: torch.Tensor) -> torch.Tensor:
     """Converts a stack of frames to a video tensor tensor.
 

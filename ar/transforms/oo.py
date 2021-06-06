@@ -1,7 +1,6 @@
 import math
 import random
 from typing import Callable
-from typing import Collection
 from typing import List
 from typing import Sequence
 from typing import Tuple
@@ -15,6 +14,13 @@ Transform = Callable[[torch.Tensor], torch.Tensor]
 
 
 class VideoRandomCrop(torch.nn.Module):
+    """Generates a random crop of a given size.
+
+    Parameters
+    ----------
+    size: Tuple[int, int]
+        Seize of the crop  (H, W)
+    """
 
     def __init__(self, size: Tuple[int, int]) -> None:
         super(VideoRandomCrop, self).__init__()
@@ -39,12 +45,28 @@ class VideoRandomCrop(torch.nn.Module):
 
 
 class VideoRandomErase(torch.nn.Module):
+    """Randomly selects a region in an torch Tensor image and erases its pixels.
+
+    Parameters
+    ----------
+    p: float, defaults .5
+        Probability that the random erasing operation will be performed.
+    scale: Tuple[float, float], defaults (0.02, 0.33)
+        Range of proportion of erased area against input image.
+    ration: Tuple[float, float]
+        Range of aspect ratio of erased area.
+    value: float, defaults 0
+        Erasing value. If a single int, it is used to erase all pixels. 
+        If a tuple of length 3, it is used to erase R, G, B 
+        channels respectively. If a str of ‘random’, erasing 
+        each pixel with random values.
+    """
 
     def __init__(self,
                  p: float = 0.5,
                  scale: Tuple[float, float] = (0.02, 0.33),
                  ratio: Tuple[float, float] = (0.3, 3.3),
-                 value: float = 0.) -> None:
+                 value: Union[float, Tuple[int, int, int]] = 0.) -> None:
         super(VideoRandomErase, self).__init__()
         if (scale[0] > scale[1]) or (ratio[0] > ratio[1]):
             raise ValueError('range should be of kind (min, max)')
@@ -57,18 +79,21 @@ class VideoRandomErase(torch.nn.Module):
         self.p = p
         self.scale = scale
         self.ratio = ratio
-        self.value = value
+
+        if isinstance(value, float):
+            self.value = torch.as_tensor([value] * 3)
+        else:
+            self.value = torch.as_tensor(value)
 
     @staticmethod
     def get_params(
-        video: torch.Tensor,
-        scale: Tuple[float, float],
-        ratio: Tuple[float, float],
-        value: float = 0.
+        video: torch.Tensor, scale: Tuple[float, float],
+        ratio: Tuple[float, float], value: torch.Tensor
     ) -> Tuple[int, int, int, int, Union[float, torch.Tensor]]:
         """Get parameters for ``video_erase`` for a random erasing.
 
-        Args:
+        Parameters
+        ----------
         video: torch.Tensor 
             Tensor image of size (C, FRAMES, H, W) to be erased.
         scale: Tuple[float, float]
@@ -76,7 +101,8 @@ class VideoRandomErase(torch.nn.Module):
         ratio: Tuple[float, float]
             range of aspect ratio of erased area.
 
-        Returns:
+        Returns
+        -------
             tuple: params (i, j, h, w, v) to be passed to ``erase`` for random erasing.
         """
         c, f, h, w = video.shape
@@ -121,8 +147,15 @@ class VideoRandomErase(torch.nn.Module):
 
 
 class VideoCenterCrop(torch.nn.Module):
+    """Always gets a centered crop of the given video with the provided size.
 
-    def __init__(self, size: Tuple[int, int]):
+    Parameters
+    ----------
+    self: Tuple[int, int]
+        Crop size
+    """
+
+    def __init__(self, size: Tuple[int, int]) -> None:
         super(VideoCenterCrop, self).__init__()
         self.size = size
 
@@ -131,8 +164,15 @@ class VideoCenterCrop(torch.nn.Module):
 
 
 class VideoResize(torch.nn.Module):
+    """Bilinearly interpolates a video to change its size.
 
-    def __init__(self, size: Tuple[int, int]):
+    Parameters
+    ----------
+    size: Tuple[int, int]
+        Video target size
+    """
+
+    def __init__(self, size: Tuple[int, int]) -> None:
         super(VideoResize, self).__init__()
         self.size = size
 
@@ -141,6 +181,7 @@ class VideoResize(torch.nn.Module):
 
 
 class VideoToTensor(torch.nn.Module):
+    """Converts a video of shape [FRAMES, H, W, C] to [C, FRAMES, H, W]."""
 
     def __init__(self) -> None:
         super(VideoToTensor, self).__init__()
@@ -150,9 +191,18 @@ class VideoToTensor(torch.nn.Module):
 
 
 class VideoNormalize(torch.nn.Module):
+    """Normalize the color channels.
+
+    Parameters
+    ----------
+    mean: Tuple[float, float, float]
+        Mean to normalize
+    std: Tuple[float, float, float]
+        Standard deviation to normalize
+    """
 
     def __init__(self, mean: Tuple[float, float, float],
-                 std: Tuple[float, float, float]):
+                 std: Tuple[float, float, float]) -> None:
         super(VideoNormalize, self).__init__()
         self.mean = mean
         self.std = std
@@ -162,8 +212,15 @@ class VideoNormalize(torch.nn.Module):
 
 
 class VideoRandomHorizontalFlip(torch.nn.Module):
+    """Flips a video horizontally with a given probability 
 
-    def __init__(self, p: float = 0.5):
+    Parameters
+    ----------
+    p: float, defaults .5
+        Probability that the random erasing operation will be performed.
+    """
+
+    def __init__(self, p: float = 0.5) -> None:
         super(VideoRandomHorizontalFlip, self).__init__()
         self.p = p
 
@@ -173,18 +230,14 @@ class VideoRandomHorizontalFlip(torch.nn.Module):
         return vid
 
 
-class VideoPad(torch.nn.Module):
-
-    def __init__(self, padding: List[int], fill: int = 0):
-        super(VideoPad, self).__init__()
-        self.padding = padding
-        self.fill = fill
-
-    def forward(self, vid: torch.Tensor) -> torch.Tensor:
-        return F.video_pad(vid, self.padding, self.fill)
-
-
 class OneOf(torch.nn.Module):
+    """Randomly choses a single transform from the given pool.
+
+    Parameters
+    ----------
+    transforms: Sequence[Transform]
+        Pool to choice a random transformation from
+    """
 
     def __init__(self, transforms: Sequence[Transform]) -> None:
         super(OneOf, self).__init__()
@@ -196,5 +249,11 @@ class OneOf(torch.nn.Module):
         return tfm_fn(vid)
 
 
-# Does nothing tho the input tensor
-Identity = lambda vid: vid
+class Identity(torch.nn.Module):
+    """Identity transformation."""
+
+    def __init__(self) -> None:
+        super(Identity, self).__init__()
+
+    def forward(self, vid: torch.Tensor) -> torch.Tensor:
+        return vid

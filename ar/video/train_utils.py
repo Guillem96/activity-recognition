@@ -4,11 +4,8 @@ from typing import Tuple
 
 import torch
 import torch.optim as optim
-import torchvision.transforms as T
 
 import ar
-import ar.transforms as VT
-from ar.typing import PathLike
 
 
 def load_datasets(
@@ -140,12 +137,11 @@ def load_optimizer(
 def data_preparation(
     dataset: str,
     *,
-    data_dir: PathLike,
+    data_dir: ar.typing.PathLike,
     frames_per_clip: int,
     video_size: Optional[Tuple[int, int]] = None,
     frame_rate: Optional[int] = None,
-    size_before_crop: Optional[Tuple[int, int]] = None,
-    annotations_path: Optional[PathLike] = None,
+    annotations_path: Optional[ar.typing.PathLike] = None,
     writer: Optional[ar.typing.TensorBoard] = None,
     steps_between_clips: int = 1,
     workers: int = 1,
@@ -156,29 +152,9 @@ def data_preparation(
     Loads the datasets with corresponding transformations and creates two data
     loaders, one for train and validation
     """
-
-    size_before_crop = size_before_crop or (128, 171)
     video_size = video_size or (112, 112)
-
-    if any(size_before_crop[i] < video_size[i] for i in range(2)):
-        raise ValueError(f'size_before_crop must {size_before_crop} '
-                         f'be larger than the video_size {video_size}')
-
-    train_tfms = T.Compose([
-        VT.VideoToTensor(),
-        VT.VideoResize(size_before_crop),
-        VT.VideoRandomCrop(video_size),
-        VT.VideoRandomHorizontalFlip(),
-        # VT.VideoRandomErase(scale=(0.02, 0.15))
-        VT.VideoNormalize(**VT.imagenet_stats),
-    ])
-
-    valid_tfms = T.Compose([
-        VT.VideoToTensor(),
-        VT.VideoResize(size_before_crop),
-        VT.VideoCenterCrop(video_size),
-        VT.VideoNormalize(**VT.imagenet_stats),
-    ])
+    train_tfms = ar.transforms.train_tfms(video_size)
+    valid_tfms = ar.transforms.valid_tfms(video_size)
 
     train_ds, valid_ds = load_datasets(dataset_type=dataset,
                                        root=data_dir,

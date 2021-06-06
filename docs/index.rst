@@ -16,6 +16,7 @@ Welcome to Activity Recognition (AR)'s documentation!
    score_fusers
    metrics
    engine
+   transforms
 
 Indices and tables
 ==================

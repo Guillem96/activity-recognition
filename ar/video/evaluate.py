@@ -11,11 +11,10 @@ import ar
 import ar.transforms as VT
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
-_AVAILABLE_MODELS = {'LRCN', 'FstCN'}
+_AVAILABLE_MODELS = {'LRCN', 'FstCN', 'R2plus1', 'SlowFast'}
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# TODO: Rewrite this to VideoIterator
 
 
 def video_level_evaluation(ds: ar.data.VideoLevelDataset,
@@ -68,12 +67,12 @@ def video_level_evaluation(ds: ar.data.VideoLevelDataset,
               help='Dataset annotations. It is not needed for all'
               ' datasets, for now it is only required with '
               'UCF-101')
-@click.option('--model-arch',
+@click.option('--model',
               type=click.Choice(list(_AVAILABLE_MODELS)),
               required=True)
 @click.option('--checkpoint', type=str, required=True)
 def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
-                         model_arch: str, checkpoint: str) -> None:
+                         model: str, checkpoint: str) -> None:
 
     if dataset == 'UCF-101' and annots_dir is None:
         raise ValueError('"annots_dir" cannot be None when selecting '

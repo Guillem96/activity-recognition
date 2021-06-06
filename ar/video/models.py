@@ -415,6 +415,8 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
     ----------
     n_classes: int
         Number of outputs of the architecture.
+    dropout: float, defaults .3
+        Dropout rate of the last layer.
     pretrainedL bool, defaults True
         Use the pretrained weights of kinetics-400
     freeze_feature_extractor: bool, defaults False
@@ -424,6 +426,7 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
 
     def __init__(self,
                  n_classes: int,
+                 dropout: float = .3,
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False) -> None:
         super().__init__()
@@ -438,6 +441,7 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
             p.requires_grad = not freeze_feature_extractor
 
         self.fe = fe
+        self.dropout = nn.Dropout(dropout)
         self.classifier = nn.Linear(in_features, n_classes)
 
     def config(self) -> dict:
@@ -449,6 +453,7 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
 
     def forward(self, video: torch.Tensor) -> torch.Tensor:
         x = self.fe(video).flatten(1)
+        x = self.dropout(x)
         return self.classifier(x).log_softmax(-1)
 
 
