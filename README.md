@@ -115,9 +115,18 @@ model = ar.video.FstCN(...)
 model = ar.video.SlowFast(...)
 ```
 
-2. Create the dataset. You can use an existing dataset, or create a custom one.
-In the case you decide to create a custom dataset, make sure it returns a tuple of video clip of
-shape (FRAMES, HEIGHT, WIDTH, CHANNELS) and the label as an integer.
+2. Create the acceleration context. This will run the training seamlessl in a local 
+machine with a single GPU or within a cluster of TPUs.
+
+```python
+import accelerate
+
+# Configure the accelerator via the bash command accelerate config
+accelerator = accelerate.Accelerator()
+
+```
+3. Create the dataset. You can use an existing dataset, or create a custom one.
+In the case you decide to create a custom dataset, make sure it returns a tuple of video clip of shape (FRAMES, HEIGHT, WIDTH, CHANNELS) and the label as an integer.
 
 ```python
 import ar.transforms as VT
@@ -127,22 +136,16 @@ tfms = T.Compose([VT.VideoToTensor(),
                   VT.VideoResize((112, 112)),
                   VT.VideoNormalize(**VT.imagenet_stats)])
 
-ds = ar.data.UCF101('dataset-path/clips', 
-                    annotation_path='dataset-path/annots', 
-                    split='ar', frames_per_clip=16,
-                    transforms=tfms)
+train_ds = ar.data.UCF101('dataset-path/clips', 
+                          annotation_path='dataset-path/annots', 
+                          split='train', frames_per_clip=16,
+                          transforms=tfms)
+valid_ds = ar.data.UCF101('dataset-path/clips', 
+                          annotation_path='dataset-path/annots', 
+                          split='test', frames_per_clip=16,
+                          transforms=tfms)
 ```
 
-3. Create the data loader to batch the data. You can use whatever sampler you 
-belive appropiate, but for we recommend the `RandomClipSampler` and the `UniformClipSampler`,
-for training and evaluation respectively. 
-
-```python
-from torchvision.datasets.samplers import RandomClipSampler
-
-sampler = RandomClipSampler(ds.video_clips, 10)
-dl = torch.utils.data.DataLoader(ds, batch_size=32, sampler=sampler)
-```
 
 4. Train the model!
 
@@ -155,7 +158,8 @@ optimizer = torch.optim.SGD(trainable_ps, lr=1e-4)
 logger = ar.logger.build_summary_writter('logs')
 
 ar.engine.train(model=model, optimizer=optimizer,
-                train_dl=dl, valid_dl=...,
+                accelerator=accelerator,
+                train_ds=ds, valid_ds=valid_ds,
                 epochs=10,
                 save_checkpoint='model.pt',
                 summary_writer=logger)

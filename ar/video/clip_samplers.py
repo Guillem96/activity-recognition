@@ -46,7 +46,7 @@ def uniform_sampling(video: VideoFramesIterator,
             clips_duration = clips_in_sec * n_clips
 
         possible_start_secs = torch.arange(
-            0, video.video_duration - clips_in_sec * 2, 
+            0, video.video_duration - clips_in_sec, 
             clips_in_sec, dtype=torch.float32)
         choices = torch.randperm(possible_start_secs.size(0))[:n_clips]
         start_secs = possible_start_secs[choices]
