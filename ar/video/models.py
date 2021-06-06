@@ -70,7 +70,7 @@ class _LRCNEncoder(nn.Module):
         # x: (BATCH, CHANNELS, FRAMES, HEIGHT, WIDTH)
 
         # x: (BATCH, FRAMES, FEATURES)
-        x = _frame_level_forward(x, self.features).squeeze()
+        x = _frame_level_forward(x, self.features).flatten(2)
 
         # (BATCH, FRAMES, OUT_FEATURES)
         return self.relu(self.pooling(x))

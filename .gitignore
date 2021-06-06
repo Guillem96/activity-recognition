@@ -37,6 +37,9 @@ logs/
 # Scripts
 precommit.sh
 
+# Reports
+reports/
+
 # Sphinx docs
 docs/_build
 docs/_static

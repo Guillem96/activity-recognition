@@ -117,7 +117,7 @@ def evaluate(
         updates_values['loss'] = loss.item()
         logger(**updates_values)
 
-    if summary_writer is not None:
+    if summary_writer and accelerator.is_main_process:
         log_values = logger.as_dict()
         summary_writer.add_scalar('validation_loss',
                                   log_values.pop('loss'),

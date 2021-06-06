@@ -1,7 +1,9 @@
 from typing import Tuple
+
+import torchvision.transforms as T
+
 import ar
 import ar.transforms as VT
-import torchvision.transforms as T
 
 
 def train_tfms(size: Tuple[int, int] = (112, 112),

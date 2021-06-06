@@ -1,6 +1,7 @@
 import abc
 import warnings
 from pathlib import Path
+from re import L
 from typing import Collection
 from typing import List
 from typing import Mapping
@@ -208,12 +209,42 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
 
 
 class VideoLevelDataset(data.Dataset, abc.ABC):
+    """Base class to provide a common interface to iterate over video files.
 
-    def __init__(self,
-                 video_paths: Sequence[Union[str, Path]],
-                 labels: Sequence[str],
-                 frame_rate: int = None,
-                 transform: Transform = None) -> None:
+    VideoLevelDatasets do not load the whole video in RAM memory. Instead it
+    computes the paths and labels of the videos and the `__getitem__` method
+    returns the video path along the corresponding encoded label.
+
+    To process the video once sampled from the dataset we recommend the builtin
+    VideoFramesIterator (`ar.io.VideoFramesIterator`).
+
+    This datasets are iterable:
+
+    .. code-block:: python
+
+        ds = VideoLevelKinetics('root_path/', 'train')
+
+        # Iterate flavour
+        for path, label in ds:
+            print(path, label)
+
+        # Or indexed
+        for i in range(len(dataset)):
+            path, label = ds[i]
+            print(path, label)
+
+    Parameters
+    ----------
+    video_paths: All video paths
+        Paths to videos
+    labels: Sequence[str]
+        Label corresponding to each path. The position i of this list 
+        is the label of the video at the position i of the `video_paths` 
+        argument.
+    """
+
+    def __init__(self, video_paths: Sequence[PathLike],
+                 labels: Sequence[str]) -> None:
 
         self.video_paths = [str(o) for o in video_paths]
         self.labels = labels
@@ -221,43 +252,34 @@ class VideoLevelDataset(data.Dataset, abc.ABC):
         self.class_2_idx = {c: i for i, c in enumerate(self.classes)}
         self.labels_ids = [self.class_2_idx[o] for o in self.labels]
 
-        self.frame_rate = frame_rate
-        self.transform = transform
+        self._pos = 0
 
-    def resample_video(self, video: torch.Tensor,
-                       original_fps: int) -> torch.Tensor:
+    def __iter__(self) -> "VideoLevelDataset":
+        return self
 
-        if self.frame_rate is None:
-            return video
-
-        step = float(original_fps) / self.frame_rate
-        if step.is_integer():
-            step = int(step)
-            return video[::step]
-
-        idxs = torch.arange(video.size(0), dtype=torch.float32) * step
-        idxs = idxs.floor().to(torch.int64)
-        return video[idxs]
+    def __next__(self) -> Tuple[PathLike, int]:
+        if self._pos == len(self):
+            raise StopIteration
+        sample = self[self._pos]
+        self._pos += 1
+        return sample
 
     def __len__(self) -> int:
+        """Gets the dataset length."""
         return len(self.video_paths)
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, int]:
-        video, audio, info = torchvision.io.read_video(self.video_paths[idx],
-                                                       pts_unit='sec')
+    def __getitem__(self, idx: int) -> Tuple[PathLike, int]:
+        """Fetches a sample from the dataset
+        
+        Parameters
+        ----------
+        idx: int
+            Sample unique index
+        
+        Returns
+        -------
+        Tuple[PathLike, int]
+            Path pointing to the video file and the encoded label.
+        """
 
-        if video.nelement() == 0:
-            warnings.warn(f'Error loading video {self.video_paths[idx]}')
-            return video, audio, info
-
-        if 'video_fps' not in info:
-            # raise ValueError(f'Error fetching metadata from'
-            #                  f' {self.video_paths[idx]} video')
-            pass
-        else:
-            video = self.resample_video(video, info['video_fps'])
-
-        if self.transform is not None:
-            video = self.transform(video)
-
-        return video, audio, self.class_2_idx[self.labels[idx]]
+        return self.video_paths[idx], self.class_2_idx[self.labels[idx]]

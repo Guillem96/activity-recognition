@@ -1,56 +1,77 @@
-from typing import Mapping
+import json
+from datetime import datetime
+from pathlib import Path
+from typing import Callable, overload
+from typing import Dict
+from typing import List
 from typing import Optional
-from typing import Sequence
+import functools
 
 import click
 import torch
-import torchvision.transforms as T
 import tqdm.auto as tqdm
 
 import ar
-import ar.transforms as VT
+from ar.typing import PathLike
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 _AVAILABLE_MODELS = {'LRCN', 'FstCN', 'R2plus1', 'SlowFast'}
+_ClipSamplerFn = Callable[[ar.io.VideoFramesIterator, int], List[torch.Tensor]]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
+def _single_video_eval(path: ar.typing.PathLike,
+                       label: int,
+                       model: torch.nn.Module,
+                       sampler: _ClipSamplerFn,
+                       clips_len: int = 16,
+                       transforms: Optional[ar.typing.Transform] = None,
+                       batch_size: int = 16,
+                       frame_rate: Optional[float] = None) -> Dict[str, float]:
 
-def video_level_evaluation(ds: ar.data.VideoLevelDataset,
-                           model: torch.nn.Module,
-                           metrics: Sequence[ar.typing.MetricFn],
-                           clips_tfms: ar.typing.Transform = VT.Identity,
-                           sampling_strategy: str = 'uniform',
-                           n_clips: int = 10,
-                           video_fmt: str = 'THWC') -> Mapping[str, float]:
+    vit = ar.io.VideoFramesIterator(path,
+                                    transforms=transforms,
+                                    frame_rate=frame_rate)
 
-    if sampling_strategy == 'uniform':
-        clips_sampler = ar.video.uniform_sampling
-    else:
-        raise ValueError(f'Invlaid `sampling_strategy` {sampling_strategy}')
+    clips = sampler(vit, clips_len)
+    clips = list(filter(lambda c: c.size(1) == clips_len, clips))
+    if not clips:
+        return None
 
-    final_preds = []
-    labels = []
+    clips = torch.stack(clips)
+    clips_ds = torch.utils.data.TensorDataset(clips)
+    clips_dl = torch.utils.data.DataLoader(
+        clips_ds,
+        batch_size=batch_size,
+        shuffle=False,
+        sampler=torch.utils.data.SequentialSampler(clips_ds))
 
-    for i in tqdm.trange(len(ds)):
-        video, audio, label = ds[i]
-        if video.nelement() == 0:
-            continue
-
-        clips = clips_sampler(video, 16, n_clips=n_clips, video_fmt=video_fmt)
-        clips = torch.stack([clips_tfms(o) for o in clips]).to(device)
-
+    scores = []
+    for clip, *_ in clips_dl:
         with torch.no_grad():
-            predictions = model(clips)
-            predictions = predictions.mean(0)
+            probs = model(clip.to(device))
+        scores.append(probs)
 
-        final_preds.append(predictions.cpu())
-        labels.append(label)
+    scores_t = torch.cat(scores, dim=0)
+    sci_fused_score = ar.video.fusion.SCI_fusion(scores_t, log_probs=True)
+    avg_fused_score = torch.mean(scores_t, dim=0)
 
-    final_preds_t = torch.stack(final_preds)
-    labels_t = torch.as_tensor(labels)
-    return {m.__name__: m(final_preds_t, labels_t).item() for m in metrics}
+    sci_label = sci_fused_score.argmax(-1).item()
+    avg_label = avg_fused_score.argmax(-1).item()
+
+    return {
+        'sci': {
+            'is_correct': sci_label == label,
+            'ground_truth': label,
+            'predicted': sci_label,
+        },
+        'avg': {
+            'is_correct': avg_label == label,
+            'ground_truth': label,
+            'predicted': avg_label,
+        }
+    }
 
 
 @click.command()
@@ -71,19 +92,23 @@ def video_level_evaluation(ds: ar.data.VideoLevelDataset,
               type=click.Choice(list(_AVAILABLE_MODELS)),
               required=True)
 @click.option('--checkpoint', type=str, required=True)
+@click.option('--output', type=click.Path(file_okay=False), default='reports')
 def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
-                         model: str, checkpoint: str) -> None:
+                         model: str, checkpoint: str, output: PathLike) -> None:
+    ar.engine.seed()
+
+    current_time = datetime.now().strftime('%b%d_%H_%M_%S')
+
+    output = Path(output)
+    output.mkdir(exist_ok=True, parents=True)
+    output = output / f'results-{current_time}.json'
 
     if dataset == 'UCF-101' and annots_dir is None:
         raise ValueError('"annots_dir" cannot be None when selecting '
                          'UCF-101 dataset')
 
-    tfms = T.Compose([
-        VT.VideoToTensor(),
-        VT.VideoResize((256, 256)),
-        VT.VideoCenterCrop((224, 224)),
-        VT.VideoNormalize(**VT.imagenet_stats)
-    ])
+    tfms = ar.transforms.valid_tfms()
+    sampler_fn = functools.partial(ar.video.uniform_sampling, overlap=False)
 
     print('Creating dataset... ', end='')
     ds: Optional[ar.data.datasets.VideoLevelDataset] = None
@@ -96,33 +121,48 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
     print('done')
 
     print('Loading model... ', end='')
-    model: Optional[ar.utils.checkpoint.SerializableModule] = None
-    if model_arch == 'LRCN':
-        model = ar.video.LRCN.from_pretrained(checkpoint)
-        model.eval()
-        model.to(device)
-    elif model_arch == 'FstCN':
-        model = ar.video.FstCN.from_pretrained(checkpoint)
-        model.eval()
-        model.to(device)
+    model_pt: Optional[ar.utils.checkpoint.SerializableModule] = None
+    clips_len = 16
+    if model == 'LRCN':
+        clips_len = 16
+        model_pt = ar.video.LRCN.from_pretrained(checkpoint)
+        model_pt.eval()
+        model_pt.to(device)
+    elif model == 'FstCN':
+        clips_len = 16
+        model_pt = ar.video.FstCN.from_pretrained(checkpoint)
+        model_pt.eval()
+        model_pt.to(device)
     else:
         raise ValueError('Unexpected model architecture')
     print('done')
 
-    metrics = [
-        ar.metrics.accuracy, ar.metrics.top_3_accuracy,
-        ar.metrics.top_5_accuracy
-    ]
+    sci_results = []
+    avg_results = []
 
-    final_metrics = video_level_evaluation(ds=ds,
-                                           model=model,
-                                           metrics=metrics,
-                                           clips_tfms=tfms,
-                                           sampling_strategy='uniform',
-                                           video_fmt='THWC')
+    for path, label in tqdm.tqdm(ds):
+        pred = _single_video_eval(path=path,
+                                  label=label,
+                                  model=model_pt,
+                                  sampler=sampler_fn,
+                                  transforms=tfms,
+                                  clips_len=clips_len,
+                                  batch_size=16)
+        if pred:
+            sci_results.append(pred['sci'])
+            avg_results.append(pred['avg'])
 
-    final_metrics = ', '.join(f'{k}: {v:.4f}' for k, v in final_metrics.items())
-    print(final_metrics)
+    total_len = len(ds)
+    sci_correct = sum(o['is_correct'] for o in sci_results)
+    avg_correct = sum(o['is_correct'] for o in avg_results)
+
+    sci_acc = float(sci_correct) / total_len
+    avg_acc = float(avg_correct) / total_len
+
+    print(f'SCI Fused accuracy: {sci_acc}')
+    print(f'Average Fused accuracy: {avg_acc}')
+
+    output.write_text(json.dumps({'avg': avg_results, 'sci': sci_results}))
 
 
 if __name__ == "__main__":

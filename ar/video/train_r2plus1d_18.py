@@ -96,8 +96,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
          epochs: int, batch_size: int, optimizer: str, grad_accum_steps: int,
          learning_rate: float, scheduler: str, fp16: bool, cpu: bool,
          logdir: Optional[ar.typing.PathLike],
-         resume_checkpoint: ar.typing.PathLike,
-         dropout: float,
+         resume_checkpoint: ar.typing.PathLike, dropout: float,
          save_checkpoint: ar.typing.PathLike, freeze_fe: bool) -> None:
     ar.engine.seed()
 

@@ -38,7 +38,7 @@ def SCI_weights(probabilities: torch.Tensor,
         p = probabilities
 
     N = float(p.size(-1))
-    maxes, _ = p.max(dim=-1, keepdim=keepdim)
+    maxes = p.max(dim=-1, keepdim=keepdim).values
 
     return (N * maxes - 1).div(N - 1)
 
@@ -87,8 +87,7 @@ def SCI_fusion(probabilities: torch.Tensor,
     SCIs = SCI_weights(p, from_logits=False, log_probs=False, keepdim=True)
 
     # pi: (M, N_CLASSES)
-    pi = (SCIs * p).sum(1)
-    pi = pi / SCIs.sum(1)
+    pi = SCIs * p
 
-    # (N_CLASSES,)
-    return pi.max(0)[0]
+    # (N_CLASSES, )
+    return pi.sum(0) / SCIs.sum(0)

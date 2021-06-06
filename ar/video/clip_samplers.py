@@ -1,13 +1,14 @@
-from ar.io import VideoFramesIterator
 from typing import List
 from typing import Tuple
 
 import torch
 
+from ar.io import VideoFramesIterator
+
 
 def uniform_sampling(video: VideoFramesIterator,
                      clips_len: int,
-                     n_clips: int = 10,
+                     n_clips: int = 12,
                      overlap: bool = True) -> List[torch.Tensor]:
     """
     Uniformly samples `n_clips` from a video. The clips samples by default can 
@@ -19,9 +20,7 @@ def uniform_sampling(video: VideoFramesIterator,
         VideoFramesIterator to take the clips from.
     clips_len: int
         Length of the sampled clips in frames
-    frames_stride: int, default 1
-        Separation between clips within a clip.
-    n_clips: int, default 3
+    n_clips: int, default 12
         Number of clips to sample
     overlap: bool, default True
         If set to False the sampled clips won't be overlapping
@@ -36,20 +35,27 @@ def uniform_sampling(video: VideoFramesIterator,
 
     if overlap:
         start_secs = torch.rand(size=(n_clips,))
-        start_secs = start_secs * video.video_duration - clips_in_sec
+        start_secs = start_secs * (video.video_duration - clips_in_sec - 1)
         start_secs = start_secs.tolist()
     else:
-        possible_start_secs = torch.arange(0,
-                                           video.video_duration - clips_in_sec,
-                                           clips_in_sec)
+        # If it is no possible to sample n_clips reduce it progressively until
+        # it is possible
+        clips_duration = clips_in_sec * n_clips
+        while clips_duration > video.video_duration:
+            n_clips -= 1
+            clips_duration = clips_in_sec * n_clips
+
+        possible_start_secs = torch.arange(
+            0, video.video_duration - clips_in_sec * 2, 
+            clips_in_sec, dtype=torch.float32)
         choices = torch.randperm(possible_start_secs.size(0))[:n_clips]
         start_secs = possible_start_secs[choices]
 
     return [
         video.take(ss,
                    ss + clips_in_sec,
-                   do_skip_frames=True,
-                   do_transform=True) for ss in start_secs
+                   do_transform=True,
+                   limit=clips_len) for ss in start_secs
     ]
 
 
@@ -94,8 +100,8 @@ def lrcn_sampling(video: VideoFramesIterator,
     return [
         video.take(ss,
                    ss + clips_in_sec,
-                   do_skip_frames=True,
-                   do_transform=True) for ss in clips_start_idx
+                   do_transform=True,
+                   limit=clips_len) for ss in clips_start_idx
     ]
 
 
@@ -103,7 +109,6 @@ def FstCN_sampling(video: VideoFramesIterator,
                    clips_len: int,
                    n_clips: int = 16,
                    n_crops: int = 4,
-                   frames_stride: int = 1,
                    crops_size: Tuple[int, int] = (112, 112),
                    overlap: bool = False) -> List[List[torch.Tensor]]:
     """
@@ -122,8 +127,6 @@ def FstCN_sampling(video: VideoFramesIterator,
         Number of clips to sample
     n_crops: int, default 4
         Number of crops to extract for each video clip
-    frames_stride: int, default 1
-        Distance between frames within a clip
     crops_size: Tuple[int, int], default (112, 112)
         Size of the generated crops
     overlap: bool, default True
@@ -142,13 +145,12 @@ def FstCN_sampling(video: VideoFramesIterator,
 
     clips = uniform_sampling(video=video,
                              clips_len=clips_len,
-                             frames_stride=frames_stride,
                              n_clips=n_clips,
                              overlap=overlap)
 
     results = []
     for clip in clips:
-        cropped_clips = [crop_fn(clip) for i in range(n_crops)]
+        cropped_clips = [crop_fn(clip) for _ in range(n_crops)]
         flipped_clips = [o.flip(dims=-1) for o in cropped_clips]
         results.extend(cropped_clips + flipped_clips)
 

@@ -105,9 +105,7 @@ def _load_model(out_units: int,
               default=True,
               help='Wether to use a bidirectional LSTM or an '
               ' autoregressive')
-@click.option('--dropout',
-              default=.5,
-              help='Dropout rate for the classifier')
+@click.option('--dropout', default=.5, help='Dropout rate for the classifier')
 def main(dataset: str, data_dir: ar.typing.PathLike,
          annots_dir: ar.typing.PathLike, validation_split: float,
          data_loader_workers: int, frames_per_clip: int, clips_stride: int,
@@ -116,8 +114,8 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
          logdir: Optional[ar.typing.PathLike],
          resume_checkpoint: ar.typing.PathLike,
          save_checkpoint: ar.typing.PathLike, feature_extractor: str,
-         freeze_fe: bool, rnn_units: int, fusion_mode: str,
-         bidirectional: bool, dropout: float) -> None:
+         freeze_fe: bool, rnn_units: int, fusion_mode: str, bidirectional: bool,
+         dropout: float) -> None:
     ar.engine.seed()
 
     accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)

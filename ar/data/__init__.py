@@ -9,5 +9,6 @@ from .utils import video_default_collate_fn
 
 __all__ = [
     'ClipLevelDataset', 'UCF101', 'Kinetics400', 'batch_data',
-    'video_default_collate_fn'
+    'video_default_collate_fn', 'VideoLevelDataset', 'VideoLevelKinetics',
+    'VideoLevelUCF101'
 ]

@@ -1,18 +1,19 @@
 import itertools
 import math
+import warnings
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
+from typing import Optional
 from typing import Tuple
 
+import matplotlib.pyplot as plt
 import torch
 import torchvision
+from matplotlib import animation
+from matplotlib.figure import Figure
 
 from ar.typing import PathLike
 from ar.typing import Transform
-
-import matplotlib.pyplot as plt
-from matplotlib import animation
-from matplotlib.figure import Figure
 
 
 class VideoFramesIterator(object):
@@ -32,6 +33,8 @@ class VideoFramesIterator(object):
         Number of frames to retrieve after each iteration
     skip_frames: int, defaults 1
         Skip frames to process the video faster but with less precision
+    frame_rate: Optional[float], defaults None
+        Resamples the frames of a video so it is proceed at frame_rate FPS
     transforms: Optional[Transform], defaults None
         Video transformations
     """
@@ -40,14 +43,42 @@ class VideoFramesIterator(object):
                  video_path: PathLike,
                  batch_size: int = 1,
                  skip_frames: int = 1,
+                 frame_rate: Optional[float] = None,
                  transforms: Optional[Transform] = None) -> None:
+
         self._video_reader = torchvision.io.VideoReader(str(video_path))
-        self.current_frame = 0
+
         self.skip_frames = skip_frames
-        self.batch_size = batch_size
         self.tranforms = transforms or (lambda x: x)
         self._is_it_end = False
         self.metadata = self._video_reader.get_metadata()
+
+        # Resample FPS function
+        self._resample = bool(frame_rate)
+        self._original_fps = self.metadata['video']['fps'][0]
+        self._fps = frame_rate or self._original_fps
+
+        # Iteration internal state
+        self._current_frame = 0
+        self.batch_size = batch_size
+        if not self._original_fps:
+            warnings.warn(f'Video {video_path} has no property fps, '
+                          'this means that the resampleing will not be applied')
+            self._resample = False
+            self._sample_frames = batch_size
+        elif self._resample:
+            self._sample_frames = math.ceil(batch_size * self._original_fps /
+                                            frame_rate)
+        else:
+            self._sample_frames = batch_size
+
+    def _resample_video(self, video: torch.Tensor) -> torch.Tensor:
+        if not self._resample:
+            return torch.arange(video.size(0))
+
+        step = float(self._original_fps) / self.video_fps
+        idxs = torch.arange(0, video.size(0), step, dtype=torch.float32)
+        return idxs.floor().long()
 
     @property
     def video_fps(self) -> float:
@@ -58,7 +89,7 @@ class VideoFramesIterator(object):
         float
             Video's FPS
         """
-        return self.metadata['video']['fps'][0]
+        return self._fps
 
     @property
     def video_duration(self) -> float:
@@ -86,7 +117,8 @@ class VideoFramesIterator(object):
              from_sec: float,
              to_sec: float,
              do_skip_frames: bool = False,
-             do_transform: bool = False) -> torch.Tensor:
+             do_transform: bool = False,
+             limit: Optional[int] = None) -> torch.Tensor:
         """Take the frames between two timestamps in seconds.
 
         Parameters
@@ -95,11 +127,12 @@ class VideoFramesIterator(object):
             Init of the interval
         to_sec: float
             End of the interval
-        do_skip_frames: bool, defaults Fale
+        do_skip_frames: bool, defaults False
             Skip the frames specified in the __init__?
         do_transform: bool, defaults False
             Apply the given transformations
-
+        limit: Optional[int], defaults None
+            Limit the number of clips to.
         Returns
         -------
         torch.Tensor
@@ -110,13 +143,19 @@ class VideoFramesIterator(object):
         frames = [
             f['data']
             for i, f in enumerate(
-                itertools.takewhile(lambda x: x['pts'] < to_sec, video_it))
+                itertools.takewhile(lambda x: x['pts'] <= to_sec, video_it))
             if not do_skip_frames or (i % self.skip_frames == 0)
         ]
 
         frames = torch.stack(frames).permute(0, 2, 3, 1)
+        frames_idx = self._resample_video(frames)
+        frames = frames[frames_idx]
+        if limit:
+            frames = frames[:limit]
+
         if do_transform:
             return self.tranforms(frames)
+
         return frames
 
     def __iter__(self) -> 'VideoFramesIterator':
@@ -147,8 +186,9 @@ class VideoFramesIterator(object):
 
         frames = []
         frames_idx = []
-        start = self.current_frame
-        end = min(start + self.batch_size * self.skip_frames, self.total_frames)
+        start = self._current_frame
+        end = min(start + self._sample_frames * self.skip_frames,
+                  self.total_frames)
 
         for _ in range(start, int(end)):
             try:
@@ -157,11 +197,11 @@ class VideoFramesIterator(object):
                 self._is_it_end = True
                 break
 
-            if self.current_frame % self.skip_frames == 0:
+            if self._current_frame % self.skip_frames == 0:
                 frames.append(frame['data'])
-                frames_idx.append(self.current_frame)
+                frames_idx.append(self._current_frame)
 
-            self.current_frame += 1
+            self._current_frame += 1
 
         if not frames:
             self._is_it_end = True
@@ -169,15 +209,22 @@ class VideoFramesIterator(object):
 
         # (FRAMES, CHANNELS, HEIGHT, WIDTH) to (FRAMES, HEIGHT, WIDTH, CHANNELS)
         video_clip = torch.stack(frames).permute(0, 2, 3, 1)
-        video_clip = self.tranforms(video_clip)
+
+        # Resample clips
+        idxs = self._resample_video(video_clip)[:self.batch_size]
+        video_clip = video_clip[idxs]
         frames_idx = torch.as_tensor(frames_idx, dtype=torch.long)
+        frames_idx = frames_idx[idxs]
+
+        # Apply transforms
+        video_clip = self.tranforms(video_clip)
 
         return frames_idx, video_clip
 
     def __len__(self) -> int:
         """Length of the iterator"""
         return math.ceil(
-            (self.total_frames / self.skip_frames) / self.batch_size)
+            (self.total_frames / self.skip_frames) / self._sample_frames)
 
 
 def plot_video(video: torch.Tensor,
@@ -244,6 +291,7 @@ def plot_video_grid(
     animation.Animation
         Generated matplotlib animation
     """
+
     def animate(i: int) -> None:
         for j, ax in enumerate(axes):
             ax.set_data(clips[j][i])

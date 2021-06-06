@@ -50,7 +50,6 @@ class Kinetics400(ClipLevelDataset):
         num_workers: int = 4,
         extensions: Collection[str] = ('mp4', 'avi')) -> None:
 
-
         super(Kinetics400,
               self).__init__(root, split, frames_per_clip, step_between_clips,
                              frame_rate, transform, num_workers, extensions)
