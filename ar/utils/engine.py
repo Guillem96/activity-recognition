@@ -86,6 +86,8 @@ def train_one_epoch(
                                   log_values.pop('loss'),
                                   global_step=epoch)
 
+    logger.close()
+
 
 @torch.no_grad()
 def evaluate(
@@ -126,6 +128,7 @@ def evaluate(
                                    log_values,
                                    global_step=epoch)
 
+    logger.close()
     return logger.as_dict()
 
 

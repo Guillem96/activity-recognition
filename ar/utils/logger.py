@@ -76,7 +76,7 @@ class ValuesLogger(object):
     total_steps: int
         Total logger lifetime
     header: str, default ''
-        Text to add befor the values logs
+        Text to add before the values logs
     """
 
     def __init__(self,
@@ -108,6 +108,9 @@ class ValuesLogger(object):
     def as_dict(self) -> Dict[str, float]:
         return {k: v.mean.item() for k, v in self.values.items()}
 
+    def close(self) -> None:
+        self.t.clear()
+        self.t.close()
 
 def build_summary_writter(log_dir: PathLike) -> TensorBoard:
     """

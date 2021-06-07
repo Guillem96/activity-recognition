@@ -16,8 +16,12 @@ def train_tfms(size: Tuple[int, int] = (112, 112),
 
     if do_crop:
         h, w = size
-        tfms.append(VT.VideoResize(int(h * 1.3), int(w * 1.3)))
+        eh = int(h * 1.3)
+        ew = int(w * 1.3)
+        tfms.append(VT.VideoResize((eh, ew)))
         tfms.append(VT.VideoRandomCrop(size))
+    else:
+        tfms.append(VT.VideoResize(size))
 
     if do_erase:
         tfms.append(VT.VideoRandomErase())
