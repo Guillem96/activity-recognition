@@ -16,6 +16,7 @@ from ar.typing import PathLike
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
 _AVAILABLE_MODELS = {'LRCN', 'FstCN', 'R2plus1', 'SlowFast'}
+
 _ClipSamplerFn = Callable[[ar.io.VideoFramesIterator, int], List[torch.Tensor]]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -119,7 +120,6 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
     else:
         raise ValueError('Unexpected dataset type')
     print('done')
-
     print('Loading model... ', end='')
     model_pt: Optional[ar.utils.checkpoint.SerializableModule] = None
     clips_len = 16
@@ -128,14 +128,32 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
         model_pt = ar.video.LRCN.from_pretrained(checkpoint)
         model_pt.eval()
         model_pt.to(device)
+
     elif model == 'FstCN':
-        clips_len = 16
         model_pt = ar.video.FstCN.from_pretrained(checkpoint)
         model_pt.eval()
         model_pt.to(device)
+        clips_len = (16 + model_pt.dt) * model_pt.st
+
+    elif model == 'R2plus1':
+        clips_len = 16
+        model_pt = ar.video.R2plus1_18.from_pretrained(checkpoint)
+        model_pt.eval()
+        model_pt.to(device)
+
+    elif model == 'SlowFast':
+        desired_slow_frames = 4
+        model_pt = ar.video.SlowFast.from_pretrained(checkpoint)
+        clips_len = desired_slow_frames * model_pt.tau
+        model_pt.eval()
+        model_pt.to(device)
+
     else:
         raise ValueError('Unexpected model architecture')
     print('done')
+
+    print('=== Model HyperParameters ===')
+    print(model_pt.config())
 
     sci_results = []
     avg_results = []

@@ -170,6 +170,7 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
         self.feature_extractor = feature_extractor
         self.n_classes = n_classes
         self.pretrained = pretrained
+        self.freeze_feature_extractor = freeze_feature_extractor
 
         # Temporal aware units params
         self.bidirectional = bidirectional
@@ -200,10 +201,10 @@ class LRCN(ar.utils.checkpoint.SerializableModule):
         return {
             'feature_extractor': self.feature_extractor,
             'n_classes': self.n_classes,
-            'pretrained': False,
+            'pretrained': self.pretrained,
             'bidirectional': self.bidirectional,
             'rnn_units': self.rnn_units,
-            'freeze_feature_extractor': False,
+            'freeze_feature_extractor': self.freeze_feature_extractor,
             'fusion_mode': self.fusion_mode,
             'dropout': self.dropout,
         }
@@ -284,6 +285,7 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
         self.feature_extractor = feature_extractor
         self.n_classes = n_classes
         self.pretrained = pretrained
+        self.freeze_feature_extractor = freeze_feature_extractor
 
         # Vdiff hyperparams
         self.st = st
@@ -328,12 +330,12 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
         self.classifier = nn.Linear(self.scl_features + self.tcl_features,
                                     self.n_classes)
 
-    def config(self) -> dict:
+    def config(self) -> Dict[str, Any]:
         return {
             'feature_extractor': self.feature_extractor,
             'n_classes': self.n_classes,
-            'pretrained': False,
-            'freeze_feature_extractor': False,
+            'pretrained': self.pretrained,
+            'freeze_feature_extractor': self.freeze_feature_extractor,
             'scl_features': self.tcl_features,
             'tcl_features': self.tcl_features,
             'st': self.st,
@@ -448,7 +450,7 @@ class R2plus1_18(ar.utils.checkpoint.SerializableModule):
         return {
             'freeze_feature_extractor': self.freeze_feature_extractor,
             'n_classes': self.n_classes,
-            'pretrained': False,
+            'pretrained': self.pretrained,
         }
 
     def forward(self, video: torch.Tensor) -> torch.Tensor:
@@ -818,7 +820,7 @@ class SlowFast(ar.utils.checkpoint.SerializableModule):
         self.dropout = nn.Dropout(dropout)
         self.linear = nn.Linear(self._out_features, n_classes)
 
-    def config(self) -> dict:
+    def config(self) -> Dict[str, Any]:
         return {
             'n_classes': self.n_classes,
             'alpha': self.alpha,
