@@ -125,25 +125,30 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
     clips_len = 16
     if model == 'LRCN':
         clips_len = 16
-        model_pt = ar.video.LRCN.from_pretrained(checkpoint)
+        model_pt = ar.video.LRCN.from_pretrained(checkpoint,
+                                                 map_location=device)
         model_pt.eval()
         model_pt.to(device)
 
     elif model == 'FstCN':
-        model_pt = ar.video.FstCN.from_pretrained(checkpoint)
+        clips_len = 16
+        model_pt = ar.video.FstCN.from_pretrained(checkpoint,
+                                                  map_location=device)
         model_pt.eval()
         model_pt.to(device)
         clips_len = (16 + model_pt.dt) * model_pt.st
 
     elif model == 'R2plus1':
         clips_len = 16
-        model_pt = ar.video.R2plus1_18.from_pretrained(checkpoint)
+        model_pt = ar.video.R2plus1_18.from_pretrained(checkpoint,
+                                                       map_location=device)
         model_pt.eval()
         model_pt.to(device)
 
     elif model == 'SlowFast':
         desired_slow_frames = 4
-        model_pt = ar.video.SlowFast.from_pretrained(checkpoint)
+        model_pt = ar.video.SlowFast.from_pretrained(checkpoint,
+                                                     map_location=device)
         clips_len = desired_slow_frames * model_pt.tau
         model_pt.eval()
         model_pt.to(device)
