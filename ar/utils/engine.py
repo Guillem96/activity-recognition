@@ -233,7 +233,6 @@ def train(
                                         model=model.__class__.__name__),
             epoch=epoch,
             optimizer=optimizer.state_dict(),
-            scheduler=scheduler.state_dict() if scheduler is not None else {},
-            save_fn=accelerator.save)
+            scheduler=scheduler.state_dict() if scheduler is not None else {})
 
     return eval_metrics
