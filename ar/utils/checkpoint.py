@@ -56,9 +56,10 @@ class SerializableModule(nn.Module, abc.ABC):
             saving with accelerator.save instead of torch.save. I left to None
             by default the method uses the `torch.save`.
         """
+        cpu_kwargs = move_to_cpu(kwargs)
         checkpoint = dict(config=self.config(),
-                          model=self.state_dict(),
-                          **kwargs)
+                          model=move_to_cpu(self.state_dict()),
+                          **cpu_kwargs)
         save_fn = save_fn or torch.save
         save_fn(checkpoint, path)
 
@@ -158,3 +159,16 @@ class SerializableModule(nn.Module, abc.ABC):
                              f'{available_names}')
         model.eval()
         return model
+
+
+def move_to_cpu(o: Any) -> Any:
+    if isinstance(o, dict):
+        return {k: move_to_cpu(v) for k, v in o.items()}
+
+    if isinstance(o, (list, tuple)):
+        return type(o)(move_to_cpu(v) for v in o)
+
+    if torch.is_tensor(o):
+        return o.cpu()
+
+    return o

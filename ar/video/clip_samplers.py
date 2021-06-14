@@ -45,17 +45,16 @@ def uniform_sampling(video: VideoFramesIterator,
             n_clips -= 1
             clips_duration = clips_in_sec * n_clips
 
-        possible_start_secs = torch.arange(
-            0, video.video_duration - clips_in_sec, 
-            clips_in_sec, dtype=torch.float32)
+        possible_start_secs = torch.arange(0,
+                                           video.video_duration - clips_in_sec,
+                                           clips_in_sec,
+                                           dtype=torch.float32)
         choices = torch.randperm(possible_start_secs.size(0))[:n_clips]
         start_secs = possible_start_secs[choices]
 
     return [
-        video.take(ss,
-                   ss + clips_in_sec,
-                   do_transform=True,
-                   limit=clips_len) for ss in start_secs
+        video.take(ss, ss + clips_in_sec, do_transform=True, limit=clips_len)
+        for ss in start_secs
     ]
 
 
@@ -98,10 +97,8 @@ def lrcn_sampling(video: VideoFramesIterator,
                                    stride_in_sec + clips_in_sec)[:n_clips]
 
     return [
-        video.take(ss,
-                   ss + clips_in_sec,
-                   do_transform=True,
-                   limit=clips_len) for ss in clips_start_idx
+        video.take(ss, ss + clips_in_sec, do_transform=True, limit=clips_len)
+        for ss in clips_start_idx
     ]
 
 
