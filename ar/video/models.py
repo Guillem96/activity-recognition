@@ -277,6 +277,7 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
                  dt: int = 9,
                  scl_features: int = 64,
                  tcl_features: int = 64,
+                 dropout: float = .5,
                  pretrained: bool = True,
                  freeze_feature_extractor: bool = False) -> None:
         super(FstCN, self).__init__()
@@ -296,6 +297,8 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
 
         # Temporal aware hyperparams
         self.tcl_features = tcl_features
+
+        self.dropout = dropout
 
         # Create SCL. To do so, we instantiate a pretrained image classifier
         # and remove the last average pooling
@@ -318,14 +321,16 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
         # 112x112
         self.tcl_temp_conv = _TemporalConv(4 * 4, self.tcl_features)
         self.tcl_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.tcl_linear = _MLP([self.tcl_features, 2048, self.tcl_features])
+        self.tcl_linear = _MLP([self.tcl_features, 2048, self.tcl_features],
+                               dropout=self.dropout)
 
         # Get more abstract SCL features branch
         self.xtra_conv = nn.Sequential(
             nn.Conv2d(scl_out_features, self.scl_features, 1, 1),
             nn.BatchNorm2d(self.scl_features), nn.ReLU(inplace=True))
         self.xtra_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.xtra_linear = _MLP([self.scl_features, 2048, self.scl_features])
+        self.xtra_linear = _MLP([self.scl_features, 2048, self.scl_features],
+                                dropout=self.dropout)
 
         self.classifier = nn.Linear(self.scl_features + self.tcl_features,
                                     self.n_classes)
@@ -340,6 +345,7 @@ class FstCN(ar.utils.checkpoint.SerializableModule):
             'tcl_features': self.tcl_features,
             'st': self.st,
             'dt': self.dt,
+            'dropout': self.dropout
         }
 
     def forward(self, clips: torch.Tensor) -> torch.Tensor:

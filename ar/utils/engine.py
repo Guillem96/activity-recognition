@@ -233,9 +233,10 @@ def train(
         if accelerator.is_local_main_process:
             model.save(str(save_checkpoint).format(
                 epoch=epoch, model=model.__class__.__name__),
-                       epoch=epoch,
-                       optimizer=optimizer.state_dict(),
-                       scheduler=scheduler.state_dict()
-                       if scheduler is not None else {})
+                    #    epoch=epoch,
+                    #    optimizer=optimizer.state_dict(),
+                    #    scheduler=scheduler.state_dict()
+                    #    if scheduler is not None else {}
+                       )
 
     return eval_metrics

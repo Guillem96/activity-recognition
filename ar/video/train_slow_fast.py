@@ -147,8 +147,9 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                         resume_checkpoint=resume_checkpoint,
                                         fusion_mode=fusion_mode)
 
+    sampled_clips = train_ds.n_videos * 10
     steps_per_epoch = math.ceil(
-        len(train_ds) / batch_size / grad_accum_steps /
+        sampled_clips / batch_size / grad_accum_steps /
         accelerator.num_processes)
 
     torch_optimizer, torch_scheduler = load_optimizer(

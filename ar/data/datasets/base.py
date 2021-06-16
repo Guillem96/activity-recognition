@@ -85,6 +85,11 @@ class ClipLevelDataset(data.Dataset, abc.ABC):
                           _audio_channels=0)
 
     @property
+    def n_videos(self):
+        """Get the number of videos referenced by the dataset."""
+        return len(self.paths)
+
+    @property
     def split_root(self) -> Path:
         """Get the directory of the videos belonging to a split.
 

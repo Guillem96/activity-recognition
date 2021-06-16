@@ -108,6 +108,7 @@ def _load_model(out_units: int,
               type=int,
               default=64,
               help='Features for the TCL branch')
+@click.option('--dropout', type=float, default=.5)
 def main(dataset: str, data_dir: ar.typing.PathLike,
          annots_dir: ar.typing.PathLike, validation_split: float,
          data_loader_workers: int, frames_per_clip: int, clips_stride: int,
@@ -117,7 +118,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
          resume_checkpoint: ar.typing.PathLike,
          save_checkpoint: ar.typing.PathLike, feature_extractor: str,
          freeze_fe: bool, st: int, dt: int, scl_features: int,
-         tcl_features: int) -> None:
+         tcl_features: int, dropout: float) -> None:
     ar.engine.seed()
 
     accelerator = accelerate.Accelerator(fp16=fp16, cpu=cpu)
@@ -155,10 +156,12 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                         st=st,
                                         dt=dt,
                                         scl_features=scl_features,
-                                        tcl_features=tcl_features)
+                                        tcl_features=tcl_features,
+                                        dropout=dropout)
 
+    sampled_clips = train_ds.n_videos * 10
     steps_per_epoch = math.ceil(
-        len(train_ds) / batch_size / grad_accum_steps /
+        sampled_clips / batch_size / grad_accum_steps /
         accelerator.num_processes)
 
     torch_optimizer, torch_scheduler = load_optimizer(
