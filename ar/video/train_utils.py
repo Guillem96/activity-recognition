@@ -121,7 +121,6 @@ def load_optimizer(
             optimizer,
             learning_rate,
             steps_per_epoch * epochs,
-            pct_start=.1,
             base_momentum=.9)
     elif scheduler_type == 'Step':
         scheduler = optim.lr_scheduler.StepLR(optimizer, steps_per_epoch, .1)

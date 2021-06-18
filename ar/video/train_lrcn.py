@@ -151,7 +151,7 @@ def main(dataset: str, data_dir: ar.typing.PathLike,
                                         fusion_mode=fusion_mode,
                                         dropout=dropout)
 
-    sampled_clips = train_ds.n_videos * 10
+    sampled_clips = sum(min(len(o), 10) for o in train_ds.video_clips.clips)
     steps_per_epoch = math.ceil(
         sampled_clips / batch_size / grad_accum_steps /
         accelerator.num_processes)
