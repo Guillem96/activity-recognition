@@ -122,17 +122,12 @@ class SerializableModule(nn.Module, abc.ABC):
         ValueError
             If name and path does not exist
         """
-        # TODO: Rewrite this to use google drive.
-        bucket = 'ml-generic-purpose-pt-models'
-        base_url = f'https://storage.googleapis.com/{bucket}/ar'
+        base_url = 'https://drive.google.com/uc?id='
 
         names_url = {
-            'lrcn-ucf-101':
-                f'{base_url}/lrcn-attn.pt',
-            'sf-densenet-kinetics-400':
-                f'{base_url}/kinetics_image_densenet121.pt',
-            'sf-resnet-kinetics-400':
-                f'{base_url}/kinetics_image_resnet18.pt'
+            'r2plus1-ucf-101': '1ZPK_wrzV2obnENLOKNQh8tecQCq1EKsx',
+            'lrcn-ucf-101': '1hlVU5sqMIyXg57SJfi_36B1AJ2wCTp17',
+            'fstcn-ucf-101': '15actfrtMsgzQOpObPGQZR9F3zAcMhsd2'
         }
 
         path = Path(name_or_path)
@@ -146,9 +141,8 @@ class SerializableModule(nn.Module, abc.ABC):
                 dst_file.parent.mkdir(exist_ok=True)
 
             if not Path(dst_file).exists():
-                res = requests.get(names_url[name])
-                with open(str(dst_file), 'wb') as f:
-                    f.write(res.content)
+                import gdown
+                gdown.download(f'{base_url}{names_url[name]}', str(dst_file))
 
             model, _ = cls.load(str(dst_file), map_location=map_location)
         else:
