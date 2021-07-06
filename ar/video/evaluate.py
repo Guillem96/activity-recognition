@@ -15,7 +15,7 @@ import ar
 from ar.typing import PathLike
 
 _AVAILABLE_DATASETS = {'kinetics400', 'UCF-101'}
-_AVAILABLE_MODELS = {'LRCN', 'FstCN', 'R2plus1', 'SlowFast'}
+_AVAILABLE_MODELS = {'LRCN', 'FstCN', 'R2plus1', 'R2plus1_18', 'SlowFast'}
 
 _ClipSamplerFn = Callable[[ar.io.VideoFramesIterator, int], List[torch.Tensor]]
 
@@ -102,7 +102,7 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
 
     output = Path(output)
     output.mkdir(exist_ok=True, parents=True)
-    output = output / f'results-{current_time}.json'
+    output = output / f'results-{current_time}-{model}-{checkpoint.replace(".", "-")}.json'
 
     if dataset == 'UCF-101' and annots_dir is None:
         raise ValueError('"annots_dir" cannot be None when selecting '
@@ -138,7 +138,7 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
         model_pt.to(device)
         clips_len = (16 + model_pt.dt) * model_pt.st
 
-    elif model == 'R2plus1':
+    elif model == 'R2plus1' or model == 'R2plus1_18':
         clips_len = 16
         model_pt = ar.video.R2plus1_18.from_pretrained(checkpoint,
                                                        map_location=device)
@@ -185,7 +185,13 @@ def cli_video_level_eval(dataset: str, data_dir: str, annots_dir: str,
     print(f'SCI Fused accuracy: {sci_acc}')
     print(f'Average Fused accuracy: {avg_acc}')
 
-    output.write_text(json.dumps({'avg': avg_results, 'sci': sci_results}))
+    report = {
+        'config': model_pt.config(),
+        'predictions': {'avg': avg_results, 'sci': sci_results},
+        'checkpoint': checkpoint,
+    }
+
+    output.write_text(json.dumps(report))
 
 
 if __name__ == "__main__":

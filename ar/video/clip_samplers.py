@@ -32,6 +32,7 @@ def uniform_sampling(video: VideoFramesIterator,
         where T will be `clips_len`
     """
     clips_in_sec = clips_len / (video.video_fps / video.skip_frames)
+    clips_in_sec = min(clips_in_sec, video.video_duration)
 
     if overlap:
         start_secs = torch.rand(size=(n_clips,))
