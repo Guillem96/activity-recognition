@@ -1,18 +1,14 @@
 import abc
-import warnings
 from pathlib import Path
-from re import L
 from typing import Collection
 from typing import List
 from typing import Mapping
 from typing import Optional
 from typing import Sequence
 from typing import Tuple
-from typing import Union
 
 import torch
 import torch.utils.data as data
-import torchvision
 from torchvision.datasets.video_utils import VideoClips
 
 from ar.typing import PathLike
